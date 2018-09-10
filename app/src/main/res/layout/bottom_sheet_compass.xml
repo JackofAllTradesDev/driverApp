@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+
+    <ImageButton
+        android:id="@+id/googleMapsBtn"
+        android:layout_width="70dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="212dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/google_maps" />
+
+    <ImageButton
+        android:id="@+id/wazeBtn"
+        android:layout_width="70dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="112dp"
+        android:layout_marginTop="212dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+
+        app:srcCompat="@drawable/waze" />
+
+    <TextView
+        android:id="@+id/gMapsTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="110dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Google Maps"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="10dp"
+      />
+
+    <TextView
+        android:id="@+id/wazeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="44dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Waze"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="10dp"
+       />
+</android.support.constraint.ConstraintLayout>
