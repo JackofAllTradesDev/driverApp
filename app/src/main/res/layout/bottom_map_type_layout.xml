@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/defaultBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="32dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@+id/satelliteBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/default_street" />
+
+    <TextView
+        android:id="@+id/mapTypeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Map Type"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/defaultTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Default"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/satelliteTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/defaultBtn" />
+
+    <TextView
+        android:id="@+id/satelliteTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="148dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Satellite"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/defaultTxt"
+        app:layout_constraintTop_toBottomOf="@+id/satelliteBtn" />
+
+    <ImageButton
+        android:id="@+id/satelliteBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="140dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/defaultBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/road" />
+</android.support.constraint.ConstraintLayout>

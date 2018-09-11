@@ -1,8 +1,6 @@
 package com.example.xloguser.finaldriverapp;
 
 import android.Manifest;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +9,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -44,9 +43,9 @@ public class NavigationDrawer extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
         imageCircleView = (CircularImageView) findViewById(R.id.imageCircleView);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        ViewPager viewPager = (ViewPager)findViewById(R.id.viewPager);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
@@ -81,8 +80,8 @@ public class NavigationDrawer extends AppCompatActivity
             }
         });
         getLocalPermission();
-
     }
+
 
 
 
@@ -131,17 +130,6 @@ public class NavigationDrawer extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/layout_route_container"
+    android:tag="navigation">
+
+    <TextView
+        android:id="@+id/navTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fontFamily="@font/roboto_medium"
+        android:textSize="12dp"
+        android:textColor="#000"
+        android:textAlignment="center"
+        android:textAllCaps="true" />
+
+    <ImageButton
+        android:id="@+id/googleMapBtn"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="56dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@+id/wazeBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/google_maps" />
+
+    <ImageButton
+        android:id="@+id/wazeBtn"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="140dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/googleMapBtn"
+        app:layout_constraintTop_toBottomOf="@+id/navTxt"
+        app:srcCompat="@drawable/waze" />
+
+    <TextView
+        android:id="@+id/gmapTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Google Map"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/wazeTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/googleMapBtn" />
+
+    <TextView
+        android:id="@+id/wazeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="148dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Waze"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/gmapTxt"
+        app:layout_constraintTop_toBottomOf="@+id/wazeBtn" />
+</android.support.constraint.ConstraintLayout>
