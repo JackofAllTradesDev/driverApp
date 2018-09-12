@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,32 +23,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.Map;
+
 public class BottomSheetDialog extends BottomSheetDialogFragment{
 
     private Integer a;
     private ImageButton satBtn;
-    SupportMapFragment mMapFragment;
-    private GoogleMap mMap;
+    private ImageButton defaultBtn;
+    private GoogleMap map;
     private int type;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.bottom_map_type_layout, container, false);
-        satBtn = (ImageButton) v.findViewById(R.id.satelliteBtn);
-        satBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int sat = 2;
-
-            mMap.setMapType(2);
-
-
-
-            }
-        });
-        return v;
-    }
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -70,15 +55,36 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
             dialog.setContentView(mapTypeDialog);
         }
 
+        satBtn = (ImageButton) mapTypeDialog.findViewById(R.id.satelliteBtn);
+        defaultBtn = (ImageButton) mapTypeDialog.findViewById(R.id.defaultBtn);
+        satBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+            }
+        });
 
+        defaultBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            }
+        });
+
+
+
+    }
+
+    public void getMapParameter(GoogleMap googleMap){
+        map = googleMap;
+        Log.e("LOG", "map =  "+map);
 
     }
     public void getid(Integer number){
         a = number;
-       Log.e("LOG", "Logs: "+number);
 
     }
 
 
-    
+
 }

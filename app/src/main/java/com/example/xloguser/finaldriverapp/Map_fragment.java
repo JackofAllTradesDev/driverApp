@@ -93,23 +93,16 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
                 bottomSheetDialog.getActivity();
                 bottomSheetDialog.show(getFragmentManager(), "Map Dialog");
                 bottomSheetDialog.getid(3);
+                bottomSheetDialog.getMapParameter(mMap);
 
             }
         });
+
 
         return v;
 
 
     }
-
-    public void setmMap() {
-
-
-    }
-
-
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -118,7 +111,6 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(origin).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
     }
-
 
 
 }
