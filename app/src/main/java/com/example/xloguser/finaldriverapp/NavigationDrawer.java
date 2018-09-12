@@ -1,6 +1,7 @@
 package com.example.xloguser.finaldriverapp;
 
 import android.Manifest;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -57,16 +59,15 @@ public class NavigationDrawer extends AppCompatActivity
         viewPager.setAdapter(TabPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView versionTxt = (TextView) navView.findViewById(R.id.appVersionTxt);
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+
+        String verionCodeNumber = versionName + versionCode;
+        versionTxt.setText("Version "+verionCodeNumber);
 
 
         String url = "https://i.ytimg.com/vi/P2AE3J0BB2o/maxresdefault.jpg";
