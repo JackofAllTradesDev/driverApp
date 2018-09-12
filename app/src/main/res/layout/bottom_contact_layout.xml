@@ -28,13 +28,13 @@
         android:id="@+id/msgBtn"
         android:layout_width="43dp"
         android:layout_height="43dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginStart="140dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:background="#00000000"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toStartOf="@+id/callBtn"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton2"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/dialogue" />
 
@@ -42,13 +42,11 @@
         android:id="@+id/callBtn"
         android:layout_width="43dp"
         android:layout_height="43dp"
-        android:layout_marginEnd="140dp"
-        android:layout_marginStart="18dp"
+        android:layout_marginEnd="112dp"
         android:layout_marginTop="48dp"
         android:background="#00000000"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/msgBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/phone_receiver" />
 
@@ -56,26 +54,40 @@
         android:id="@+id/messageTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="218dp"
-        android:layout_marginStart="140dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Message"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#000"
         android:textSize="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/callTxt"
+        app:layout_constraintStart_toEndOf="@+id/messageTxt2"
         app:layout_constraintTop_toBottomOf="@+id/msgBtn" />
 
     <TextView
-        android:id="@+id/callTxt"
-        android:layout_width="wrap_content"
+        android:id="@+id/messageTxt2"
+        android:layout_width="43dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="148dp"
-        android:layout_marginStart="225dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="BlockBox"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+
+    <TextView
+        android:id="@+id/callTxt"
+        android:layout_width="43dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="112dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Call"
         android:textAlignment="center"
@@ -83,7 +95,18 @@
         android:textColor="#000"
         android:textSize="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/callBtn" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="48dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/blockbox_logo" />
 
 </android.support.constraint.ConstraintLayout>
