@@ -2,6 +2,8 @@ package com.example.xloguser.finaldriverapp.BottomSheetDialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +32,10 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
     private Integer a;
     private ImageButton satBtn;
     private ImageButton defaultBtn;
+    private ImageButton gmapBtn;
+    private ImageButton wazeBtn;
+    private ImageButton msgBtn;
+    private ImageButton callBtn;
     private GoogleMap map;
     private int type;
 
@@ -57,6 +63,10 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
 
         satBtn = (ImageButton) mapTypeDialog.findViewById(R.id.satelliteBtn);
         defaultBtn = (ImageButton) mapTypeDialog.findViewById(R.id.defaultBtn);
+        gmapBtn = (ImageButton) nagivationDialog.findViewById(R.id.googleMapBtn);
+        wazeBtn = (ImageButton) nagivationDialog.findViewById(R.id.wazeBtn);
+        msgBtn = (ImageButton) contactDialog.findViewById(R.id.msgBtn);
+        callBtn = (ImageButton) contactDialog.findViewById(R.id.callBtn);
         satBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +80,55 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             }
         });
+
+        gmapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_VIEW);
+                i.setPackage("com.google.android.apps.maps");
+                startActivity(i);
+
+
+            }
+        });
+        wazeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String appPackageName = "com.waze"; // getPackageName() from Context or Activity object
+                try {
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_VIEW);
+                    i.setPackage(appPackageName);
+                    startActivity(i);
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
+            }
+        });
+        msgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String num = "+63091234567890";
+                Intent intent = new Intent("android.intent.action.VIEW");
+
+                /** sample number only waiting for it to make it dynamic*/
+                intent.setData(Uri.parse("smsto:"+ num));
+                startActivity(intent);
+            }
+        });
+
+        callBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String num = "+639064402708";
+                String uri = "tel:" + num.trim();
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
+
 
 
 

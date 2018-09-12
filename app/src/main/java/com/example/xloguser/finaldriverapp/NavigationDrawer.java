@@ -1,17 +1,14 @@
 package com.example.xloguser.finaldriverapp;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,19 +18,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private final static int request_user_location = 99;
     private boolean locationPermissionGranted = false;
     private CircularImageView imageCircleView;
-    private  DrawerLayout drawer;
-    Context mContext;
-    Map_fragment map_fragment;
+    private CircularImageView profileImageView;
+    private NavigationView navView;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +46,12 @@ public class NavigationDrawer extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         imageCircleView = (CircularImageView) findViewById(R.id.imageCircleView);
-        ViewPager viewPager = (ViewPager)findViewById(R.id.viewPager);
+        navView = (NavigationView) findViewById(R.id.nav_view);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
 
         tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(TabPagerAdapter);
@@ -72,6 +77,21 @@ public class NavigationDrawer extends AppCompatActivity
                 .centerCrop()
                 .into(imageCircleView);
 
+        if (navView != null) {
+            LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
+
+            if (mParent != null) {
+
+                profileImageView = (CircularImageView) mParent.findViewById(R.id.profileImageCirle);
+                Picasso.get()
+                        .load(url)
+                        .resize(6000, 2000)
+                        .centerCrop()
+                        .into(profileImageView);
+            }
+        }
+
+
         imageCircleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,22 +103,19 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
 
-
-
-    private void getLocalPermission(){
+    private void getLocalPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Activated ",
                         Toast.LENGTH_LONG).show();
                 locationPermissionGranted = true;
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, request_user_location);
             }
-            else{
-                ActivityCompat.requestPermissions(this,permissions,request_user_location);
-            }
-        }else{
-            ActivityCompat.requestPermissions(this,permissions,request_user_location);
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, request_user_location);
         }
     }
 
@@ -161,17 +178,17 @@ public class NavigationDrawer extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_pending) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_complete) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_all) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_about) {
 
-        } else if (id == R.id.nav_send) {
+        }else if (id == R.id.nav_logout) {
 
         }
 
@@ -179,5 +196,6 @@ public class NavigationDrawer extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 }
