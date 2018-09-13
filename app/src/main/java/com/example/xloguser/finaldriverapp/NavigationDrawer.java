@@ -1,6 +1,8 @@
 package com.example.xloguser.finaldriverapp;
 
 import android.Manifest;
+import android.Manifest.permission;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -35,10 +37,12 @@ public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private final static int request_user_location = 99;
     private boolean locationPermissionGranted = false;
+    private boolean locationPermissionGrantedContacts = false;
     private CircularImageView imageCircleView;
     private CircularImageView profileImageView;
     private NavigationView navView;
     private DrawerLayout drawer;
+    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 120;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +105,20 @@ public class NavigationDrawer extends AppCompatActivity
             }
         });
         getLocalPermission();
+        getLocalPermissionContacts();
+
     }
 
 
     private void getLocalPermission() {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] permissions = {permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED )  {
+            if (ContextCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Activated ",
                         Toast.LENGTH_LONG).show();
                 locationPermissionGranted = true;
+
             } else {
                 ActivityCompat.requestPermissions(this, permissions, request_user_location);
             }
@@ -119,11 +126,39 @@ public class NavigationDrawer extends AppCompatActivity
             ActivityCompat.requestPermissions(this, permissions, request_user_location);
         }
     }
+    private void getLocalPermissionContacts() {
+        String[] permissions = {permission.CALL_PHONE};
+
+        if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE ) == PackageManager.PERMISSION_GRANTED )  {
+            if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "CALL_PHONE Activated ",
+                        Toast.LENGTH_LONG).show();
+                locationPermissionGrantedContacts = true;
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, READ_CONTACTS_PERMISSIONS_REQUEST);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, READ_CONTACTS_PERMISSIONS_REQUEST);
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case request_user_location: {
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(this, "Permission Failed",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    Toast.makeText(this, "Permission Granted",
+                            Toast.LENGTH_LONG).show();
+                }
+
+            }
+            case READ_CONTACTS_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0) {
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
@@ -197,6 +232,7 @@ public class NavigationDrawer extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 
 }
