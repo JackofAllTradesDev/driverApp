@@ -34,7 +34,7 @@
         android:background="#00000000"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toStartOf="@+id/callBtn"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintStart_toEndOf="@+id/msgBlockBoxBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/dialogue" />
 
@@ -80,7 +80,7 @@
         android:textColor="#000"
         android:textSize="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+        app:layout_constraintTop_toBottomOf="@+id/msgBlockBoxBtn" />
 
     <TextView
         android:id="@+id/callTxt"
@@ -98,7 +98,7 @@
         app:layout_constraintTop_toBottomOf="@+id/callBtn" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/msgBlockBoxBtn"
         android:layout_width="43dp"
         android:layout_height="43dp"
         android:layout_marginStart="112dp"
