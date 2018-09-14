@@ -5,11 +5,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -43,9 +45,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
     private ImageButton sendBtn;
     private ImageButton mapTypeBtn;
     private Button currentTransBtn;
-    private int type;
-    GoogleMap mapa;
-//    private ImageButton satBtn;
+    View viewSnackBar;
 
 
     public Map_fragment() {
@@ -110,11 +110,16 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
         return v;
 
 
     }
+
+
+
+
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

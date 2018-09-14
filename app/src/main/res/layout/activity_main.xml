@@ -94,7 +94,7 @@
         android:id="@+id/loginBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/login_text_container"
+        android:background="#4180f4"
         android:elevation="0dp"
         android:ems="14"
         android:text="LOGIN"
