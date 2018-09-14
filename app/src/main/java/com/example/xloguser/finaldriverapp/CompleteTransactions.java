@@ -14,7 +14,9 @@ import com.example.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.example.xloguser.finaldriverapp.Model.CompletedTransactionModel;
 
 import java.util.ArrayList;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class CompleteTransactions extends AppCompatActivity {
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;

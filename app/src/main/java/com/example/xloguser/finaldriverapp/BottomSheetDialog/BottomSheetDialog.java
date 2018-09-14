@@ -26,7 +26,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.Map;
-
+/**
+ * Created by Jaymon Rivera on 09/10/2018.
+ */
 public class BottomSheetDialog extends BottomSheetDialogFragment{
 
     private Integer a;

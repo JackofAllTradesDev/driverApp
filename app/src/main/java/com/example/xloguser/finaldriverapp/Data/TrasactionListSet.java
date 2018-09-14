@@ -1,5 +1,9 @@
 package com.example.xloguser.finaldriverapp.Data;
 
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
+
 public class TrasactionListSet {
 
    public static String[] transactionID = {"TR-1000002", "TR-1000003", "TR-1000004", "TR-1000005", "TR-1000006", "TR-1000007", "TR-1000008","TR-1000009", "TR-1000010", "TR-1000011", "TR-1000012"};

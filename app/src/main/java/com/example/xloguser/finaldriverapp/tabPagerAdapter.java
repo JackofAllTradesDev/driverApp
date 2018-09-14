@@ -6,7 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
 import android.widget.TextView;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class tabPagerAdapter extends FragmentStatePagerAdapter {
 
     String [] tabArray =  new String[]{"Current Trip", "Dashboard"};

@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class ForgotPin extends AppCompatActivity {
 
     private Button sumbitCpNumber;

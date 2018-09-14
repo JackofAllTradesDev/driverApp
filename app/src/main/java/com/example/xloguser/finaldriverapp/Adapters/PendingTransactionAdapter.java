@@ -12,7 +12,9 @@ import com.example.xloguser.finaldriverapp.Model.PendingTransactionModel;
 import com.example.xloguser.finaldriverapp.R;
 
 import java.util.ArrayList;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTransactionAdapter.MyViewHolder> {
     private ArrayList<PendingTransactionModel> transactionList;
     @NonNull

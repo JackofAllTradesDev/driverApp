@@ -18,7 +18,9 @@ import com.example.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 
 import java.util.ArrayList;
 
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 /**
  * A simple {@link Fragment} subclass.
  */

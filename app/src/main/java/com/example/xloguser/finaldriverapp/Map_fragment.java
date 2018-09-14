@@ -33,7 +33,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 /**
  * A simple {@link Fragment} subclass.
  */

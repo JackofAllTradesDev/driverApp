@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 
 public class AppStatus {
 

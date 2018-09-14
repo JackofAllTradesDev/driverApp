@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class MainActivity extends AppCompatActivity {
     private TextView forgotPin;
     private Button loginBtn;

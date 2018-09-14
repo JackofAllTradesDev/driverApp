@@ -11,7 +11,9 @@ import com.example.xloguser.finaldriverapp.Model.CompletedTransactionModel;
 import com.example.xloguser.finaldriverapp.R;
 
 import java.util.ArrayList;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class CompletedTransactionAdapter extends RecyclerView.Adapter<CompletedTransactionAdapter.MyViewHolder> {
     private ArrayList<CompletedTransactionModel> transactionList;
     @NonNull

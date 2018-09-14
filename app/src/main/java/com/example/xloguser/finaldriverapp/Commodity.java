@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
+/**
+ * Created by Jaymon Rivera on 09/14/2018.
+ */
 public class Commodity extends AppCompatActivity {
 
     @Override
