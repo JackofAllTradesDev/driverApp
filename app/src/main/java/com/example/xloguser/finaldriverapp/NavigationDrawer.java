@@ -3,6 +3,7 @@ package com.example.xloguser.finaldriverapp;
 import android.Manifest;
 import android.Manifest.permission;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -116,7 +117,7 @@ public class NavigationDrawer extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED )  {
             if (ContextCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Activated ",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 locationPermissionGranted = true;
 
             } else {
@@ -132,7 +133,7 @@ public class NavigationDrawer extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE ) == PackageManager.PERMISSION_GRANTED )  {
             if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "CALL_PHONE Activated ",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 locationPermissionGrantedContacts = true;
             } else {
                 ActivityCompat.requestPermissions(this, permissions, READ_CONTACTS_PERMISSIONS_REQUEST);
@@ -150,11 +151,11 @@ public class NavigationDrawer extends AppCompatActivity
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             Toast.makeText(this, "Permission Failed",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                     Toast.makeText(this, "Permission Granted",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -163,11 +164,11 @@ public class NavigationDrawer extends AppCompatActivity
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             Toast.makeText(this, "Permission Failed",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                     Toast.makeText(this, "Permission Granted",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -215,10 +216,15 @@ public class NavigationDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_pending) {
-            // Handle the camera action
+            Intent intent = new Intent(this, CompleteTransactions.class);
+            startActivity(intent);
         } else if (id == R.id.nav_complete) {
+            Intent intent = new Intent(this, CompleteTransactions.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_all) {
+            Intent intent = new Intent(this, AllTrasactions.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_settings) {
 

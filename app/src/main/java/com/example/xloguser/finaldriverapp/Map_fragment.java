@@ -3,6 +3,7 @@ package com.example.xloguser.finaldriverapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.media.Image;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -40,6 +42,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
     private ImageButton compassBtn;
     private ImageButton sendBtn;
     private ImageButton mapTypeBtn;
+    private Button currentTransBtn;
     private int type;
     GoogleMap mapa;
 //    private ImageButton satBtn;
@@ -59,6 +62,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
 
         compassBtn = (ImageButton) v.findViewById(R.id.compassBtn);
         mapTypeBtn = (ImageButton) v.findViewById(R.id.mapTypeBtn);
+        currentTransBtn = (Button) v.findViewById(R.id.currentTransactionBtn);
         sendBtn = (ImageButton) v.findViewById(R.id.sendBtn);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -95,6 +99,14 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
                 bottomSheetDialog.getid(3);
                 bottomSheetDialog.getMapParameter(mMap);
 
+            }
+        });
+
+        currentTransBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Commodity.class);
+                startActivity(intent);
             }
         });
 

@@ -33,7 +33,18 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ForgotPin"></activity>
+        <activity android:name=".ForgotPin" />
+        <activity
+            android:name=".Commodity"
+            android:parentActivityName=".NavigationDrawer" />
+        <activity
+            android:name=".AllTrasactions"
+            android:parentActivityName=".NavigationDrawer" />
+        <activity
+            android:name=".CompleteTransactions"
+            android:parentActivityName=".CompleteTransactions" />
+        <activity android:name=".PendingTransactions"
+            android:parentActivityName=".NavigationDrawer"></activity>
     </application>
 
 </manifest>

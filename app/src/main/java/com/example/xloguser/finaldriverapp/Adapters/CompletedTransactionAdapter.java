@@ -7,19 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
+import com.example.xloguser.finaldriverapp.Model.CompletedTransactionModel;
 import com.example.xloguser.finaldriverapp.R;
 
 import java.util.ArrayList;
 
-public class DashboardTransactionAdapter extends RecyclerView.Adapter<DashboardTransactionAdapter.MyViewHolder> {
-    private ArrayList<DashboardTransactionsModel> transactionList;
+public class CompletedTransactionAdapter extends RecyclerView.Adapter<CompletedTransactionAdapter.MyViewHolder> {
+    private ArrayList<CompletedTransactionModel> transactionList;
     @NonNull
     @Override
-    public DashboardTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CompletedTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.transaction_list, parent, false);
+                .inflate(R.layout.completed_transaction_list, parent, false);
 
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
@@ -27,8 +27,8 @@ public class DashboardTransactionAdapter extends RecyclerView.Adapter<DashboardT
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DashboardTransactionAdapter.MyViewHolder holder, int position) {
-        DashboardTransactionsModel dash_board = transactionList.get(position);
+    public void onBindViewHolder(@NonNull CompletedTransactionAdapter.MyViewHolder holder, int position) {
+        CompletedTransactionModel dash_board = transactionList.get(position);
 
 
         holder.textViewTransactionId.setText(String.valueOf(dash_board.getTransactionID()));
@@ -56,7 +56,7 @@ public class DashboardTransactionAdapter extends RecyclerView.Adapter<DashboardT
     }
 
 
-    public DashboardTransactionAdapter(ArrayList<DashboardTransactionsModel> data) {
+    public CompletedTransactionAdapter(ArrayList<CompletedTransactionModel> data) {
         this.transactionList = data;
     }
 }

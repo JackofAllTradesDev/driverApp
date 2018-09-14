@@ -24,7 +24,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/pendingTransactionTxt"
+                android:id="@+id/allTransactionTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -49,20 +49,20 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center|left"
-                android:layout_marginEnd="44dp"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginEnd="23dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="12dp"
                 android:text="Shipper"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="#000"
                 android:textSize="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/pendingContentTxt"
+                app:layout_constraintEnd_toStartOf="@+id/allContentTxt"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pendingTransactionTxt" />
+                app:layout_constraintTop_toBottomOf="@+id/allTransactionTxt" />
 
             <TextView
-                android:id="@+id/pendingContentTxt"
+                android:id="@+id/allContentTxt"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
