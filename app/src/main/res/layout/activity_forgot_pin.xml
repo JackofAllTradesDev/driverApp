@@ -7,6 +7,85 @@
     tools:context=".ForgotPin">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/enterPIn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="280dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="166dp"
+            android:layout_marginStart="164dp"
+            android:layout_marginTop="214dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="ENTER NEW PIN"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textSize="28dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/newPinEditText"
+            android:layout_width="163dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:fontFamily="@font/roboto_medium"
+            android:inputType="numberPassword"
+            android:maxLength="6"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Please enter your new pin"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+        <Button
+            android:id="@+id/newPInBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#4180f4"
+            android:text="Submit"
+            android:textAllCaps="true"
+            android:textColor="#fff"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/enterCode"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -161,7 +240,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="3dp"
-            android:layout_marginTop="109dp"
+            android:layout_marginTop="114dp"
             android:inputType="number"
             android:maxLength="10"
             android:textColor="#fff"
