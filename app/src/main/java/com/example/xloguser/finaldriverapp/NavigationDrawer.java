@@ -72,6 +72,7 @@ public class NavigationDrawer extends AppCompatActivity
         viewPager.setAdapter(TabPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -287,9 +288,6 @@ public class NavigationDrawer extends AppCompatActivity
              *Snackbar.make(viewSnackBar, message, duration).show();
              */
         } else {
-            /**
-             * Internet is NOT available, Toast It!
-             */
 //            Toast.makeText(getActivity(), "Ooops! No WiFi/Mobile Networks Connected!", Toast.LENGTH_SHORT).show();
             int duration = Snackbar.LENGTH_LONG;
             String message = " No Internet Connection";

@@ -1,6 +1,7 @@
 package com.example.xloguser.finaldriverapp;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -30,7 +31,8 @@ public class Dashboard_fragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
     private static ArrayList<DashboardTransactionsModel> data;
-    private CardView cv;
+    private CardView cvToday;
+    private CardView cvUpComing;
     static View.OnClickListener myOnClickListener;
     public Dashboard_fragment() {
         // Required empty public constructor
@@ -45,7 +47,8 @@ public class Dashboard_fragment extends Fragment {
 
 
         recyclerView = (RecyclerView) v.findViewById(R.id.transactionRecycleViewer);
-        cv = (CardView) v.findViewById(R.id.cardViewToday);
+        cvToday = (CardView) v.findViewById(R.id.cardViewToday);
+        cvUpComing = (CardView) v.findViewById(R.id.cardViewUpComing);
         recyclerView.setHasFixedSize(true);
 
 
@@ -62,6 +65,22 @@ public class Dashboard_fragment extends Fragment {
                     TrasactionListSet.contentList[i]
             ));
         }
+
+        cvToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TodayUpcomingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        cvUpComing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TodayUpcomingActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         Log.e("LOG", "Msg: "+data);

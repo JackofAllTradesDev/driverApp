@@ -46,7 +46,10 @@
         <activity
             android:name=".PendingTransactions"
             android:parentActivityName=".NavigationDrawer" />
-        <activity android:name=".About"
+        <activity
+            android:name=".About"
+            android:parentActivityName=".NavigationDrawer" />
+        <activity android:name=".TodayUpcomingActivity"
             android:parentActivityName=".NavigationDrawer"></activity>
     </application>
 

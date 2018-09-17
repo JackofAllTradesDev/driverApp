@@ -1,12 +1,17 @@
 package com.example.xloguser.finaldriverapp.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.xloguser.finaldriverapp.Commodity;
 import com.example.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.example.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 import com.example.xloguser.finaldriverapp.R;
@@ -17,6 +22,7 @@ import java.util.ArrayList;
  */
 public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAdapter.MyViewHolder> {
     private ArrayList<AllTransactionModel> transactionList;
+    private Context context;
     @NonNull
     @Override
     public AllTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,12 +36,21 @@ public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AllTransactionAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final AllTransactionAdapter.MyViewHolder holder, int position) {
         AllTransactionModel dash_board = transactionList.get(position);
 
 
         holder.textViewTransactionId.setText(String.valueOf(dash_board.getTransactionID()));
         holder.textViewContent.setText(String.valueOf(dash_board.getContentTxt()));
+
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("log", "msg:"+ holder.textViewTransactionId.getText());
+                Intent intent = new Intent(v.getContext(), Commodity.class);
+                v.getContext().startActivity(intent);
+            }
+        });
 
     }
 
@@ -50,11 +65,13 @@ public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAd
 
         TextView textViewTransactionId;
         TextView textViewContent;
+        CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewTransactionId = (TextView) itemView.findViewById(R.id.allTransactionTxt);
             this.textViewContent = (TextView) itemView.findViewById(R.id.allContentTxt);
+            this.cv = (CardView) itemView.findViewById(R.id.cvAllList);
         }
     }
 

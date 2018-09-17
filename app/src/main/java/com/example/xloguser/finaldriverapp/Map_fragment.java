@@ -58,8 +58,6 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_map_fragment, container, false);
         View v = inflater.inflate(R.layout.fragment_map_fragment, container, false);
 
         compassBtn = (ImageButton) v.findViewById(R.id.compassBtn);
@@ -73,8 +71,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
         compassBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mBottomSheetBehavior.setPeekHeight(150);
-//                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
                 bottomSheetDialog.getActivity();
                 bottomSheetDialog.show(getFragmentManager(), "Navigation Dialog");
@@ -112,6 +109,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
         return v;
 
 
@@ -126,6 +124,8 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+
         LatLng origin = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(origin).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
