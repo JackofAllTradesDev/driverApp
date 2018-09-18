@@ -66,8 +66,8 @@ public class CompletedTransactionAdapter extends RecyclerView.Adapter<CompletedT
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTransactionTxt);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.pendingContentTxt);
+            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.completeTransaction);
+            this.textViewContent = (TextView) itemView.findViewById(R.id.completeContent);
             this.cv = (CardView) itemView.findViewById(R.id.completedCV);
         }
     }

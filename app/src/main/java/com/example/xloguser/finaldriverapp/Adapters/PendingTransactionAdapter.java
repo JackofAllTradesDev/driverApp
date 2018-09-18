@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.xloguser.finaldriverapp.Commodity;
-import com.example.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.example.xloguser.finaldriverapp.Model.PendingTransactionModel;
 import com.example.xloguser.finaldriverapp.R;
 
@@ -68,8 +67,8 @@ public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTrans
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTransactionTxt);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.pendingContentTxt);
+            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTransaction);
+            this.textViewContent = (TextView) itemView.findViewById(R.id.pendingContent);
             this.cv = (CardView) itemView.findViewById(R.id.pendingCV);
         }
     }

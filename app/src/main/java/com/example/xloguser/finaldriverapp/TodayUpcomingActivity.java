@@ -10,7 +10,7 @@ public class TodayUpcomingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today_upcoming);
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar3);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.todayUpcomingToolbar);
         mToolbar.setTitle("Today");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
