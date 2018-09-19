@@ -114,8 +114,8 @@ public class NavigationDrawer extends AppCompatActivity
                 drawer.openDrawer(Gravity.LEFT);
             }
         });
+//        getLocalPermission();
         getLocalPermission();
-        getLocalPermissionContacts();
         internetChecking();
 
 
@@ -124,26 +124,15 @@ public class NavigationDrawer extends AppCompatActivity
 
 
 
+
+
     private void getLocalPermission() {
-        String[] permissions = {permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION};
+        String[] permissions = {permission.CALL_PHONE, permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION, permission.CAMERA, permission.READ_EXTERNAL_STORAGE};
 
-        if (ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED )  {
-            if (ContextCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "Location Activated ",
-//                        Toast.LENGTH_SHORT).show();
-                locationPermissionGranted = true;
-
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, request_user_location);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, request_user_location);
-        }
-    }
-    private void getLocalPermissionContacts() {
-        String[] permissions = {permission.CALL_PHONE};
-
-        if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE ) == PackageManager.PERMISSION_GRANTED )  {
+        if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.CAMERA ) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.READ_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED)  {
             if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
 //                Toast.makeText(this, "CALL_PHONE Activated ",
 //                        Toast.LENGTH_SHORT).show();

@@ -47,6 +47,8 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
     private ImageButton sendBtn;
     private ImageButton mapTypeBtn;
     private Button currentTransBtn;
+    private Button startTransactionBtn;
+    private boolean isTransaction = false;
     View viewSnackBar;
 
 
@@ -64,8 +66,13 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
         mapTypeBtn = (ImageButton) v.findViewById(R.id.mapTypeBtn);
         currentTransBtn = (Button) v.findViewById(R.id.currentTransactionBtn);
         sendBtn = (ImageButton) v.findViewById(R.id.sendBtn);
+        startTransactionBtn = (Button) v.findViewById(R.id.startTripBtn);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
+
+        if(isTransaction){
+
+        }
 
 
         compassBtn.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +113,15 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Commodity.class);
                 startActivity(intent);
+            }
+        });
+        startTransactionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startTransactionBtn.setText("Return to transaction");
+                Intent intent = new Intent(getActivity(), MainMap.class);
+                startActivity(intent);
+
             }
         });
 

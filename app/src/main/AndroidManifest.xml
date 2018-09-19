@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -49,8 +53,13 @@
         <activity
             android:name=".About"
             android:parentActivityName=".NavigationDrawer" />
-        <activity android:name=".TodayUpcomingActivity"
-            android:parentActivityName=".NavigationDrawer"></activity>
+        <activity
+            android:name=".TodayUpcomingActivity"
+            android:parentActivityName=".NavigationDrawer" />
+        <activity android:name=".MainMap" />
+        <activity android:name=".SignatureActivity" />
+        <activity android:name=".RoutesActivity"
+            android:parentActivityName=".MainMap"></activity>
     </application>
 
 </manifest>
