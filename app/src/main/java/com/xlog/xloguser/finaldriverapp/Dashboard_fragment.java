@@ -59,12 +59,12 @@ public class Dashboard_fragment extends Fragment {
         data = new ArrayList<DashboardTransactionsModel>();
 
         Log.e("LOG", "element: "+ TrasactionListSet.transactionID.length);
-        for (int i = 0; i < TrasactionListSet.transactionID.length; i++) {
-            data.add(new DashboardTransactionsModel(
-                    TrasactionListSet.transactionID[i],
-                    TrasactionListSet.contentList[i]
-            ));
-        }
+//        for (int i = 0; i < TrasactionListSet.transactionID.length; i++) {
+//            data.add(new DashboardTransactionsModel(
+//                    TrasactionListSet.transactionID[i],
+//                    TrasactionListSet.contentList[i]
+//            ));
+//        }
 
         cvToday.setOnClickListener(new View.OnClickListener() {
             @Override

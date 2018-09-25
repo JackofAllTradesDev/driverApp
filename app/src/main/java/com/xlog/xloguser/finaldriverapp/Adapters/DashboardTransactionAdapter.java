@@ -46,7 +46,7 @@ public class DashboardTransactionAdapter extends RecyclerView.Adapter<DashboardT
 
 
         holder.textViewTransactionId.setText(String.valueOf(dash_board.getTransactionID()));
-        holder.textViewContent.setText(String.valueOf(dash_board.getContentTxt()));
+//        holder.textViewContent.setText(String.valueOf(dash_board.getContentTxt()));
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,6 @@ public class DashboardTransactionAdapter extends RecyclerView.Adapter<DashboardT
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewTransactionId = (TextView) itemView.findViewById(R.id.allTransaction);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.allContent);
             this.cv = (CardView) itemView.findViewById(R.id.cardViewDashboard);
 
 

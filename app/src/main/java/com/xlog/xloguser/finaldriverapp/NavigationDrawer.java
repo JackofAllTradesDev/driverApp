@@ -15,6 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -32,11 +35,29 @@ import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+import com.xlog.xloguser.finaldriverapp.Adapters.DashboardTransactionAdapter;
+import com.xlog.xloguser.finaldriverapp.Api.Api;
+import com.xlog.xloguser.finaldriverapp.Data.TransactionListDashboard;
+import com.xlog.xloguser.finaldriverapp.Data.TrasactionListSet;
+import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
+import com.xlog.xloguser.finaldriverapp.Model.Login;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
@@ -48,10 +69,19 @@ public class NavigationDrawer extends AppCompatActivity
     private boolean locationPermissionGrantedContacts = false;
     private CircularImageView imageCircleView;
     private CircularImageView profileImageView;
+    private TextView userFullname;
+    private TextView driverMobileNumber;
     private NavigationView navView;
     private DrawerLayout drawer;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 120;
     View viewSnackBar;
+    private static final String TAG = "NavigationDrawer";
+    private Retrofit retrofit;
+    private String profile_image = "";
+    private RecyclerView.LayoutManager layoutManager;
+    private static RecyclerView recyclerView;
+    private static ArrayList<DashboardTransactionsModel> data;
+    private static RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +91,18 @@ public class NavigationDrawer extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         viewSnackBar = findViewById(R.id.drawer_layout);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         imageCircleView = (CircularImageView) findViewById(R.id.imageCircleView);
         navView = (NavigationView) findViewById(R.id.nav_view);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        recyclerView = (RecyclerView) findViewById(R.id.transactionRecycleViewer);
+        recyclerView.setHasFixedSize(true);
 
 
-        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(TabPagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
+//        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
+//        viewPager.setAdapter(TabPagerAdapter);
+//        tabLayout.setupWithViewPager(viewPager);
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -82,29 +114,8 @@ public class NavigationDrawer extends AppCompatActivity
 
         String verionCodeNumber = versionName + versionCode;
         versionTxt.setText("Version "+verionCodeNumber);
-
-
-        String url = "https://i.ytimg.com/vi/P2AE3J0BB2o/maxresdefault.jpg";
-
-        Picasso.get()
-                .load(url)
-                .resize(6000, 2000)
-                .centerCrop()
-                .into(imageCircleView);
-
-        if (navView != null) {
-            LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
-
-            if (mParent != null) {
-
-                profileImageView = (CircularImageView) mParent.findViewById(R.id.profileImageCirle);
-                Picasso.get()
-                        .load(url)
-                        .resize(6000, 2000)
-                        .centerCrop()
-                        .into(profileImageView);
-            }
-        }
+        loadApi();
+        loadUserDetails();
 
 
         imageCircleView.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +125,103 @@ public class NavigationDrawer extends AppCompatActivity
                 drawer.openDrawer(Gravity.LEFT);
             }
         });
-//        getLocalPermission();
+
         getLocalPermissionContacts();
         internetChecking();
+        recycleViewLoad();
 
+
+    }
+    public void loadUserDetails(){
+        internetChecking();
+
+        Bundle extras = getIntent().getExtras();
+        String tokenString = extras.getString("access_Token");
+        Log.e(TAG, "TOKEN__ "+tokenString);
+
+
+        Api api = retrofit.create(Api.class);
+        Call<UserDetails> call = api.getUserDetails(tokenString);
+        Call<List<ReservationList>> call2 = api.getReservationList(tokenString);
+
+        call2.enqueue(new Callback<List<ReservationList>>() {
+            @Override
+            public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
+                int value = response.body().size();
+                Log.e(TAG, "SIZE___ "+ value);
+                for(int t = 0; t < value; t++){
+                    Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+
+            }
+        });
+
+        call.enqueue(new Callback<UserDetails>() {
+            @Override
+            public void onResponse(Call<UserDetails> call, Response<UserDetails> response) {
+                String image_url = "https://xlog-dev.s3.amazonaws.com/";
+                String value = response.body().getEntity().getImage().toString();
+                String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                String mobile = response.body().getEntity().getMobileNumber();
+                profile_image = image_url+value;
+                loadImages(profile_image);
+                loadDetails(full_name, mobile);
+            }
+
+            @Override
+            public void onFailure(Call<UserDetails> call, Throwable t) {
+                Log.e(TAG, "Response Failure "+ t.getMessage());
+                loadUserDetails();
+            }
+        });
+
+    }
+    public void loadApi(){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Api.userDetails)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+    public void loadImages(String image_url){
+
+        Picasso.get()
+                .load(image_url)
+                .resize(600, 200)
+                .centerInside()
+                .into(imageCircleView);
+
+        if (navView != null) {
+            LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
+
+            if (mParent != null) {
+
+                profileImageView = (CircularImageView) mParent.findViewById(R.id.profileImageCirle);
+                Picasso.get()
+                        .load(image_url)
+                        .resize(600, 200)
+                        .centerInside()
+                        .into(profileImageView);
+            }
+        }
+    }
+    public void loadDetails(String fullname, String mobile_num){
+        LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
+        userFullname = (TextView) mParent.findViewById(R.id.fullNameTxt);
+        driverMobileNumber = (TextView) mParent.findViewById(R.id.userNumberTxt);
+
+        userFullname.setText(fullname);
+        driverMobileNumber.setText(mobile_num);
 
     }
 
@@ -227,8 +331,6 @@ public class NavigationDrawer extends AppCompatActivity
             Intent intent = new Intent(this, AllTrasactions.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_settings) {
-
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(this, About.class);
             startActivity(intent);
@@ -245,6 +347,7 @@ public class NavigationDrawer extends AppCompatActivity
                             // positive button logic
                             Intent intent = new Intent(NavigationDrawer.this, MainActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     });
             String negativeText = getString(android.R.string.cancel);
@@ -276,7 +379,6 @@ public class NavigationDrawer extends AppCompatActivity
              *Snackbar.make(viewSnackBar, message, duration).show();
              */
         } else {
-//            Toast.makeText(getActivity(), "Ooops! No WiFi/Mobile Networks Connected!", Toast.LENGTH_SHORT).show();
             int duration = Snackbar.LENGTH_LONG;
             String message = " No Internet Connection";
             Snackbar.make(viewSnackBar, message, duration).show();
@@ -287,5 +389,23 @@ public class NavigationDrawer extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         internetChecking();
+    }
+
+    private void recycleViewLoad(){
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        data = new ArrayList<DashboardTransactionsModel>();
+
+        Log.e("LOG", "element: "+ TrasactionListSet.transactionID.length);
+        for (int i = 0; i < TransactionListDashboard.transactionID.length; i++) {
+            data.add(new DashboardTransactionsModel(
+                    TrasactionListSet.transactionID[i]
+            ));
+        }
+        adapter = new DashboardTransactionAdapter(data);
+        recyclerView.setAdapter(adapter);
     }
 }

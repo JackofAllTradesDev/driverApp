@@ -17,8 +17,10 @@
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,66 +28,28 @@
 
             <TextView
                 android:id="@+id/allTransaction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="231dp"
+                android:layout_height="33dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignStart="@+id/shipperTxt"
-                android:layout_marginEnd="272dp"
-                android:layout_marginStart="28dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto_medium"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="#000"
-                android:textSize="14dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/shipperTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center|left"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="44dp"
-                android:layout_marginStart="28dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Shipper"
-                android:textAlignment="center"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center"
+                android:text="TextView"
+                android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="#000"
-                android:textSize="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/pendingContent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/allTransaction"
-                app:layout_constraintVertical_bias="0.117" />
-
-            <TextView
-                android:id="@+id/allContent"
-                android:layout_width="240dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@+id/shipperTxt"
-                android:layout_gravity="center|right"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="13dp"
-                android:layout_marginTop="40dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/roboto_medium"
-                android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                android:textColor="#000"
-                android:textSize="10dp"
+                android:textSize="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.942"
-                app:layout_constraintStart_toEndOf="@+id/shipperTxt"
+                app:layout_constraintHorizontal_bias="0.165"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.512" />
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
