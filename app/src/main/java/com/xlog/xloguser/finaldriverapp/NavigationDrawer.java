@@ -1,16 +1,14 @@
 package com.xlog.xloguser.finaldriverapp;
 
-import android.Manifest;
 import android.Manifest.permission;
-import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -28,26 +26,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Dash;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
-import com.xlog.xloguser.finaldriverapp.Adapters.DashboardTransactionAdapter;
+import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
+import com.xlog.xloguser.finaldriverapp.Adapters.DashboadAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
-import com.xlog.xloguser.finaldriverapp.Data.TransactionListDashboard;
-import com.xlog.xloguser.finaldriverapp.Data.TrasactionListSet;
+import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
-import com.xlog.xloguser.finaldriverapp.Model.Login;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
-
-import org.w3c.dom.Text;
+import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +59,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "NavigationDrawer";
     private final static int request_user_location = 99;
     private boolean locationPermissionGranted = false;
     private boolean locationPermissionGrantedContacts = false;
@@ -71,17 +67,19 @@ public class NavigationDrawer extends AppCompatActivity
     private CircularImageView profileImageView;
     private TextView userFullname;
     private TextView driverMobileNumber;
+    private TextView today;
+    private TextView upcoming;
     private NavigationView navView;
     private DrawerLayout drawer;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 120;
     View viewSnackBar;
-    private static final String TAG = "NavigationDrawer";
     private Retrofit retrofit;
     private String profile_image = "";
-    private RecyclerView.LayoutManager layoutManager;
-    private static RecyclerView recyclerView;
-    private static ArrayList<DashboardTransactionsModel> data;
-    private static RecyclerView.Adapter adapter;
+    private DashboadAdapter dashboadAdapter;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    List<String> transactionList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +95,13 @@ public class NavigationDrawer extends AppCompatActivity
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.transactionRecycleViewer);
-        recyclerView.setHasFixedSize(true);
+        today = (TextView) findViewById(R.id.todayTxt);
+        upcoming = (TextView) findViewById(R.id.upcomingTxt);
+        transactionList = new ArrayList<>();
 
-
-//        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
-//        viewPager.setAdapter(TabPagerAdapter);
-//        tabLayout.setupWithViewPager(viewPager);
+            //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
+           //        viewPager.setAdapter(TabPagerAdapter);
+          //        tabLayout.setupWithViewPager(viewPager);
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -115,7 +114,7 @@ public class NavigationDrawer extends AppCompatActivity
         String verionCodeNumber = versionName + versionCode;
         versionTxt.setText("Version "+verionCodeNumber);
         loadApi();
-        loadUserDetails();
+
 
 
         imageCircleView.setOnClickListener(new View.OnClickListener() {
@@ -128,30 +127,39 @@ public class NavigationDrawer extends AppCompatActivity
 
         getLocalPermissionContacts();
         internetChecking();
-        recycleViewLoad();
+        getAccesToken();
+
+
+
 
 
     }
-    public void loadUserDetails(){
+    public void loadUserDetails(String Token){
         internetChecking();
 
-        Bundle extras = getIntent().getExtras();
-        String tokenString = extras.getString("access_Token");
-        Log.e(TAG, "TOKEN__ "+tokenString);
+        Log.e(TAG, "TOKEN__ "+Token);
 
 
         Api api = retrofit.create(Api.class);
-        Call<UserDetails> call = api.getUserDetails(tokenString);
-        Call<List<ReservationList>> call2 = api.getReservationList(tokenString);
+        Call<UserDetails> call = api.getUserDetails(Token);
+        Call<List<ReservationList>> call2 = api.getReservationList(Token);
 
         call2.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
                 int value = response.body().size();
                 Log.e(TAG, "SIZE___ "+ value);
+                today.setText(String.valueOf(value));
+                upcoming.setText(String.valueOf(value));
+
                 for(int t = 0; t < value; t++){
                     Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+                    transactionList.add(response.body().get(t).getPrefixedId());
+
                 }
+                generateEmployeeList();
+
+
             }
 
             @Override
@@ -175,9 +183,11 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<UserDetails> call, Throwable t) {
                 Log.e(TAG, "Response Failure "+ t.getMessage());
-                loadUserDetails();
+             getAccesToken();
             }
         });
+
+
 
     }
     public void loadApi(){
@@ -391,21 +401,31 @@ public class NavigationDrawer extends AppCompatActivity
         internetChecking();
     }
 
-    private void recycleViewLoad(){
-        layoutManager = new LinearLayoutManager(getApplicationContext());
+    private void generateEmployeeList() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
-        data = new ArrayList<DashboardTransactionsModel>();
-
-        Log.e("LOG", "element: "+ TrasactionListSet.transactionID.length);
-        for (int i = 0; i < TransactionListDashboard.transactionID.length; i++) {
-            data.add(new DashboardTransactionsModel(
-                    TrasactionListSet.transactionID[i]
-            ));
-        }
-        adapter = new DashboardTransactionAdapter(data);
-        recyclerView.setAdapter(adapter);
+        mAdapter = new DashboadAdapter(transactionList);
+        recyclerView.setAdapter(mAdapter);
     }
+    public void getAccesToken(){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String value ="";
+//                        db.rmDao().getAll();
+                for(int a = 0; a < db.rmDao().getToken().size(); a++){
+                    Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getToken().get(a).getAccess_token());
+                    value = db.rmDao().getToken().get(a).getAccess_token();
+
+                }
+            loadUserDetails(value);
+
+            }
+        });
+
+    }
+
 }

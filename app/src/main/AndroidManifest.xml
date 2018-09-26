@@ -32,7 +32,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAo208bRSMNGGZStilPpmJkMgaMLujMLsI" />
+            android:value="AIzaSyDnC23xX9YyLwYIbdx4nkegfRH6LTIrcP0" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -58,8 +58,10 @@
             android:parentActivityName=".NavigationDrawer" />
         <activity android:name=".MainMap" />
         <activity android:name=".SignatureActivity" />
-        <activity android:name=".RoutesActivity"
-            android:parentActivityName=".MainMap"></activity>
+        <activity
+            android:name=".RoutesActivity"
+            android:parentActivityName=".MainMap" />
+        <activity android:name=".TrasactionView"></activity>
     </application>
 
 </manifest>

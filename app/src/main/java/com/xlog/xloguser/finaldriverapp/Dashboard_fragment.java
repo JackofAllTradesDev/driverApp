@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.xlog.xloguser.finaldriverapp.Adapters.DashboardTransactionAdapter;
 import com.xlog.xloguser.finaldriverapp.Data.TrasactionListSet;
 import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 
@@ -84,7 +83,7 @@ public class Dashboard_fragment extends Fragment {
 
 
         Log.e("LOG", "Msg: "+data);
-        adapter = new DashboardTransactionAdapter(data);
+//        adapter = new DashboardTransactionAdapter(data);
         recyclerView.setAdapter(adapter);
 
 

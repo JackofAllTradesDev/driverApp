@@ -57,7 +57,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * A simple {@link Fragment} subclass.
  */
 public class Map_fragment extends Fragment implements OnMapReadyCallback {
-    private GoogleMap mMap;
+    private GoogleMap mMaps;
     SupportMapFragment mMapFragment;
     private BottomSheetBehavior mBottomSheetBehavior;
     private ImageButton compassBtn;
@@ -118,7 +118,8 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
                 bottomSheetDialog.getActivity();
                 bottomSheetDialog.show(getFragmentManager(), "Map Dialog");
                 bottomSheetDialog.getid(3);
-                bottomSheetDialog.getMapParameter(mMap);
+                Log.e(TAG, "MAPS___ "+mMaps );
+//                bottomSheetDialog.getMapParameter(mMaps);
 
             }
         });
@@ -145,46 +146,6 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public void loadApi( String token){
-
-        Log.e(TAG, "token____  "+token);
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.MINUTES)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(Api.truckerList)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        Api api = retrofit.create(Api.class);
-        Call<List<ReservationList>> call = api.getReservationList(token);
-
-      call.enqueue(new Callback<List<ReservationList>>() {
-          @Override
-          public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-             int decodeWaypoint = response.body().get(0).getWaypoints().size();
-              String add ="";
-                for(int a = 0; a < decodeWaypoint; a++){
-                    add= response.body().get(0).getWaypoints().get(a).toString();
-                    decodePoly(add);
-                }
-
-
-
-
-          }
-
-          @Override
-          public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-              Log.e(TAG, "Response failed "+ t.getMessage());
-
-          }
-      });
-    }
-
 
 
 
@@ -192,8 +153,7 @@ public class Map_fragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMaps = googleMap;
 
     }
     private List decodePoly(String encoded) {

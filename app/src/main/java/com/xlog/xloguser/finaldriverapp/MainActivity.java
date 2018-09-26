@@ -1,10 +1,12 @@
 package com.xlog.xloguser.finaldriverapp;
 
 import android.app.ProgressDialog;
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.Login;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
+import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView counterText;
     int counter = 3;
     View viewSnackBar;
+    String access_token;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
                 String access_token = response.body().getAccessToken();
                 Log.e(TAG, "token___"+access_token);
                 Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
-                intent.putExtra("access_Token", access_token);
+//                intent.putExtra("access_Token", access_token);
+                saveTokenToDb(access_token);
                 startActivity(intent);
                 finish();
                 Bundle bundle = new Bundle();
@@ -207,5 +214,25 @@ public class MainActivity extends AppCompatActivity {
             String message = " No Internet Connection";
 //            Snackbar.make(viewSnackBar, message, duration).show();
         }
+    }
+    public void saveTokenToDb(final String token){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
+                .build();
+
+        int a = 1;
+        final TokenEntity todoListItem= new TokenEntity(a,token);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+              Log.e(TAG, "COUNT____ "+ db.rmDao().countCountries());
+              int count = db.rmDao().countCountries();
+              if(count == 0){
+                  db.rmDao().addToken(todoListItem);
+              }else
+              {
+                  db.rmDao().update(token, 1);
+              }
+            }
+        });
     }
 }

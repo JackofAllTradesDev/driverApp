@@ -17,6 +17,7 @@ public interface Api {
     String userDetails = "http://ec2-35-174-156-110.compute-1.amazonaws.com/codeigniter/";
     String snapToRoadUrl = "http://ec2-35-174-156-110.compute-1.amazonaws.com/codeigniter/";
     String truckerList = "http://ec2-35-174-156-110.compute-1.amazonaws.com/codeigniter/";
+    String transactionNumber = "http://ec2-35-174-156-110.compute-1.amazonaws.com/codeigniter/";
 
     @GET("mobile_api/loginauth.php")
     Call<Login> getToken(@Query("client_secret") String client_secret, @Query("client_id") String client_id, @Query("username") String username, @Query("password") String password, @Query("grant_type") String grant_type, @Query("scope") String scope );
@@ -26,4 +27,6 @@ public interface Api {
     Call<SnapToRoad> getCoordinates(@Query("coordinates") String coordinates);
     @GET("mobile_api/truckerList.php")
     Call<List<ReservationList>> getReservationList(@Query("access_token") String token);
+    @GET("mobile_api/truckerList.php")
+    Call<List<ReservationList>> getInfo(@Query("access_token") String token, @Query("prefixId")String trans);
 }

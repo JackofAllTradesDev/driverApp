@@ -2,7 +2,6 @@ package com.xlog.xloguser.finaldriverapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
-import com.xlog.xloguser.finaldriverapp.Adapters.DashboardTransactionAdapter;
 import com.xlog.xloguser.finaldriverapp.Data.TrasactionListSet;
 import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
-import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 
 import java.util.ArrayList;
 /**

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TrasactionView"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:context=".MapsActivity" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="141dp">
+
+        <Button
+            android:id="@+id/currentTransactionBtn"
+            android:layout_width="141dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/button_layout"
+            android:textColor="#fff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="335dp"
+            android:layout_height="90dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:clipToPadding="false"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="5dp"
+            app:chainUseRtl="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/compassBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="300dp"
+                android:layout_marginTop="20dp"
+                android:background="#00000000"
+                android:elevation="0dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/compass_asset" />
+
+            <ImageButton
+                android:id="@+id/sendBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="300dp"
+                android:layout_marginTop="58dp"
+                android:background="#00000000"
+                android:elevation="0dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/send" />
+
+            <TextView
+                android:id="@+id/originLocation"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="23dp"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_medium"
+                android:singleLine="true"
+                android:text="8th Floor, Unit 803, Ecoplaza Building, 2305, Chino Roces Avenue, Makati, 1231 Metro Manila"
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/receiverText"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="60dp"
+                android:autoText="false"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_medium"
+                android:singleLine="true"
+                android:text="John Doe"
+                android:textColor="#000"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto_mediumitalic"
+                android:text="Route A"
+                android:textAlignment="textStart"
+                android:textAllCaps="true"
+                android:textColor="#000"
+                android:textSize="8dp" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="25dp"
+                android:src="@drawable/pin_asset" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="60dp"
+                android:src="@drawable/user_asset" />
+
+            <View
+                android:layout_width="260dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="50dp"
+                android:background="@android:color/darker_gray" />
+        </android.support.v7.widget.CardView>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="100dp"
+        android:background="#00000000">
+
+        <ImageButton
+            android:id="@+id/mapTypeBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            android:src="@drawable/map_type"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/startTripBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/button_layout"
+        android:gravity="center"
+        android:text="Start Trip"
+        android:textColor="#fff"
+        android:fontFamily="@font/roboto_medium"
+        android:textAlignment="center"/>
+
+
+</android.support.design.widget.CoordinatorLayout>
