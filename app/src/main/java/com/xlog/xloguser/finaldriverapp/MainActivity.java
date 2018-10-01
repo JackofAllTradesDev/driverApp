@@ -1,7 +1,9 @@
 package com.xlog.xloguser.finaldriverapp;
 
 import android.app.ProgressDialog;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
                 public void onClick(View v) {
-                submitForm();
+                internetChecking();
                 }
         });
 
@@ -112,26 +114,29 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                internetChecking();
-                String access_token = response.body().getAccessToken();
-                Log.e(TAG, "token___"+access_token);
-                Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
-//                intent.putExtra("access_Token", access_token);
-                saveTokenToDb(access_token);
-                startActivity(intent);
-                finish();
-                Bundle bundle = new Bundle();
-                bundle.putString("access_tokenKey", access_token);
-                Map_fragment fragobj = new Map_fragment();
-                fragobj.setArguments(bundle);
-                progressDialogdialog.dismiss();
+                if(response.isSuccessful()){
+                    String access_token = response.body().getAccessToken();
+                    Log.e(TAG, "token___"+access_token);
+                    Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
+                    saveTokenToDb(access_token);
+                    startActivity(intent);
+                    finish();
+                    progressDialogdialog.dismiss();
+                }
+                else{
+
+                    internetChecking();
+                }
+
 
             }
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
+                progressDialogdialog.dismiss();
                 Log.e(TAG, "Response Failure "+ t.getMessage());
-                errorMessage(t.getMessage());
+                errorMessage();
+
             }
         });
 
@@ -141,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
         progressDialogdialog = new ProgressDialog(MainActivity.this);
         progressDialogdialog.setMessage("Connecting");
         progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
         login(userName.getText().toString(), passWord.getText().toString());
     }
     public void inputCredentials(){
@@ -159,15 +166,17 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
     }
-    public void errorMessage(String message){
+    public void errorMessage(){
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertBuilder.setTitle(message);
+        alertBuilder.setTitle("Timeout");
+        alertBuilder.setMessage("Please Try Again");
         String positiveText = getString(android.R.string.ok);
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        internetChecking();
                         dialog.dismiss();
                     }
                 });
@@ -186,37 +195,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public void reset(){
-        Toast.makeText(MainActivity.this, "Wait for 5 seconds",
-                Toast.LENGTH_SHORT).show();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                counterText.setVisibility(View.INVISIBLE);
-                counter = 3;
-                loginBtn.setEnabled(true);
-                loginBtn.setBackgroundColor(Color.parseColor("#4180f4"));
-            }
-        }, 5000);
-    }
 
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
-            /**
-             *Toast.makeText(getActivity(), "WiFi/Mobile Networks Connected!", Toast.LENGTH_SHORT).show();
-             *int duration = Snackbar.LENGTH_LONG;
-             *String message = "Internet Connection";
-             *Snackbar.make(viewSnackBar, message, duration).show();
-             */
+            submitForm();
         } else {
-            Toast.makeText(MainActivity.this, "Ooops! No WiFi/Mobile Networks Connected!", Toast.LENGTH_SHORT).show();
-            int duration = Snackbar.LENGTH_LONG;
-            String message = " No Internet Connection";
-//            Snackbar.make(viewSnackBar, message, duration).show();
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertBuilder.setTitle("Somethings Wrong");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = getString(android.R.string.ok);
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
         }
     }
     public void saveTokenToDb(final String token){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
                 .build();
 
         int a = 1;
@@ -235,4 +236,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `Coordinates` (`id` INTEGER, "
+                    + "`latLang` TEXT, PRIMARY KEY(`id`))");
+        }
+    };
 }

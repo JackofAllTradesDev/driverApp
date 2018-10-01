@@ -1,6 +1,11 @@
 package com.xlog.xloguser.finaldriverapp;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,10 +13,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -45,7 +52,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.SnapToRoad;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
+import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,13 +98,20 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     private Retrofit retrofit;
     ArrayList<String> coordinateToSnap;
     ArrayList<LatLng> coordinatesList;
+    private ProgressDialog progressDialogdialog;
+    String transNumberPass;
+    int driverID;
+    ArrayList<String> storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_map);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.mainMapToolbar);
-        mToolbar.setTitle("TR-10000001");
+        Bundle extras = getIntent().getExtras();
+        transNumberPass = extras.getString("transNumber");
+        driverID = extras.getInt("driverId");
+        mToolbar.setTitle(transNumberPass);
         setSupportActionBar(mToolbar);
         coordinateToSnap = new ArrayList<>();
         coordinatesList = new ArrayList<>();
@@ -107,6 +124,9 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         mainSubmitBtn = (Button) findViewById(R.id.mainSubmitBtn);
         routeBtn = (ImageButton) findViewById(R.id.routeBtn);
         endTripBtn.setVisibility(View.INVISIBLE);
+        storage = new ArrayList<>();
+        Log.e(TAG, "loggg++++"+driverID);
+
 
         mMapFragmentMain = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mainMap);
@@ -161,6 +181,9 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             }
         });
         buildApi();
+        getData();
+
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -178,7 +201,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         locationRequest.setFastestInterval(500);
 //        locationRequest.setMaxWaitTime(1000);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainMap.this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         REQUEST_LOCATION_PERMISSION);
@@ -193,10 +217,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             super.onLocationResult(locationResult);
             for (Location location : locationResult.getLocations()) {
                 mLocation = location;
-                zoomMapTo(mLocation);
-                drawUserPositionMarker(mLocation);
-                sendCoordinatesToApi(mLocation);
-
+                internetChecking(mLocation);
 
 
             }
@@ -228,11 +249,38 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
 
     }
+    public void sendCoordinatesToLocal(Location location){
+        Location newLocation = location;
+        String concatenatedString = null;
+        double lat = newLocation.getLatitude();
+        double lng = newLocation.getLongitude();
+        String concatCoordinate = Double.toString(lat) + "," + Double.toString(lng);
+        StringBuilder sb = new StringBuilder();
+        coordinateToSnap.add(concatCoordinate);
+        if(coordinateToSnap. size() > 5){
+            Log.e(TAG, "Wait for 10 coordinates");
+            coordinateToSnap.clear();
+        }else {
+            for(String val : coordinateToSnap){
+                sb.append(val + "|");
+                concatenatedString = sb.toString();
+                Log.e(TAG, "snap count " + coordinateToSnap.size());
+            }
+        }
+        if(coordinateToSnap.size() == 5){
+            storage.add(concatenatedString.substring(0, concatenatedString.length() - 1));
+        }
+
+
+
+    }
     private void snapToRoadApi(String coordinates){
         String cord = coordinates;
 
+        Log.e(TAG, "num+ "+transNumberPass);
+
         Api api = retrofit.create(Api.class);
-        Call<SnapToRoad> call = api.getCoordinates(cord);
+        Call<SnapToRoad> call = api.getCoordinates(cord, driverID, transNumberPass);
 
         call.enqueue(new Callback<SnapToRoad>() {
             @Override
@@ -267,9 +315,12 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .clickable(true)
                 .addAll(coordinatesList));
         polyline1.setWidth(25);
-        polyline1.setColor(Color.BLUE);
+        polyline1.setColor(Color.BLACK);
         polyline1.setEndCap(new RoundCap());
     }
+
+
+
 
     private void buildApi(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -427,18 +478,208 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         super.onResume();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         buildGoogleApiClient();
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         buildGoogleApiClient();
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+
     }
+    private void getData() {
+        progressDialogdialog = new ProgressDialog(MainMap.this);
+        progressDialogdialog.setMessage("Loading");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
+
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token")
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String value = "";
+
+                for (int a = 0; a < db.rmDao().getToken().size(); a++) {
+                    Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
+                    value = db.rmDao().getToken().get(a).getAccess_token();
+
+                }
+
+                loadWaypoints(value, transNumberPass);
+            }
+        });
+
+
+    }
+    private void loadWaypoints(String tok, String transNumber){
+        Api api = retrofit.create(Api.class);
+        Call<List<ReservationList>> call = api.getInfo(tok, transNumber);
+
+        call.enqueue(new Callback<List<ReservationList>>() {
+            @Override
+            public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
+                if(response.isSuccessful()){
+                    LatLng latLng = null;
+                    String num ="";
+                    int val = response.body().get(0).getRoutes().size();
+                    for(int v = 0; v < val; v++){
+                        Double lat = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLat();
+                        Double lang = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLng();
+                        String name = response.body().get(0).getRoutes().get(v).getName();
+                        latLng = new LatLng(lat, lang);
+                        mMap.addMarker(new MarkerOptions().position(latLng)
+                                .title(name));
+                    }
+                  ;
+                    int waypoint = response.body().get(0).getWaypoints().size();
+                    for(int b = 0; b < waypoint; b++){
+                        decodePoly(response.body().get(0).getWaypoints().get(b));
+                    }
+                }
+                progressDialogdialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+                Log.e(TAG, "Response failed "+t.getMessage());
+            }
+        });
+
+    }
+    private List decodePoly(String encoded) {
+
+        List poly = new ArrayList();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+
+            Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .addAll(poly));
+            polyline1.setWidth(15);
+            polyline1.setColor(Color.rgb(	57,135,252));
+            polyline1.setEndCap(new RoundCap());
+        }
+
+        return poly;
+    }
+
+    private void internetChecking(Location location) {
+        if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            int size = storage.size();
+            if(size == 0){
+                zoomMapTo(location);
+                drawUserPositionMarker(location);
+                sendCoordinatesToApi(location);
+            }else{
+
+                localToAPi();
+            }
+
+
+        } else {
+            insertLocal();
+            sendCoordinatesToLocal(location);
+
+        }
+    }
+    private void insertLocal(){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Coordinates").addMigrations(MIGRATION_1_2)
+                .build();
+        int a = 0;
+        int size = storage.size();
+        String cord = "";
+        for(int z = 0; z < size; z++){
+            cord = storage.get(z);
+        }
+
+        if(size == 0){
+            Log.e(TAG, "AAA ");
+        }else{
+            final Coordinates todoListItem= new Coordinates(null,cord);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    db.rmDao().AddCoordinates(todoListItem);
+                }
+            });
+        }
+
+
+
+            }
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `Coordinates` (`id` INTEGER, "
+                    + "`latLang` TEXT, PRIMARY KEY(`id`))");
+        }
+    };
+
+    private void localToAPi(){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Coordinates").addMigrations(MIGRATION_1_2)
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int size = db.rmDao().getAll().size();
+                if(size < 0){
+                    //do nothing
+
+                }else{
+                    for(int a = 0; a < db.rmDao().getAll().size(); a++){
+                        Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getAll().get(a).getLatLang());
+//                        snapToRoadApi(db.rmDao().getAll().get(a).getLatLang());
+                    }
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            db.rmDao().deleteAll();
+
+
+
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
 }
 

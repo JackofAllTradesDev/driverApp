@@ -46,6 +46,9 @@ public class ReservationList {
     @SerializedName("waypoints")
     @Expose
     private List<String> waypoints = null;
+    @SerializedName("delivery_dates")
+    @Expose
+    private List<DeliveryDate> deliveryDates = null;
 
     public Integer getId() {
         return id;
@@ -149,6 +152,14 @@ public class ReservationList {
 
     public void setWaypoints(List<String> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public List<DeliveryDate> getDeliveryDates() {
+        return deliveryDates;
+    }
+
+    public void setDeliveryDates(List<DeliveryDate> deliveryDates) {
+        this.deliveryDates = deliveryDates;
     }
 
 }

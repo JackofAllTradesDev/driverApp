@@ -90,7 +90,6 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto_medium"
                 android:singleLine="true"
-                android:text="8th Floor, Unit 803, Ecoplaza Building, 2305, Chino Roces Avenue, Makati, 1231 Metro Manila"
                 android:textColor="#000"
                 android:textSize="14dp" />
 
@@ -105,7 +104,6 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto_medium"
                 android:singleLine="true"
-                android:text="John Doe"
                 android:textColor="#000"
                 android:textSize="14dp" />
 
@@ -116,7 +114,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/roboto_mediumitalic"
-                android:text="Route A"
+                android:text="Route "
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="#000"

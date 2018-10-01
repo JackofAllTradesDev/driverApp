@@ -1,7 +1,9 @@
 package com.xlog.xloguser.finaldriverapp;
 
 import android.Manifest.permission;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,9 +42,13 @@ import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -79,6 +85,8 @@ public class NavigationDrawer extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     List<String> transactionList;
+    List<String> upcomingList;
+    String dateString ="";
 
 
     @Override
@@ -98,6 +106,7 @@ public class NavigationDrawer extends AppCompatActivity
         today = (TextView) findViewById(R.id.todayTxt);
         upcoming = (TextView) findViewById(R.id.upcomingTxt);
         transactionList = new ArrayList<>();
+        upcomingList = new ArrayList<>();
 
             //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
            //        viewPager.setAdapter(TabPagerAdapter);
@@ -129,7 +138,11 @@ public class NavigationDrawer extends AppCompatActivity
         internetChecking();
         getAccesToken();
 
-
+        SimpleDateFormat formatter
+                = new SimpleDateFormat ("yyyy-MM-dd");
+        Date currentTime_1 = new Date();
+         dateString = formatter.format(currentTime_1);
+         Log.e(TAG, "DATE "+dateString);
 
 
 
@@ -147,17 +160,62 @@ public class NavigationDrawer extends AppCompatActivity
         call2.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                int value = response.body().size();
-                Log.e(TAG, "SIZE___ "+ value);
-                today.setText(String.valueOf(value));
-                upcoming.setText(String.valueOf(value));
 
-                for(int t = 0; t < value; t++){
-                    Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-                    transactionList.add(response.body().get(t).getPrefixedId());
+                if(response.isSuccessful()){
+                    int value = response.body().size();
+                    String date= "";
+                    Log.e(TAG, "SIZE___ "+ value);
+
+                    String transNumber ="";
+                    for(int t = 0; t < value; t++){
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if(current.before(apiDate)){
+                                upcomingList.add(response.body().get(t).getPrefixedId());
+
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if(dateString.equalsIgnoreCase(date) ) {
+                            transactionList.add(response.body().get(t).getPrefixedId());
+                        }
+
+                    }
+
+                }else {
+                    int value = response.body().size();
+                    String date= "";
+                    Log.e(TAG, "SIZE___ "+ value);
+                    today.setText(String.valueOf(value));
+                    upcoming.setText(String.valueOf(value));
+                    String transNumber ="";
+                    for(int t = 0; t < value; t++){
+
+                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                        Log.e(TAG, "date  "+date);
+
+                        if(dateString.equalsIgnoreCase(date) ){
+                            transactionList.add(response.body().get(t).getPrefixedId());
+                        }
+                    }
 
                 }
+                int sizeTrans = transactionList.size();
+                int sizeUpcoming = upcomingList.size();
+                today.setText(Integer.toString(sizeTrans));
+                upcoming.setText(Integer.toString(sizeUpcoming));
                 generateEmployeeList();
+
+
+
 
 
             }
@@ -171,13 +229,36 @@ public class NavigationDrawer extends AppCompatActivity
         call.enqueue(new Callback<UserDetails>() {
             @Override
             public void onResponse(Call<UserDetails> call, Response<UserDetails> response) {
-                String image_url = "https://xlog-dev.s3.amazonaws.com/";
-                String value = response.body().getEntity().getImage().toString();
-                String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
-                String mobile = response.body().getEntity().getMobileNumber();
-                profile_image = image_url+value;
-                loadImages(profile_image);
-                loadDetails(full_name, mobile);
+                if(response.isSuccessful()){
+                    String value = response.body().getEntity().getImage();
+                    Log.e(TAG, " value "+value);
+                    if(value == null){
+
+                        String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                        String mobile = response.body().getEntity().getMobileNumber();
+                        profile_image = "https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX8345221.jpg";
+                        loadImages(profile_image);
+                        loadDetails(full_name, mobile);
+                    }else{
+                        String image_url = "https://xlog-dev.s3.amazonaws.com/";
+
+                        String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                        String mobile = response.body().getEntity().getMobileNumber();
+                        profile_image = image_url+value;
+                        loadImages(profile_image);
+                        loadDetails(full_name, mobile);
+                    }
+
+                }else{
+                    String image_url = "https://xlog-dev.s3.amazonaws.com/";
+                    String value = response.body().getEntity().getImage().toString();
+                    String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                    String mobile = response.body().getEntity().getMobileNumber();
+                    profile_image = image_url+value;
+                    loadImages(profile_image);
+                    loadDetails(full_name, mobile);
+                }
+
             }
 
             @Override
@@ -331,13 +412,9 @@ public class NavigationDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_pending) {
-            Intent intent = new Intent(this, CompleteTransactions.class);
+            Intent intent = new Intent(this, PendingTransactions.class);
             startActivity(intent);
-        } else if (id == R.id.nav_complete) {
-            Intent intent = new Intent(this, CompleteTransactions.class);
-            startActivity(intent);
-
-        } else if (id == R.id.nav_all) {
+        }  else if (id == R.id.nav_all) {
             Intent intent = new Intent(this, AllTrasactions.class);
             startActivity(intent);
 
@@ -408,14 +485,13 @@ public class NavigationDrawer extends AppCompatActivity
         recyclerView.setAdapter(mAdapter);
     }
     public void getAccesToken(){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
                 .build();
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 String value ="";
-//                        db.rmDao().getAll();
                 for(int a = 0; a < db.rmDao().getToken().size(); a++){
                     Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getToken().get(a).getAccess_token());
                     value = db.rmDao().getToken().get(a).getAccess_token();
@@ -427,5 +503,12 @@ public class NavigationDrawer extends AppCompatActivity
         });
 
     }
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `Coordinates` (`id` INTEGER, "
+                    + "`latLang` TEXT, PRIMARY KEY(`id`))");
+        }
+    };
 
 }

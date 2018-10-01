@@ -44,6 +44,7 @@
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#fff"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -58,6 +59,7 @@
         android:background="#00000000"
         android:scaleType="fitXY"
         android:src="@drawable/map_type"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +76,7 @@
         android:background="#00000000"
         android:scaleType="fitXY"
         android:src="@drawable/route_btn"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -247,6 +250,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:scaleType="fitXY"
+                android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView15"
                 app:srcCompat="@drawable/about" />

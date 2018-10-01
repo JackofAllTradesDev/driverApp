@@ -69,7 +69,6 @@ public class TodayUpcomingAdapter extends RecyclerView.Adapter<TodayUpcomingAdap
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewTransactionId = (TextView) itemView.findViewById(R.id.completeTransaction);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.pendingContent);
             this.cv = (CardView) itemView.findViewById(R.id.pendingCV);
         }
     }

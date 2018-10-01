@@ -13,68 +13,56 @@ import android.widget.TextView;
 import com.xlog.xloguser.finaldriverapp.Commodity;
 import com.xlog.xloguser.finaldriverapp.Model.PendingTransactionModel;
 import com.xlog.xloguser.finaldriverapp.R;
+import com.xlog.xloguser.finaldriverapp.TrasactionView;
 
 import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
 public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTransactionAdapter.MyViewHolder> {
-    private ArrayList<PendingTransactionModel> transactionList;
-    @NonNull
-    @Override
-    public PendingTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.pending_transaction_list, parent, false);
-
-        MyViewHolder myViewHolder = new MyViewHolder(view);
-        return myViewHolder;
-
+    public PendingTransactionAdapter(List<String> trNumber) {
+        this.trNumberPending = trNumber;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull final PendingTransactionAdapter.MyViewHolder holder, int position) {
-        PendingTransactionModel dash_board = transactionList.get(position);
-
-
-        holder.textViewTransactionId.setText(String.valueOf(dash_board.getTransactionID()));
-        holder.textViewContent.setText(String.valueOf(dash_board.getContentTxt()));
-
-
-        holder.cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("log", "msg:"+ holder.textViewTransactionId.getText());
-                Intent intent = new Intent(v.getContext(), Commodity.class);
-                v.getContext().startActivity(intent);
-            }
-        });
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return
-                transactionList.size();
-    }
-
+    List<String> trNumberPending;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTransactionId;
-        TextView textViewContent;
+        public TextView textViewTransactionId;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTransaction);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.pendingContent);
+            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTxt);
             this.cv = (CardView) itemView.findViewById(R.id.pendingCV);
         }
     }
 
+    @NonNull
+    @Override
+    public PendingTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.pending_transaction_list, parent, false);
+        return new PendingTransactionAdapter.MyViewHolder(view);
+    }
 
-    public PendingTransactionAdapter(ArrayList<PendingTransactionModel> data) {
-        this.transactionList = data;
+    @Override
+    public void onBindViewHolder(@NonNull final PendingTransactionAdapter.MyViewHolder holder, int position) {
+        holder.textViewTransactionId.setText(trNumberPending.get(position));
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), TrasactionView.class);
+                intent.putExtra("tr_number", holder.textViewTransactionId.getText());
+                v.getContext().startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return trNumberPending.size();
     }
 }

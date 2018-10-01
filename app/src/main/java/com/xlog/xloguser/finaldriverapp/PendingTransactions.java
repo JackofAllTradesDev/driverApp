@@ -1,5 +1,7 @@
 package com.xlog.xloguser.finaldriverapp;
 
+import android.arch.persistence.room.Room;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,23 +9,45 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
+import com.xlog.xloguser.finaldriverapp.Adapters.DashboadAdapter;
 import com.xlog.xloguser.finaldriverapp.Adapters.PendingTransactionAdapter;
+import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Data.TrasactionListSet;
 import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.PendingTransactionModel;
+import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
 public class PendingTransactions extends AppCompatActivity {
+    private static final String TAG = "PendingTransactions";
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
-    private static ArrayList<PendingTransactionModel> data;
-
+    List<String> transactionList;
+    private RecyclerView.Adapter mAdapter;
+    private Retrofit retrofit;
+    private TextView warn ;
+    String dateString ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,32 +59,95 @@ public class PendingTransactions extends AppCompatActivity {
         mToolbar.setTitle("Pending Transactions");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        transactionList = new ArrayList<>();
+        loadApi();
+        getAccesToken();
+        SimpleDateFormat formatter
+                = new SimpleDateFormat ("yyyy-MM-dd");
+        Date currentTime_1 = new Date();
+        dateString = formatter.format(currentTime_1);
 
 
-        layoutManager = new LinearLayoutManager(getBaseContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+    public void loadApi(){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
 
-        loadPendingTransactions();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Api.userDetails)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    public void getAccesToken(){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String value ="";
+                for(int a = 0; a < db.rmDao().getToken().size(); a++){
+                    Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getToken().get(a).getAccess_token());
+                    value = db.rmDao().getToken().get(a).getAccess_token();
+
+                }
+                loadData(value);
+
+            }
+        });
+
+    }
+    public void loadData(String Token) {
+
+        Api api = retrofit.create(Api.class);
+        Call<List<ReservationList>> call = api.getReservationList(Token);
+
+        call.enqueue(new Callback<List<ReservationList>>() {
+            @Override
+            public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
+                int value = response.body().size();
+                String date= "";
+                for(int t = 0; t < value; t++){
+                    Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+                    date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                    SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date date1 = formatApiDate.parse(date);
+                        Date date2 = currentDate.parse(dateString);
+                        if(date2.before(date1)) {
+                            transactionList.add(response.body().get(t).getPrefixedId());
+
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+                loadPendingTransactions();
+            }
+
+            @Override
+            public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+
+            }
+        });
 
     }
 
     private void loadPendingTransactions(){
 
-        data = new ArrayList<PendingTransactionModel>();
-
-        Log.e("LOG", "element: "+ TrasactionListSet.transactionID.length);
-        for (int i = 0; i < TrasactionListSet.transactionID.length; i++) {
-            data.add(new PendingTransactionModel(
-                    TrasactionListSet.transactionID[i],
-                    TrasactionListSet.contentList[i]
-            ));
-        }
-
-
-        Log.e("LOG", "Msg: "+data);
-        adapter = new PendingTransactionAdapter(data);
-        recyclerView.setAdapter(adapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new PendingTransactionAdapter(transactionList);
+        recyclerView.setAdapter(mAdapter);
 
 
     }

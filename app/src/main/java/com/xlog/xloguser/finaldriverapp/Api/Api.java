@@ -8,7 +8,11 @@ import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface Api {
@@ -24,9 +28,12 @@ public interface Api {
     @GET("mobile_api/currentUserDetails.php")
     Call<UserDetails> getUserDetails(@Query("access_token") String access_token);
     @GET("mobile_api/snaptoroad.php")
-    Call<SnapToRoad> getCoordinates(@Query("coordinates") String coordinates);
+    Call<SnapToRoad> getCoordinates(@Query("coordinates") String coordinates, @Query("driverId") int driver, @Query("prefixId")String prefixId);
     @GET("mobile_api/truckerList.php")
     Call<List<ReservationList>> getReservationList(@Query("access_token") String token);
     @GET("mobile_api/truckerList.php")
     Call<List<ReservationList>> getInfo(@Query("access_token") String token, @Query("prefixId")String trans);
+//    @POST("mobile_api/truckerList.php")
+//    @FormUrlEncoded
+//    Call<List<ReservationList>> savePost(@Query("access_token") String token, @Query("prefixId")String trans, @Field("trucker") int track);
 }

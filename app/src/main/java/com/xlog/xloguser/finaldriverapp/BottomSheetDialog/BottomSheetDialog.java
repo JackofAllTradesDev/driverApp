@@ -11,6 +11,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.xlog.xloguser.finaldriverapp.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.xlog.xloguser.finaldriverapp.TrasactionView;
 
 import java.util.Map;
 /**
@@ -39,6 +41,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
     private ImageButton msgBtn;
     private ImageButton callBtn;
     private GoogleMap map;
+    private String numbers ="";
     private int type;
 
 
@@ -111,26 +114,45 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
         msgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String num = "+63091234567890";
+//                String num = "+63091234567890";
                 Intent intent = new Intent("android.intent.action.VIEW");
+                if(numbers == " "){
+                    Toast.makeText(getActivity(), "No Phone Encoded",
+                            Toast.LENGTH_LONG).show();
+                }else{
+                    /** sample number only waiting for it to make it dynamic*/
+                    intent.setData(Uri.parse("smsto:"+ numbers));
+                    startActivity(intent);
+                }
 
-                /** sample number only waiting for it to make it dynamic*/
-                intent.setData(Uri.parse("smsto:"+ num));
-                startActivity(intent);
             }
         });
 
         callBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String num = "+639064402708";
-                String uri = "tel:" + num.trim();
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse(uri));
-                startActivity(intent);
+//                String num = "+639064402708";
+                if(numbers == " "){
+                    Toast.makeText(getActivity(), "No Phone Encoded",
+                            Toast.LENGTH_LONG).show();
+                }else{
+                    String uri = "tel:" + numbers.trim();
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse(uri));
+                    startActivity(intent);
+                }
+
             }
         });
 
+
+
+
+    }
+    public void getNumbers(String number){
+         numbers = number;
+
+        Log.e("LOG", "number =  "+numbers);
 
 
 

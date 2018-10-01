@@ -15,68 +15,56 @@ import com.xlog.xloguser.finaldriverapp.Commodity;
 import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
 import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
 import com.xlog.xloguser.finaldriverapp.R;
+import com.xlog.xloguser.finaldriverapp.TrasactionView;
 
 import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
 public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAdapter.MyViewHolder> {
-    private ArrayList<AllTransactionModel> transactionList;
-    private Context context;
-    @NonNull
-    @Override
-    public AllTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.all_transaction_list, parent, false);
-
-        MyViewHolder myViewHolder = new MyViewHolder(view);
-        return myViewHolder;
-
+    public AllTransactionAdapter(List<String> trNumber) {
+        this.trNumber = trNumber;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull final AllTransactionAdapter.MyViewHolder holder, int position) {
-        AllTransactionModel dash_board = transactionList.get(position);
-
-
-        holder.textViewTransactionId.setText(String.valueOf(dash_board.getTransactionID()));
-        holder.textViewContent.setText(String.valueOf(dash_board.getContentTxt()));
-
-        holder.cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("log", "msg:"+ holder.textViewTransactionId.getText());
-                Intent intent = new Intent(v.getContext(), Commodity.class);
-                v.getContext().startActivity(intent);
-            }
-        });
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return
-                transactionList.size();
-    }
-
+    List<String> trNumber;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTransactionId;
-        TextView textViewContent;
+        public TextView textViewTransactionId;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewTransactionId = (TextView) itemView.findViewById(R.id.allTransactionTxt);
-            this.textViewContent = (TextView) itemView.findViewById(R.id.allContentTxt);
             this.cv = (CardView) itemView.findViewById(R.id.cvAllList);
         }
     }
 
+    @NonNull
+    @Override
+    public AllTransactionAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.all_transaction_list, parent, false);
+        return new AllTransactionAdapter.MyViewHolder(view);
+    }
 
-    public AllTransactionAdapter(ArrayList<AllTransactionModel> data) {
-        this.transactionList = data;
+    @Override
+    public void onBindViewHolder(@NonNull final AllTransactionAdapter.MyViewHolder holder, int position) {
+        holder.textViewTransactionId.setText(trNumber.get(position));
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), TrasactionView.class);
+                intent.putExtra("tr_number", holder.textViewTransactionId.getText());
+                v.getContext().startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return trNumber.size();
     }
 }
