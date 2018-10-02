@@ -5,27 +5,23 @@ import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -51,6 +47,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.SnapToRoad;
@@ -97,9 +95,11 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     boolean didInitialZoom;
     private Retrofit retrofit;
     ArrayList<String> coordinateToSnap;
+    ArrayList<LatLng> saveCoordinates;
     ArrayList<LatLng> coordinatesList;
+     ArrayList<ArrayList<LatLng>> saved;
     private ProgressDialog progressDialogdialog;
-    String transNumberPass;
+    public static  String transNumberPass;
     int driverID;
     ArrayList<String> storage;
 
@@ -110,11 +110,12 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         Toolbar mToolbar = (Toolbar) findViewById(R.id.mainMapToolbar);
         Bundle extras = getIntent().getExtras();
         transNumberPass = extras.getString("transNumber");
-        driverID = extras.getInt("driverId");
         mToolbar.setTitle(transNumberPass);
         setSupportActionBar(mToolbar);
         coordinateToSnap = new ArrayList<>();
         coordinatesList = new ArrayList<>();
+        saveCoordinates = new ArrayList<>();
+        saved = new ArrayList<ArrayList<LatLng>>();
         cameraBtn = (ImageButton) findViewById(R.id.cameraBtn);
         mainMapTypeBtn = (ImageButton) findViewById(R.id.mainMapTypeButton);
         signatureBtn = (Button) findViewById(R.id.signatureBtn);
@@ -125,7 +126,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         routeBtn = (ImageButton) findViewById(R.id.routeBtn);
         endTripBtn.setVisibility(View.INVISIBLE);
         storage = new ArrayList<>();
-        Log.e(TAG, "loggg++++"+driverID);
+
 
 
         mMapFragmentMain = (SupportMapFragment) getSupportFragmentManager()
@@ -169,9 +170,10 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         routeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainMap.this, RoutesActivity.class);
-//                startActivity(intent);
-                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+                Intent intent = new Intent(MainMap.this, RoutesActivity.class);
+                intent.putExtra("tr_number", transNumberPass);
+                startActivity(intent);
+//                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             }
         });
         mainMapTypeBtn.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +186,10 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         getData();
 
 
+
+
     }
+
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -199,7 +204,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(2000);
         locationRequest.setFastestInterval(500);
-//        locationRequest.setMaxWaitTime(1000);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -218,6 +222,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             for (Location location : locationResult.getLocations()) {
                 mLocation = location;
                 internetChecking(mLocation);
+                Toast.makeText(MainMap.this, "Get coordinates + "+mLocation.getLatitude()+" "+mLocation.getLongitude(),
+                        Toast.LENGTH_LONG).show();
 
 
             }
@@ -278,6 +284,9 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         String cord = coordinates;
 
         Log.e(TAG, "num+ "+transNumberPass);
+        Log.e(TAG, "cord+ "+cord);
+
+        Log.e(TAG, "driverID "+driverID);
 
         Api api = retrofit.create(Api.class);
         Call<SnapToRoad> call = api.getCoordinates(cord, driverID, transNumberPass);
@@ -297,10 +306,11 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                         lngLocation = Double.parseDouble(lng);
                         LatLng latLng = new LatLng(latLocation, lngLocation);
                         coordinatesList.add(latLng);
-                        Log.e(TAG, "coordinatesList___ "+ coordinatesList);
+                        saveCoordinates.add(latLng);
+                        Log.e(TAG, "coordinatesList "+ coordinatesList);
 
                     } catch (NumberFormatException e) {
-                        Log.e(TAG, "Convert to Double Failed : ");
+                        Log.e(TAG, "Convert to Double Failed : " );
                     }
 
                 }
@@ -308,7 +318,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
             @Override
             public void onFailure(Call<SnapToRoad> call, Throwable t) {
-
+                Log.e(TAG, "Failed : " +t.getMessage());
             }
         });
       Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
@@ -320,7 +330,10 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     }
 
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     private void buildApi(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -329,10 +342,15 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.snapToRoadUrl)
+
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
     private void zoomMapTo(Location location) {
@@ -474,25 +492,39 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         buildGoogleApiClient();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        buildGoogleApiClient();
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        saved.add(saveCoordinates);
+        if(saved != null){
+            for(int b = 0; b < saved.size(); b++){
+                Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                        .clickable(true)
+                        .addAll(saved.get(b)));
+                polyline1.setWidth(25);
+                polyline1.setColor(Color.BLACK);
+                polyline1.setEndCap(new RoundCap());
+            }
 
-
+        }
+        Log.e(TAG, "outState "+ saved);
     }
     private void getData() {
         progressDialogdialog = new ProgressDialog(MainMap.this);
@@ -512,6 +544,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
                     value = db.rmDao().getToken().get(a).getAccess_token();
+                    driverID = db.rmDao().getToken().get(a).getDriverID();
 
                 }
 
@@ -661,25 +694,17 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                     //do nothing
 
                 }else{
-                    for(int a = 0; a < db.rmDao().getAll().size(); a++){
+                    for(int a = 0; a < size; a++){
                         Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getAll().get(a).getLatLang());
-//                        snapToRoadApi(db.rmDao().getAll().get(a).getLatLang());
+                        String latlng = db.rmDao().getAll().get(a).getLatLang();
+//                        snapToRoadApi(latlng);
                     }
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            db.rmDao().deleteAll();
-
-
-
-                        }
-                    });
                 }
 
             }
         });
     }
+
 
 }
 

@@ -27,7 +27,7 @@ public interface Api {
     Call<Login> getToken(@Query("client_secret") String client_secret, @Query("client_id") String client_id, @Query("username") String username, @Query("password") String password, @Query("grant_type") String grant_type, @Query("scope") String scope );
     @GET("mobile_api/currentUserDetails.php")
     Call<UserDetails> getUserDetails(@Query("access_token") String access_token);
-    @GET("mobile_api/snaptoroad.php")
+    @POST("mobile_api/snaptoroad.php")
     Call<SnapToRoad> getCoordinates(@Query("coordinates") String coordinates, @Query("driverId") int driver, @Query("prefixId")String prefixId);
     @GET("mobile_api/truckerList.php")
     Call<List<ReservationList>> getReservationList(@Query("access_token") String token);

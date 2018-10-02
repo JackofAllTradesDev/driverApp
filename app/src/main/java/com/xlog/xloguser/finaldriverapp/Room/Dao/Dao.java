@@ -33,4 +33,7 @@ public interface Dao {
     @Query("DELETE FROM Coordinates")
     void deleteAll();
 
+    @Query("UPDATE Token SET driverID= :driverId WHERE id = :id")
+    void updateId(int driverId, int id);
+
 }

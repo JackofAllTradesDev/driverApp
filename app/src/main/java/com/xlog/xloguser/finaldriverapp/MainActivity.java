@@ -217,11 +217,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void saveTokenToDb(final String token){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2).fallbackToDestructiveMigration()
                 .build();
 
         int a = 1;
-        final TokenEntity todoListItem= new TokenEntity(a,token);
+        int b = 1;
+        final TokenEntity todoListItem= new TokenEntity(a,token, b);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {

@@ -76,12 +76,12 @@
         android:background="#00000000"
         android:scaleType="fitXY"
         android:src="@drawable/route_btn"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainMapTypeButton"
+        app:layout_constraintTop_toTopOf="@+id/mainMap"
         app:layout_constraintVertical_bias="0.0" />
 
     <android.support.v7.widget.CardView

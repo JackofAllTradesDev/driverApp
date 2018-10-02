@@ -87,6 +87,7 @@ public class NavigationDrawer extends AppCompatActivity
     List<String> transactionList;
     List<String> upcomingList;
     String dateString ="";
+    int driverId;
 
 
     @Override
@@ -239,14 +240,17 @@ public class NavigationDrawer extends AppCompatActivity
                         profile_image = "https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX8345221.jpg";
                         loadImages(profile_image);
                         loadDetails(full_name, mobile);
+                        getID(response.body().getEntity().getId());
+
                     }else{
                         String image_url = "https://xlog-dev.s3.amazonaws.com/";
-
+                        getID(response.body().getEntity().getId());
                         String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
                         String mobile = response.body().getEntity().getMobileNumber();
                         profile_image = image_url+value;
                         loadImages(profile_image);
                         loadDetails(full_name, mobile);
+
                     }
 
                 }else{
@@ -254,9 +258,11 @@ public class NavigationDrawer extends AppCompatActivity
                     String value = response.body().getEntity().getImage().toString();
                     String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
                     String mobile = response.body().getEntity().getMobileNumber();
+                    getID(response.body().getEntity().getId());
                     profile_image = image_url+value;
                     loadImages(profile_image);
                     loadDetails(full_name, mobile);
+
                 }
 
             }
@@ -497,11 +503,28 @@ public class NavigationDrawer extends AppCompatActivity
                     value = db.rmDao().getToken().get(a).getAccess_token();
 
                 }
+
             loadUserDetails(value);
 
             }
         });
 
+    }
+
+    public void getID(final int id){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+
+               db.rmDao().updateId(id, 1);
+
+            }
+        });
     }
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override

@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Entity {
 
+    @SerializedName("id")
+    @Expose
+    private Integer id;
     @SerializedName("image")
     @Expose
     private String image;
@@ -18,6 +21,14 @@ public class Entity {
     @SerializedName("mobileNumber")
     @Expose
     private String mobileNumber;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getImage() {
         return image;

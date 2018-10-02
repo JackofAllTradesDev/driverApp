@@ -64,6 +64,7 @@ public class AllTrasactions extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new AllTransactionAdapter(transactionList);
         recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
     }
     public void loadApi() {
