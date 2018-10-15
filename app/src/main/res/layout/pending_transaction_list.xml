@@ -30,7 +30,7 @@
                 android:layout_width="231dp"
                 android:layout_height="33dp"
                 android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/shipperTxt"
+                android:layout_alignStart="@+id/shipperTxtDash"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"

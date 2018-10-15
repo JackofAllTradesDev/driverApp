@@ -10,14 +10,14 @@
         android:id="@+id/background"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/driver_new_bg" />
+        app:srcCompat="@drawable/new_background_white" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/background"
-        app:srcCompat="@drawable/xlog_logo_new" />
+        app:srcCompat="@drawable/driver_app_new_logo" />
 
     <EditText
         android:id="@+id/userName"
@@ -44,7 +44,7 @@
         android:hint="Username"
         android:inputType="textPersonName"
         android:paddingStart="13dp"
-        android:textColor="#fff"
+        android:textColor="#000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
@@ -75,7 +75,7 @@
             android:hint="Password"
             android:inputType="numberPassword"
             android:paddingStart="13dp"
-            android:textColor="#fff" />
+            android:textColor="#000" />
     </android.support.design.widget.TextInputLayout>
 
     <TextView
@@ -96,6 +96,10 @@
         android:id="@+id/loginBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="18dp"
         android:background="#4180f4"
         android:elevation="0dp"
         android:ems="14"
@@ -104,14 +108,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordTextBox"
+        app:layout_constraintVertical_bias="0.126" />
 
     <TextView
         android:id="@+id/counterTxt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="58dp"
+        android:layout_marginStart="57dp"
         android:fontFamily="@font/roboto_medium"
         android:text=""
         android:textAlignment="textStart"

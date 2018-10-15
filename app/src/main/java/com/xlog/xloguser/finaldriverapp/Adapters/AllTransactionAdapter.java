@@ -1,43 +1,46 @@
 package com.xlog.xloguser.finaldriverapp.Adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.xlog.xloguser.finaldriverapp.Commodity;
-import com.xlog.xloguser.finaldriverapp.Model.AllTransactionModel;
-import com.xlog.xloguser.finaldriverapp.Model.DashboardTransactionsModel;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.R;
 import com.xlog.xloguser.finaldriverapp.TrasactionView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
 public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAdapter.MyViewHolder> {
-    public AllTransactionAdapter(List<String> trNumber) {
-        this.trNumber = trNumber;
+    public AllTransactionAdapter(List<ReservationList> trNumber) {
+        this.reservationList = trNumber;
     }
 
-    List<String> trNumber;
+    List<ReservationList> reservationList;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textViewTransactionId;
+        public TextView shipperTxt;
+        public TextView consigneeTxt;
+        public TextView commodityTxt;
+        public TextView dateTxt;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewTransactionId = (TextView) itemView.findViewById(R.id.allTransactionTxt);
+            this.shipperTxt = (TextView) itemView.findViewById(R.id.shipperTxt);
+            this.consigneeTxt = (TextView) itemView.findViewById(R.id.cosigneeTxt);
+            this.commodityTxt = (TextView) itemView.findViewById(R.id.commodityTxt);
+            this.dateTxt = (TextView) itemView.findViewById(R.id.deliveryDateTxt);
             this.cv = (CardView) itemView.findViewById(R.id.cvAllList);
         }
     }
@@ -52,19 +55,26 @@ public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAd
 
     @Override
     public void onBindViewHolder(@NonNull final AllTransactionAdapter.MyViewHolder holder, int position) {
-        holder.textViewTransactionId.setText(trNumber.get(position));
+        ReservationList reservationLists = reservationList.get(position);
+
+        holder.textViewTransactionId.setText(reservationLists.getPrefixedId());
+        holder.shipperTxt.setText(reservationLists.getReservation().getShipper().getName());
+        holder.consigneeTxt.setText("Shipper Ever Consginee");
+        holder.commodityTxt.setText(reservationLists.getReservation().getCommodity().getTranslation().getName());
+        holder.dateTxt.setText(reservationLists.getDeliveryDates().get(0).getDeliveryAt());
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), TrasactionView.class);
                 intent.putExtra("tr_number", holder.textViewTransactionId.getText());
                 v.getContext().startActivity(intent);
+
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return trNumber.size();
+        return reservationList.size();
     }
 }

@@ -45,7 +45,7 @@ public class AllTrasactions extends AppCompatActivity {
     private static RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private Retrofit retrofit;
-    List<String> transactionList;
+    List<ReservationList> transactionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class AllTrasactions extends AppCompatActivity {
                 int value = response.body().size();
                 for(int t = 0; t < value; t++){
                     Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-                    transactionList.add(response.body().get(t).getPrefixedId());
+                    transactionList = response.body();
 
                 }
                 loadDataAdapter();

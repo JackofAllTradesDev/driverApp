@@ -5,7 +5,7 @@
 
     <group android:checkableBehavior="single">
     <item
-        android:title="My Trips">
+        android:title="@string/testTitle">
         <menu>
             <group
                 android:id="@+id/menu_top"
@@ -22,7 +22,7 @@
             </group>
         </menu>
     </item>
-
+    </group>
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_about"
@@ -33,6 +33,6 @@
             android:icon="@drawable/logout"
             android:title="Logout" />
     </group>
-    </group>
+
 
 </menu>

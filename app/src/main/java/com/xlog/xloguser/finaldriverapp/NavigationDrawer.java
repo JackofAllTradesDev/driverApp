@@ -49,6 +49,7 @@ import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -84,10 +85,11 @@ public class NavigationDrawer extends AppCompatActivity
     private Retrofit retrofit;
     private String profile_image = "";
     private DashboadAdapter dashboadAdapter;
-    private RecyclerView recyclerView;
+    private static RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-    List<String> transactionList;
-    List<String> upcomingList;
+    List<ReservationList> transactionList;
+    List<ReservationList> reservationListList;
+    List<ReservationList> upcomingList;
     String dateString ="";
     int driverId;
 
@@ -109,6 +111,7 @@ public class NavigationDrawer extends AppCompatActivity
         today = (TextView) findViewById(R.id.todayTxt);
         upcoming = (TextView) findViewById(R.id.upcomingTxt);
         transactionList = new ArrayList<>();
+        reservationListList = new ArrayList<>();
         upcomingList = new ArrayList<>();
 
             //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
@@ -178,15 +181,14 @@ public class NavigationDrawer extends AppCompatActivity
                             Date apiDate = formatApiDate.parse(date);
                             Date current = currentDate.parse(dateString);
                             if(current.before(apiDate)){
-                                upcomingList.add(response.body().get(t).getPrefixedId());
-
+                                upcomingList = response.body();
                             }
 
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                         if(dateString.equalsIgnoreCase(date) ) {
-                            transactionList.add(response.body().get(t).getPrefixedId());
+                            transactionList.addAll(Collections.singleton(response.body().get(t)));
                         }
 
                     }
@@ -206,7 +208,8 @@ public class NavigationDrawer extends AppCompatActivity
                         Log.e(TAG, "date  "+date);
 
                         if(dateString.equalsIgnoreCase(date) ){
-                            transactionList.add(response.body().get(t).getPrefixedId());
+                            transactionList.addAll(response.body());
+
                         }
                     }
 
@@ -491,6 +494,7 @@ public class NavigationDrawer extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new DashboadAdapter(transactionList);
         recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
     public void getAccesToken(){
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)

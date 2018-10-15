@@ -18,9 +18,10 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="NavigationView">
-        <item name="android:textColorSecondary">#fff</item>
-    </style>
+
+        <style name="NavigationDrawerTheme">
+            <item name="android:textColorSecondary">#FFF000</item>
+        </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

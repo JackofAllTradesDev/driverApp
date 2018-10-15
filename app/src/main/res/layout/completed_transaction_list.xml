@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/shipperTxt"
+                android:layout_alignStart="@+id/shipperTxtDash"
                 android:layout_marginEnd="272dp"
                 android:layout_marginStart="28dp"
                 android:layout_marginTop="8dp"
@@ -66,7 +66,7 @@
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignTop="@+id/shipperTxt"
+                android:layout_alignTop="@+id/shipperTxtDash"
                 android:layout_gravity="center|right"
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="13dp"
@@ -79,7 +79,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.942"
-                app:layout_constraintStart_toEndOf="@+id/shipperTxt"
+                app:layout_constraintStart_toEndOf="@+id/shipperTxtDash"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
         </android.support.constraint.ConstraintLayout>

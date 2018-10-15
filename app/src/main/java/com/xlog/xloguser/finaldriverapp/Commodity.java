@@ -10,16 +10,21 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.xlog.xloguser.finaldriverapp.Adapters.RoutesAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.Route;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +49,10 @@ public class Commodity extends AppCompatActivity {
     private TextView gross;
     private TextView volume;
     private ProgressDialog progressDialogdialog;
+    private static RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private List<Route> routes;
+    RoutesAdapter routesAdapter;
 
 
     @Override
@@ -56,13 +65,11 @@ public class Commodity extends AppCompatActivity {
         mToolbar.setTitle(transNumber);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        hsCode = (TextView)findViewById(R.id.hsCodeTxt);
         commodity = (TextView)findViewById(R.id.commodityTxt);
-        cDesc = (TextView)findViewById(R.id.descTxt);
-        value = (TextView)findViewById(R.id.valueOfGoods);
-        special = (TextView)findViewById(R.id.specialConditionTxt);
         gross = (TextView)findViewById(R.id.totalGross);
         volume = (TextView)findViewById(R.id.totalVolume);
+        recyclerView = (RecyclerView) findViewById(R.id.routesRecyclerViewCommodity);
+        routes = new ArrayList<>();
         Fabric.with(this, new Crashlytics());
         loadApi();
         internetChecking();
@@ -109,26 +116,22 @@ public class Commodity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
                 if(response.isSuccessful()){
-                    String hsCode = response.body().get(0).getReservation().getCommodity().getCode();
-                    String commodityName = response.body().get(0).getReservation().getCommodityDescription();
-                    String commodityDesc = response.body().get(0).getReservation().getCommodity().getTranslation().getDescription();
-                    String valueOfGoods = response.body().get(0).getReservation().getValueOfGoods();
-                    String otherSpecialCondition = response.body().get(0).getReservation().getOtherSpecialConditions();
                     String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
                     String volume = response.body().get(0).getReservation().getTotalVolume();
-                    setNames(hsCode,commodityName,commodityDesc,valueOfGoods,otherSpecialCondition,grossWeight,volume);
+                    setNames(grossWeight,volume);
+                    routes = response.body().get(0).getRoutes();
+                    loadDataAdapter();
                     progressDialogdialog.dismiss();
+
                 }
                 else {
-                    String hsCode = response.body().get(0).getReservation().getCommodity().getCode();
-                    String commodityName = response.body().get(0).getReservation().getCommodityDescription();
-                    String commodityDesc = response.body().get(0).getReservation().getCommodity().getTranslation().getDescription();
-                    String valueOfGoods = response.body().get(0).getReservation().getValueOfGoods();
-                    String otherSpecialCondition = response.body().get(0).getReservation().getOtherSpecialConditions();
                     String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
                     String volume = response.body().get(0).getReservation().getTotalVolume();
-                    setNames(hsCode,commodityName,commodityDesc,valueOfGoods,otherSpecialCondition,grossWeight,volume);
+                    setNames(grossWeight,volume);
+                    routes = response.body().get(0).getRoutes();
+                    loadDataAdapter();
                     progressDialogdialog.dismiss();
+
                 }
 
 
@@ -179,14 +182,16 @@ public class Commodity extends AppCompatActivity {
     };
 
 
-    private void setNames(String code, String name, String Desc, String val, String specialString, String grossString, String volumeString ){
-        hsCode.setText(code);
-        commodity.setText(name);
-        cDesc.setText(Desc);
-        value.setText(val);
-        special.setText(specialString);
+    private void setNames( String grossString, String volumeString ){
         gross.setText(grossString);
         volume.setText(volumeString);
+
+    }
+
+    private void loadDataAdapter(){
+        routesAdapter = new RoutesAdapter(routes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(routesAdapter);
 
     }
 
