@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -21,11 +23,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.Login;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         viewSnackBar = findViewById(R.id.drawer_layout);
         forgotPin = (TextView)findViewById(R.id.forgotPinTxtView);
@@ -71,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
          uname = userName.getText().toString();
          pword = passWord.getText().toString();
 
-
-
+        Fabric.with(this, new Crashlytics());
+        checkGps();
         runApi();
 
         forgotPin.setOnClickListener(new View.OnClickListener() {
@@ -90,8 +97,34 @@ public class MainActivity extends AppCompatActivity {
                 internetChecking();
                 }
         });
-
     }
+
+    private void checkGps(){
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
+    }
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
     public void runApi(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
@@ -99,10 +132,15 @@ public class MainActivity extends AppCompatActivity {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.URL)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
@@ -176,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        internetChecking();
+
                         dialog.dismiss();
                     }
                 });

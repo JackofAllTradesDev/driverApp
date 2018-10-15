@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
 import com.xlog.xloguser.finaldriverapp.Adapters.DashboadAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +58,7 @@ public class AllTrasactions extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         transactionList = new ArrayList<>();
+        Fabric.with(this, new Crashlytics());
         loadApi();
         getAccesToken();
     }

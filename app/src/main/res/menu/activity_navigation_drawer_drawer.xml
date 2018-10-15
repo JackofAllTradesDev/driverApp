@@ -3,21 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <group android:checkableBehavior="single">
     <item
-        android:id="@+id/titleTxt"
         android:title="My Trips">
         <menu>
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_pending"
-            android:icon="@drawable/pending"
-            android:title="Pending"
-            />
-        <item
-            android:id="@+id/nav_all"
-            android:icon="@drawable/all_trips"
-            android:title="All" />
-    </group>
+            <group
+                android:id="@+id/menu_top"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_pending"
+                    android:icon="@drawable/pending"
+                    android:title="Pending" />
+
+                <item
+                    android:id="@+id/nav_all"
+                    android:icon="@drawable/all_trips"
+                    android:title="All" />
+            </group>
         </menu>
     </item>
 
@@ -31,6 +33,6 @@
             android:icon="@drawable/logout"
             android:title="Logout" />
     </group>
-
+    </group>
 
 </menu>

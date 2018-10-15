@@ -12,7 +12,7 @@ import com.xlog.xloguser.finaldriverapp.Room.Dao.Dao;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
 
-@Database(entities = { TokenEntity.class, Coordinates.class}, version = 2, exportSchema = false)
+@Database(entities = { TokenEntity.class, Coordinates.class}, version =1, exportSchema = false)
 public abstract class RmDatabase extends RoomDatabase {
 
     private static final String DB_NAME = "RoomDatabase.db";

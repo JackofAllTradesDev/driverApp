@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.Dash;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -52,6 +53,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -112,7 +114,7 @@ public class NavigationDrawer extends AppCompatActivity
             //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
            //        viewPager.setAdapter(TabPagerAdapter);
           //        tabLayout.setupWithViewPager(viewPager);
-
+        Fabric.with(this, new Crashlytics());
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);

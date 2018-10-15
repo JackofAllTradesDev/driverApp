@@ -8,13 +8,12 @@ import android.util.Log;
  * Created by Jaymon Rivera on 09/14/2018.
  */
 
-public class AppStatus {
+public class AppStatus extends MainMap {
 
     static Context context;
 
     private static AppStatus instance = new AppStatus();
     ConnectivityManager connectivityManager;
-    NetworkInfo wifiInfo, mobileInfo;
     boolean connected = false;
 
     public static AppStatus getInstance(Context ctx) {

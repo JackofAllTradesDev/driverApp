@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.xlog.xloguser.finaldriverapp.Adapters.RoutesAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +44,7 @@ public class RoutesActivity extends AppCompatActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.routesToolbar);
         mToolbar.setTitle("Routes");
         setSupportActionBar(mToolbar);
+        Fabric.with(this, new Crashlytics());
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = (RecyclerView) findViewById(R.id.routeRecyclerView);
         routes = new ArrayList<>();

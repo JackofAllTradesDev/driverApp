@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
@@ -22,6 +23,7 @@ import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,7 +63,7 @@ public class Commodity extends AppCompatActivity {
         special = (TextView)findViewById(R.id.specialConditionTxt);
         gross = (TextView)findViewById(R.id.totalGross);
         volume = (TextView)findViewById(R.id.totalVolume);
-
+        Fabric.with(this, new Crashlytics());
         loadApi();
         internetChecking();
     }

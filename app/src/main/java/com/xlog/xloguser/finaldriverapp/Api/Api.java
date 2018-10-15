@@ -2,9 +2,11 @@ package com.xlog.xloguser.finaldriverapp.Api;
 
 import com.xlog.xloguser.finaldriverapp.Model.Login;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Model.SendBase;
 import com.xlog.xloguser.finaldriverapp.Model.SnapToRoad;
 import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,7 +35,6 @@ public interface Api {
     Call<List<ReservationList>> getReservationList(@Query("access_token") String token);
     @GET("mobile_api/truckerList.php")
     Call<List<ReservationList>> getInfo(@Query("access_token") String token, @Query("prefixId")String trans);
-//    @POST("mobile_api/truckerList.php")
-//    @FormUrlEncoded
-//    Call<List<ReservationList>> savePost(@Query("access_token") String token, @Query("prefixId")String trans, @Field("trucker") int track);
+    @POST("mobile_api/saveattachment.php")
+    Call<List<SendBase>> sendBase64(@Body ArrayList<SendBase> post);
 }

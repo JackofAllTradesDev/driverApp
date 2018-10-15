@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -22,12 +23,17 @@ import android.widget.LinearLayout;
 import android.graphics.Path;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import io.fabric.sdk.android.Fabric;
 
 public class SignatureActivity extends AppCompatActivity {
 
@@ -60,7 +66,7 @@ public class SignatureActivity extends AppCompatActivity {
         current = uniqueId + ".png";
         mypath= new File(directory,current);
 
-
+        Fabric.with(this, new Crashlytics());
         mContent = (LinearLayout) findViewById(R.id.linearLayout);
         mSignature = new signature(this, null);
         mSignature.setBackgroundColor(Color.WHITE);
@@ -80,7 +86,13 @@ public class SignatureActivity extends AppCompatActivity {
                     mView.setDrawingCacheEnabled(true);
                     mSignature.save(mView);
                     Bundle b = new Bundle();
-                    b.putString("status", String.valueOf(mBitmap));
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                    byte[] profileImage = outputStream.toByteArray();
+                    String imgString = Base64.encodeToString(profileImage,
+                            Base64.NO_WRAP);
+
+                    b.putString("byte", imgString);
                     Intent intent = new Intent();
                     intent.putExtras(b);
                     setResult(RESULT_OK,intent);

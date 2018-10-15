@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,7 +90,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
         loadApi();
         list = new ArrayList<LatLng>();
-
+        Fabric.with(this, new Crashlytics());
 
 
         compassBtn.setOnClickListener(new View.OnClickListener() {
@@ -311,6 +314,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         final LatLngBounds bounds = new LatLngBounds.Builder().include(new LatLng(maxLat, maxLon)).include(new LatLng(minLat, minLon)).build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 90));
     }
+
 
 
 

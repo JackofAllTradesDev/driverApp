@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="71" />
+                                                <entry key="scalingPercent" value="83" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -37,9 +37,9 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="f7f6f7" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/xlog_logo.png" />
+                                      <entry key="foregroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/xlog_logo_new.png" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="xlog_launcher" />
+                                      <entry key="outputName" value="xlog_launcher_new" />
                                     </map>
                                   </option>
                                 </PersistentState>

@@ -21,7 +21,10 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_navigation_drawer"
         app:menu="@menu/activity_navigation_drawer_drawer"
-        app:itemTextAppearance="@style/NavDrawerTextStyle">
+        app:itemTextAppearance="@style/NavDrawerTextStyle"
+        android:background="#194A6B"
+        android:theme="@style/NavigationView"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

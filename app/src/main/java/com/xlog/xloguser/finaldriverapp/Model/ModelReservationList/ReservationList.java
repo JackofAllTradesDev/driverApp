@@ -49,6 +49,9 @@ public class ReservationList {
     @SerializedName("delivery_dates")
     @Expose
     private List<DeliveryDate> deliveryDates = null;
+    @SerializedName("trucks")
+    @Expose
+    private List<Truck> trucks = null;
 
     public Integer getId() {
         return id;
@@ -160,6 +163,14 @@ public class ReservationList {
 
     public void setDeliveryDates(List<DeliveryDate> deliveryDates) {
         this.deliveryDates = deliveryDates;
+    }
+
+    public List<Truck> getTrucks() {
+        return trucks;
+    }
+
+    public void setTrucks(List<Truck> trucks) {
+        this.trucks = trucks;
     }
 
 }
