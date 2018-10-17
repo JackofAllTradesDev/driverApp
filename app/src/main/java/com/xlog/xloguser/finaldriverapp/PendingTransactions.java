@@ -1,5 +1,6 @@
 package com.xlog.xloguser.finaldriverapp;
 
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
@@ -24,6 +28,7 @@ import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,11 +48,13 @@ public class PendingTransactions extends AppCompatActivity {
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
-    List<String> transactionList;
+    List<ReservationList> transactionList;
     private RecyclerView.Adapter mAdapter;
     private Retrofit retrofit;
     private TextView warn ;
     String dateString ="";
+    PendingTransactionAdapter pendingTransactionAdapter;
+    private ProgressDialog progressDialogdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,11 @@ public class PendingTransactions extends AppCompatActivity {
     }
 
     public void getAccesToken(){
+        progressDialogdialog = new ProgressDialog(PendingTransactions.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token")
                 .build();
 
@@ -110,28 +122,32 @@ public class PendingTransactions extends AppCompatActivity {
         call.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                int value = response.body().size();
-                String date= "";
-                for(int t = 0; t < value; t++){
-                    Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-                    date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                    SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                    try {
-                        Date date1 = formatApiDate.parse(date);
-                        Date date2 = currentDate.parse(dateString);
-                        if(date2.before(date1)) {
-                            transactionList.add(response.body().get(t).getPrefixedId());
+                if(response.isSuccessful()){
+                    int value = response.body().size();
+                    String date= "";
+                    for(int t = 0; t < value; t++){
+                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date date1 = formatApiDate.parse(date);
+                            Date date2 = currentDate.parse(dateString);
+                            if(date2.before(date1)) {
+                                transactionList.addAll(Collections.singleton(response.body().get(t)));
 
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
 
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+
                     }
-
-
+                    loadPendingTransactions();
+                    progressDialogdialog.dismiss();
                 }
-                loadPendingTransactions();
+
             }
 
             @Override
@@ -146,9 +162,32 @@ public class PendingTransactions extends AppCompatActivity {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new PendingTransactionAdapter(transactionList);
-        recyclerView.setAdapter(mAdapter);
+        pendingTransactionAdapter = new PendingTransactionAdapter(transactionList);
+        recyclerView.setAdapter(pendingTransactionAdapter);
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) search.getActionView();
+        searchView.setQueryHint("Search Transactions");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newQuery) {
+                pendingTransactionAdapter.getFilter().filter(newQuery);
+                return false;
+            }
+        });
+        return true;
     }
 }

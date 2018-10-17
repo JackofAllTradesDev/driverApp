@@ -8,9 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.xlog.xloguser.finaldriverapp.Commodity;
+import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.PendingTransactionModel;
 import com.xlog.xloguser.finaldriverapp.R;
 import com.xlog.xloguser.finaldriverapp.TrasactionView;
@@ -21,21 +24,70 @@ import java.util.List;
 /**
  * Created by Jaymon Rivera on 09/14/2018.
  */
-public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTransactionAdapter.MyViewHolder> {
-    public PendingTransactionAdapter(List<String> trNumber) {
-        this.trNumberPending = trNumber;
+public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTransactionAdapter.MyViewHolder>implements Filterable {
+
+
+    List<ReservationList> trNumberPending;
+    List<ReservationList> trNumberPendingFiltered;
+
+    public PendingTransactionAdapter(List<ReservationList> trNumberPending) {
+        this.trNumberPending = trNumberPending;
+        trNumberPendingFiltered = new ArrayList<>(trNumberPending);
     }
 
-    List<String> trNumberPending;
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    private Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<ReservationList> filteredList = new ArrayList<>();
+
+            if(constraint == null || constraint.length() == 0){
+                filteredList.addAll(trNumberPendingFiltered);
+
+            }else{
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for(ReservationList item : trNumberPendingFiltered){
+                    if(item.getPrefixedId().toString().toLowerCase().contains(filterPattern)){
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            trNumberPending.clear();
+            trNumberPending.addAll((List)results.values);
+            notifyDataSetChanged();
+
+        }
+    };
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textViewTransactionId;
+        public TextView shipperTxt;
+        public TextView consigneeTxt;
+        public TextView commodityTxt;
+        public TextView deliveryDate;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTxt);
+            this.textViewTransactionId = (TextView) itemView.findViewById(R.id.pendingTransactions);
+            this.shipperTxt = (TextView) itemView.findViewById(R.id.pendingShipper);
+            this.consigneeTxt = (TextView) itemView.findViewById(R.id.consigneePendingTxt);
+            this.commodityTxt = (TextView) itemView.findViewById(R.id.commodityTxtPending);
+            this.deliveryDate = (TextView) itemView.findViewById(R.id.deliveryDateTxtPending);
             this.cv = (CardView) itemView.findViewById(R.id.pendingCV);
         }
     }
@@ -50,7 +102,13 @@ public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTrans
 
     @Override
     public void onBindViewHolder(@NonNull final PendingTransactionAdapter.MyViewHolder holder, int position) {
-        holder.textViewTransactionId.setText(trNumberPending.get(position));
+        ReservationList reservationLists = trNumberPending.get(position);
+
+        holder.textViewTransactionId.setText(reservationLists.getPrefixedId());
+        holder.shipperTxt.setText(reservationLists.getReservation().getShipper().getName());
+        holder.consigneeTxt.setText(reservationLists.getReservation().getConsignee().getName());
+        holder.commodityTxt.setText(reservationLists.getReservation().getCommodity().getTranslation().getName());
+        holder.deliveryDate.setText(reservationLists.getDeliveryDates().get(0).getDeliveryAt());
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

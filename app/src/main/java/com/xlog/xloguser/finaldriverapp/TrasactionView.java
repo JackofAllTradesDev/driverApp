@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -14,6 +15,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -71,16 +74,17 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     private BitmapDescriptor userPositionMarkerBitmapDescriptor;
     private Marker userPositionMarker;
     Context context;
-    String transNumberPass;
+    String transNumberPass, currentTrans;
     int driverId;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trasaction_view);
+         mToolbar = (Toolbar) findViewById(R.id.transactionViewToolbar);
         compassBtn = (ImageButton) findViewById(R.id.compassBtn);
         mapTypeBtn = (ImageButton) findViewById(R.id.mapTypeBtn);
-        currentTransBtn = (Button) findViewById(R.id.currentTransactionBtn);
         sendBtn = (ImageButton) findViewById(R.id.sendBtn);
         startTransactionBtn = (Button) findViewById(R.id.startTripBtn);
         currentTransBtn = (Button) findViewById(R.id.currentTransactionBtn);
@@ -116,19 +120,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         mapTypeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
-                bottomSheetDialog.getActivity();
-                bottomSheetDialog.show(getSupportFragmentManager(), "Map Dialog");
-                bottomSheetDialog.getid(3);
-                bottomSheetDialog.getMapParameter(mMap);
-            }
-        });
-        currentTransBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentTransBtn.getText();
                 Intent intent = new Intent(TrasactionView.this, Commodity.class);
-                intent.putExtra("tr_number", currentTransBtn.getText());
+                intent.putExtra("tr_number",currentTrans);
                 startActivity(intent);
             }
         });
@@ -149,6 +142,20 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
     }
 
     public void loadApi() {
@@ -237,7 +244,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 String value = "";
                 Bundle extras = getIntent().getExtras();
                 transNumberPass = extras.getString("tr_number");
-                currentTransBtn.setText(transNumberPass);
+                currentTrans =  transNumberPass;
+                mToolbar.setTitle(currentTrans);
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
                     value = db.rmDao().getToken().get(a).getAccess_token();

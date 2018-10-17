@@ -13,6 +13,7 @@ import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationLi
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.Route;
 import com.xlog.xloguser.finaldriverapp.R;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHolder> {
@@ -28,14 +29,12 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView route;
-        public TextView routeName;
         public TextView addressTxt;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.route = (TextView) itemView.findViewById(R.id.routeTxt);
-            this.routeName = (TextView) itemView.findViewById(R.id.nameRouteTxt);
             this.addressTxt = (TextView) itemView.findViewById(R.id.addressTxt);
             this.cv = (CardView) itemView.findViewById(R.id.routeCv);
         }
@@ -52,14 +51,12 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
     public void onBindViewHolder(@NonNull final RoutesAdapter.MyViewHolder holder, int position) {
         Route reservationLists = routes.get(position);
 
+        char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 
-                holder.route.setText("Route "+String.valueOf(position));
-                holder.routeName.setText(reservationLists.getName());
                 holder.addressTxt.setText(reservationLists.getFormattedAddress());
                 Log.e("TAGGG", "TAGGG+++ "+reservationLists.getName());
 
-
-
+            holder.route.setText("Route "+String.valueOf(alphabet[position]));
     }
 
     @Override

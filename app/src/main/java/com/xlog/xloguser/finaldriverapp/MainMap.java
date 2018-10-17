@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -53,6 +54,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -132,6 +134,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     String image2, ext;
     EditText received, contact;
     InputStream is;
+    String rName;
+    String conttact, access_token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,22 +184,38 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+                }
+
             }
         });
 
         signatureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainMap.this, SignatureActivity.class);
-                startActivityForResult(intent,SIGNATURE_ACTIVITY);
+                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(MainMap.this, SignatureActivity.class);
+                    startActivityForResult(intent,SIGNATURE_ACTIVITY);
+                }
+
             }
         });
         attachBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFolder();
+                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
+                }else{
+                    openFolder();
+                }
+
 
             }
         });
@@ -208,6 +228,10 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         mainSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                rName = received.getText().toString();
+                conttact = contact.getText().toString();
+                Log.e(TAG, "loggy "+ rName +" "+conttact);
+
                 validationCheck();
 
             }
@@ -540,6 +564,20 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
     }
 
     @Override
@@ -548,7 +586,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         switch(requestCode) {
             case SIGNATURE_ACTIVITY:
                 if (resultCode == RESULT_OK) {
-
+                    rName = received.getText().toString();
+                    conttact = contact.getText().toString();
                      image2 = (String) data.getExtras().get("byte");
                     Log.e("log_tag", "Panel Saved " + image2);
                     byte[] decodedString = Base64.decode(String.valueOf(image2), Base64.DEFAULT);
@@ -556,7 +595,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                     Log.e("log_tag", "decoded  " + decodedByte);
                     ImageView imageview = (ImageView) findViewById(R.id.signatureImg);
                     imageview.setImageBitmap(decodedByte);
-                    signature();
+                    signature(rName, conttact);
 
                 }
                 break;
@@ -564,7 +603,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 if (requestCode == CAMERA_PIC_REQUEST) {
                     if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-
+                        rName = received.getText().toString();
+                        conttact = contact.getText().toString();
 
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         imageBitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
@@ -574,24 +614,23 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                                 Base64.NO_WRAP);
                         ImageView imageview = (ImageView) findViewById(R.id.pictureImg);
                         imageview.setImageBitmap(imageBitmap);
-                        camera();
+                        camera(rName, conttact);
 
                     }
                 }
                 break;
             case PICKFILE_RESULT_CODE:
                 if (resultCode == RESULT_OK) {
-                    String rName = received.getText().toString();
-                    String conttact = contact.getText().toString();
                         File fileS = new File(data.getData().getPath());
                         Uri selectedFileURI = data.getData();
                         filename.setText(fileS.getName());
+                    rName = received.getText().toString();
+                    conttact = contact.getText().toString();
                         String fileExt = MimeTypeMap.getFileExtensionFromUrl(selectedFileURI.toString());
                         try {
                             is = getContentResolver().openInputStream(selectedFileURI);
                             Log.e(TAG, "Fpath. " + is);
                             Log.e(TAG, "fileExt. " + "." + fileExt);
-                            Log.e(TAG, "Names  " + "." + rName+" "+conttact);
                             readBytes(is,".pdf",driverID,rName,conttact);
 
 
@@ -617,6 +656,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         }
         @Override
         protected Void doInBackground(Void... params) {
+
 
             Gson gson = new GsonBuilder()
                 .setLenient()
@@ -670,40 +710,42 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         String base64 = Base64.encodeToString(myByteArray, Base64.DEFAULT);
 
         SendBase sendBase = new SendBase();
-        sendBase.setExt(ext);
-        sendBase.setDriverID(drive);
+        sendBase.setStatus(1);
         sendBase.setName(name);
         sendBase.setContact(contact);
+        sendBase.setExt(ext);
+        sendBase.setDriverID(drive);
         sendBase.setEncodedfile(base64);
-
+        sendBase.setToken(access_token);
         sendBases.add(sendBase);
     return data;
     }
 
-    private void signature(){
-        Api api = retrofit.create(Api.class);
+    private void signature(String a, String b){
 
         SendBase sendBase = new SendBase();
+        sendBase.setStatus(1);
+        sendBase.setName(a);
+        sendBase.setContact(b);
         sendBase.setExt(".png");
         sendBase.setDriverID(driverID);
-        sendBase.setName(received.getText().toString());
-        sendBase.setContact(contact.getText().toString());
         sendBase.setEncodedfile(image2);
-
+        sendBase.setToken(access_token);
         sendBases.add(sendBase);
+        Log.e(TAG, "error "+ sendBase.getToken());
 
     }
 
-    private void camera(){
-        Api api = retrofit.create(Api.class);
+    private void camera(String name, String number){
 
         SendBase sendBase = new SendBase();
         sendBase.setExt(".png");
+        sendBase.setToken(access_token);
         sendBase.setDriverID(driverID);
-        sendBase.setName(received.getText().toString());
-        sendBase.setContact(contact.getText().toString());
         sendBase.setEncodedfile(imgString);
-
+        sendBase.setStatus(1);
+        sendBase.setName(name);
+        sendBase.setContact(number);
         sendBases.add(sendBase);
     }
     public void openFolder()
@@ -785,12 +827,12 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
-                    value = db.rmDao().getToken().get(a).getAccess_token();
+                    access_token = db.rmDao().getToken().get(a).getAccess_token();
                     driverID = db.rmDao().getToken().get(a).getDriverID();
 
                 }
 
-                loadWaypoints(value, transNumberPass);
+                loadWaypoints(access_token, transNumberPass);
             }
         });
 

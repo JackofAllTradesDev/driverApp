@@ -1,16 +1,21 @@
 package com.xlog.xloguser.finaldriverapp;
 
+import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.os.AsyncTask;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
@@ -23,6 +28,7 @@ import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,10 +48,12 @@ public class AllTrasactions extends AppCompatActivity {
     private static final String TAG = "AllTrasactions";
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private static RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private Retrofit retrofit;
     List<ReservationList> transactionList;
+    private AllTransactionAdapter transactionAdapter;
+    private ProgressDialog progressDialogdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +73,8 @@ public class AllTrasactions extends AppCompatActivity {
     private void loadDataAdapter(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new AllTransactionAdapter(transactionList);
-        recyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        transactionAdapter = new AllTransactionAdapter(transactionList);
+        recyclerView.setAdapter(transactionAdapter);
 
     }
     public void loadApi() {
@@ -85,6 +92,11 @@ public class AllTrasactions extends AppCompatActivity {
     }
 
     public void getAccesToken(){
+        progressDialogdialog = new ProgressDialog(AllTrasactions.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
                 .build();
 
@@ -120,13 +132,17 @@ public class AllTrasactions extends AppCompatActivity {
         call.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                int value = response.body().size();
-                for(int t = 0; t < value; t++){
-                    Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-                    transactionList = response.body();
+                if(response.isSuccessful()){
+                    int value = response.body().size();
+                    for(int t = 0; t < value; t++){
+                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+                        transactionList = response.body();
 
+                    }
+                    loadDataAdapter();
+                    progressDialogdialog.dismiss();
                 }
-                loadDataAdapter();
+
             }
 
             @Override
@@ -136,4 +152,35 @@ public class AllTrasactions extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) search.getActionView();
+        searchView.setQueryHint("Search Transactions");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newQuery) {
+                transactionAdapter.getFilter().filter(newQuery);
+                return false;
+            }
+        });
+        return true;
+
+    }
+
+
+
+
+
+
+
 }

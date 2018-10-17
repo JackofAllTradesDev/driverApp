@@ -8,7 +8,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/routeCv"
         android:layout_width="0dp"
-        android:layout_height="108dp"
+        android:layout_height="83dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -39,11 +39,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/nameRouteTxt"
+                android:id="@+id/addressTxt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:layout_marginStart="100dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="36dp"
                 android:fontFamily="@font/roboto_medium"
                 android:text="TextView"
@@ -52,27 +52,24 @@
                 android:textColor="#000"
                 android:textSize="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.747"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/textView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/addressTxt"
+                android:id="@+id/textView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="100dp"
-                android:layout_marginTop="9dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="12dp"
                 android:fontFamily="@font/roboto_medium"
-                android:text="TextView"
+                android:text="Address"
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="#000"
                 android:textSize="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nameRouteTxt" />
+                app:layout_constraintTop_toBottomOf="@+id/routeTxt" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

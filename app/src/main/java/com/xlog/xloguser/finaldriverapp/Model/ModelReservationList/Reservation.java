@@ -36,6 +36,9 @@ public class Reservation {
     @SerializedName("container_release_order")
     @Expose
     private Object containerReleaseOrder;
+    @SerializedName("consignee")
+    @Expose
+    private Consignee consignee;
 
     public Integer getId() {
         return id;
@@ -115,6 +118,14 @@ public class Reservation {
 
     public void setContainerReleaseOrder(Object containerReleaseOrder) {
         this.containerReleaseOrder = containerReleaseOrder;
+    }
+
+    public Consignee getConsignee() {
+        return consignee;
+    }
+
+    public void setConsignee(Consignee consignee) {
+        this.consignee = consignee;
     }
 
 }

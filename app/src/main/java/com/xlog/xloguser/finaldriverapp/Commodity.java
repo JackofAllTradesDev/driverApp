@@ -64,7 +64,6 @@ public class Commodity extends AppCompatActivity {
         String transNumber = extras.getString("tr_number");
         mToolbar.setTitle(transNumber);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commodity = (TextView)findViewById(R.id.commodityTxt);
         gross = (TextView)findViewById(R.id.totalGross);
         volume = (TextView)findViewById(R.id.totalVolume);

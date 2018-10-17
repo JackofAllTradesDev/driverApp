@@ -19,6 +19,31 @@ public class SendBase {
     @SerializedName("contact")
     @Expose
     private String contact;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @SerializedName("token")
+    @Expose
+    private String token;
+
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @SerializedName("status")
+    @Expose
+    private int status;
     @SerializedName("name")
     @Expose
     private String name;

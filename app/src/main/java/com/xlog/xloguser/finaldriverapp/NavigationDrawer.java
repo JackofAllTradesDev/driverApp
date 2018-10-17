@@ -1,6 +1,7 @@
 package com.xlog.xloguser.finaldriverapp;
 
 import android.Manifest.permission;
+import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,10 +78,12 @@ public class NavigationDrawer extends AppCompatActivity
     private CircularImageView profileImageView;
     private TextView userFullname;
     private TextView driverMobileNumber;
-    private TextView today;
+    private TextView today, username;
     private TextView upcoming;
     private NavigationView navView;
     private DrawerLayout drawer;
+    private ProgressDialog progressDialogdialog;
+    private CardView todayTr, upcomingTr;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 120;
     View viewSnackBar;
     private Retrofit retrofit;
@@ -91,6 +95,7 @@ public class NavigationDrawer extends AppCompatActivity
     List<ReservationList> reservationListList;
     List<ReservationList> upcomingList;
     String dateString ="";
+    String tokens;
     int driverId;
 
 
@@ -109,10 +114,14 @@ public class NavigationDrawer extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.transactionRecycleViewer);
         today = (TextView) findViewById(R.id.todayTxt);
+        username = (TextView) findViewById(R.id.userNameDashTxt);
         upcoming = (TextView) findViewById(R.id.upcomingTxt);
+        todayTr = (CardView) findViewById(R.id.cardViewToday);
+        upcomingTr = (CardView) findViewById(R.id.cardViewUpComing);
         transactionList = new ArrayList<>();
         reservationListList = new ArrayList<>();
         upcomingList = new ArrayList<>();
+        todayTr.setEnabled(true);
 
             //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
            //        viewPager.setAdapter(TabPagerAdapter);
@@ -131,7 +140,19 @@ public class NavigationDrawer extends AppCompatActivity
         loadApi();
 
 
+        todayTr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                todayList();
 
+            }
+        });
+        upcomingTr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upcomingList();
+            }
+        });
         imageCircleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,12 +174,102 @@ public class NavigationDrawer extends AppCompatActivity
 
 
     }
+
+    private void todayList(){
+        transactionList.clear();
+        progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
+        Api api = retrofit.create(Api.class);
+        Call<UserDetails> call = api.getUserDetails(tokens);
+        Call<List<ReservationList>> call2 = api.getReservationList(tokens);
+
+        call2.enqueue(new Callback<List<ReservationList>>() {
+            @Override
+            public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
+                if(response.isSuccessful()){
+                    int value = response.body().size();
+                    String date= "";
+                    for(int t = 0; t < value; t++){
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if(dateString.equalsIgnoreCase(date)){
+                                transactionList.addAll(Collections.singleton(response.body().get(t)));
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    generateEmployeeList();
+                    upcomingTr.setEnabled(true);
+                    todayTr.setEnabled(false);
+                    progressDialogdialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+
+            }
+        });
+    }
+    private void upcomingList(){
+
+        progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
+        Api api = retrofit.create(Api.class);
+        Call<UserDetails> call = api.getUserDetails(tokens);
+        Call<List<ReservationList>> call2 = api.getReservationList(tokens);
+
+        call2.enqueue(new Callback<List<ReservationList>>() {
+            @Override
+            public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
+                if(response.isSuccessful()){
+                    int value = response.body().size();
+                    String date= "";
+                    for(int t = 0; t < value; t++){
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if(current.before(apiDate)){
+                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    generateUpcomingList();
+                    upcomingTr.setEnabled(false);
+                    progressDialogdialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+
+            }
+        });
+    }
     public void loadUserDetails(String Token){
         internetChecking();
 
         Log.e(TAG, "TOKEN__ "+Token);
 
-
+        tokens = Token;
         Api api = retrofit.create(Api.class);
         Call<UserDetails> call = api.getUserDetails(Token);
         Call<List<ReservationList>> call2 = api.getReservationList(Token);
@@ -181,7 +292,7 @@ public class NavigationDrawer extends AppCompatActivity
                             Date apiDate = formatApiDate.parse(date);
                             Date current = currentDate.parse(dateString);
                             if(current.before(apiDate)){
-                                upcomingList = response.body();
+                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
                             }
 
                         } catch (ParseException e) {
@@ -208,7 +319,7 @@ public class NavigationDrawer extends AppCompatActivity
                         Log.e(TAG, "date  "+date);
 
                         if(dateString.equalsIgnoreCase(date) ){
-                            transactionList.addAll(response.body());
+                            transactionList.addAll(Collections.singleton(response.body().get(t)));
 
                         }
                     }
@@ -240,7 +351,7 @@ public class NavigationDrawer extends AppCompatActivity
                     Log.e(TAG, " value "+value);
                     if(value == null){
 
-                        String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                        String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
                         String mobile = response.body().getEntity().getMobileNumber();
                         profile_image = "https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX8345221.jpg";
                         loadImages(profile_image);
@@ -321,7 +432,7 @@ public class NavigationDrawer extends AppCompatActivity
         LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
         userFullname = (TextView) mParent.findViewById(R.id.fullNameTxt);
         driverMobileNumber = (TextView) mParent.findViewById(R.id.userNumberTxt);
-
+        username.setText(fullname);
         userFullname.setText(fullname);
         driverMobileNumber.setText(mobile_num);
 
@@ -493,6 +604,13 @@ public class NavigationDrawer extends AppCompatActivity
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new DashboadAdapter(transactionList);
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+    private void generateUpcomingList() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new DashboadAdapter(upcomingList);
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

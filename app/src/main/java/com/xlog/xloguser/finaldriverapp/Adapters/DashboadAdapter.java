@@ -67,7 +67,7 @@ public class DashboadAdapter extends RecyclerView.Adapter<DashboadAdapter.ViewHo
 
         holder.textViewTransactionId.setText(reservationLists.getPrefixedId());
         holder.shipperTxt.setText(reservationLists.getReservation().getShipper().getName());
-        holder.cosigneeTxt.setText("Shipper Ever Consginee");
+        holder.cosigneeTxt.setText(reservationLists.getReservation().getConsignee().getName());
         holder.commodityTxt.setText(reservationLists.getReservation().getCommodity().getTranslation().getName());
         holder.deliveryTxt.setText(reservationLists.getDeliveryDates().get(0).getDeliveryAt());
             holder.cv.setOnClickListener(new View.OnClickListener() {
