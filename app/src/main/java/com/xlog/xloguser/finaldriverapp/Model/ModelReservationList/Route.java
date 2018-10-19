@@ -24,6 +24,9 @@ public class Route {
     @SerializedName("formatted_phone_number")
     @Expose
     private String formattedPhoneNumber;
+    @SerializedName("routestatus")
+    @Expose
+    private String routestatus;
 
     public String getId() {
         return id;
@@ -71,6 +74,14 @@ public class Route {
 
     public void setFormattedPhoneNumber(String formattedPhoneNumber) {
         this.formattedPhoneNumber = formattedPhoneNumber;
+    }
+
+    public String getRoutestatus() {
+        return routestatus;
+    }
+
+    public void setRoutestatus(String routestatus) {
+        this.routestatus = routestatus;
     }
 
 }

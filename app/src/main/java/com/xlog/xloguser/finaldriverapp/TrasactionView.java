@@ -193,6 +193,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         latLng = new LatLng(lat, lang);
                         mMap.addMarker(new MarkerOptions().position(latLng)
                                 .title(name));
+
+                        String check = response.body().get(0).getRoutes().get(v).getRoutestatus();
+                        String c = "Completed";
+                        if(check.equalsIgnoreCase(c)){
+                            startTransactionBtn.setVisibility(View.INVISIBLE);
+                        }else {
+                            startTransactionBtn.setVisibility(View.VISIBLE);
+                        }
                     }
                     for(int a = 0; a < val; a++){
                         if(a == 1){

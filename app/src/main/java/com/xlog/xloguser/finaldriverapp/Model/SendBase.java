@@ -1,24 +1,33 @@
 
 package com.xlog.xloguser.finaldriverapp.Model;
 
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class SendBase {
 
-    @SerializedName("ext")
+    @SerializedName("token")
     @Expose
-    private String ext;
-    @SerializedName("encodedfile")
-    @Expose
-    private String encodedfile;
-
+    private String token;
     @SerializedName("driverID")
     @Expose
     private int driverID;
     @SerializedName("contact")
     @Expose
     private String contact;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("status")
+    @Expose
+    private int status;
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("encodeFile")
+    @Expose
+    private List<EncodeFile> encodeFile = null;
 
     public String getToken() {
         return token;
@@ -27,26 +36,6 @@ public class SendBase {
     public void setToken(String token) {
         this.token = token;
     }
-
-    @SerializedName("token")
-    @Expose
-    private String token;
-
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    @SerializedName("status")
-    @Expose
-    private int status;
-    @SerializedName("name")
-    @Expose
-    private String name;
 
     public int getDriverID() {
         return driverID;
@@ -72,20 +61,28 @@ public class SendBase {
         this.name = name;
     }
 
-    public String getExt() {
-        return ext;
+    public int getStatus() {
+        return status;
     }
 
-    public void setExt(String ext) {
-        this.ext = ext;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public String getEncodedfile() {
-        return encodedfile;
+    public String getId() {
+        return id;
     }
 
-    public void setEncodedfile(String encodedfile) {
-        this.encodedfile = encodedfile;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<EncodeFile> getEncodeFile() {
+        return encodeFile;
+    }
+
+    public void setEncodeFile(List<EncodeFile> encodeFile) {
+        this.encodeFile = encodeFile;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.xlog.xloguser.finaldriverapp.Adapters;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +31,14 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
         public TextView route;
         public TextView addressTxt;
+        public TextView status;
         CardView cv;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.route = (TextView) itemView.findViewById(R.id.routeTxt);
             this.addressTxt = (TextView) itemView.findViewById(R.id.addressTxt);
+            this.status = (TextView) itemView.findViewById(R.id.statusTxtRoute);
             this.cv = (CardView) itemView.findViewById(R.id.routeCv);
         }
     }
@@ -55,6 +58,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.MyViewHold
 
                 holder.addressTxt.setText(reservationLists.getFormattedAddress());
                 Log.e("TAGGG", "TAGGG+++ "+reservationLists.getName());
+        if(reservationLists.getRoutestatus().isEmpty()){
+            holder.status.setText("On-going");
+            holder.status.setTextColor(Color.parseColor("#ff0000"));
+
+        }else {
+            holder.status.setText("Completed");
+        }
 
             holder.route.setText("Route "+String.valueOf(alphabet[position]));
     }

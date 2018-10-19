@@ -32,24 +32,6 @@
         app:layout_constraintVertical_bias="1.0"
         tools:context=".MainMap" />
 
-    <Button
-        android:id="@+id/endTripBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="110dp"
-        android:layout_marginStart="110dp"
-        android:background="@drawable/button_layout"
-        android:fontFamily="@font/roboto_medium"
-        android:text="end trip"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="#fff"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageButton
         android:id="@+id/mainMapTypeButton"
         android:layout_width="50dp"

@@ -93,25 +93,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainMap extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     SupportMapFragment mMapFragmentMain;
-    private ImageButton cameraBtn;
-    private Button signatureBtn;
-    private Button endTripBtn;
-    private Button mainSubmitBtn;
     private ImageButton mainMapTypeBtn;
-    private ImageButton attachBtn;
     private ImageButton routeBtn;
-    private TextView filename;
-    private CardView mainCV;
     private GoogleApiClient mGoogleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocation;
     private BitmapDescriptor userPositionMarkerBitmapDescriptor;
     private Marker userPositionMarker;
-    final int CAMERA_PIC_REQUEST = 1337;
-    public static final int SIGNATURE_ACTIVITY = 10;
-    private static final int PICK_FROM_GALLERY = 101;
     public static final int REQUEST_LOCATION_PERMISSION = 100;
-    private static final int PICKFILE_RESULT_CODE = 1;
     private static final String TAG = "MainMap";
     boolean zoomable = true;
     boolean didInitialZoom;
@@ -120,7 +109,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     ArrayList<LatLng> saveCoordinates;
     ArrayList<LatLng> coordinatesList;
     ArrayList<ArrayList<LatLng>> saved;
-    ArrayList<SendBase> sendBases;
     private ProgressDialog progressDialogdialog;
     public static  String transNumberPass;
     int driverID;
@@ -128,10 +116,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     ArrayList<String> retrieve;
     BroadcastReceiver broadcastReceiver;
     BackgroundReceiver backgroundReceiver;
-    String IMAGE_FILENAME = "img";
-    private Uri imageToUploadUri;
-    String imgString;
-    String image2, ext;
     EditText received, contact;
     InputStream is;
     String rName;
@@ -150,20 +134,12 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         coordinatesList = new ArrayList<>();
         saveCoordinates = new ArrayList<>();
         saved = new ArrayList<ArrayList<LatLng>>();
-        cameraBtn = (ImageButton) findViewById(R.id.cameraBtn);
         mainMapTypeBtn = (ImageButton) findViewById(R.id.mainMapTypeButton);
-        signatureBtn = (Button) findViewById(R.id.signatureBtn);
-        attachBtn = (ImageButton) findViewById(R.id.attachmentBtn);
-        endTripBtn = (Button) findViewById(R.id.endTripBtn);
-        mainCV = (CardView) findViewById(R.id.endRouteCv);
-        mainSubmitBtn = (Button) findViewById(R.id.mainSubmitBtn);
         routeBtn = (ImageButton) findViewById(R.id.routeBtn);
         received = (EditText) findViewById(R.id.receivedTxt);
         contact = (EditText) findViewById(R.id.contactTxt);
-        filename = (TextView) findViewById(R.id.fileNameTxt);
         storage = new ArrayList<>();
         retrieve = new ArrayList<>();
-        sendBases = new ArrayList<>();
         Fabric.with(this, new Crashlytics());
 
 
@@ -181,61 +157,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .findFragmentById(R.id.mainMap);
         mMapFragmentMain.getMapAsync(this);
 
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
-                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
-                }
-
-            }
-        });
-
-        signatureBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
-                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(MainMap.this, SignatureActivity.class);
-                    startActivityForResult(intent,SIGNATURE_ACTIVITY);
-                }
-
-            }
-        });
-        attachBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
-                    Toast.makeText(MainMap.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }else{
-                    openFolder();
-                }
 
 
-            }
-        });
-        endTripBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainCV.setVisibility(View.VISIBLE);
-            }
-        });
-        mainSubmitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rName = received.getText().toString();
-                conttact = contact.getText().toString();
-                Log.e(TAG, "loggy "+ rName +" "+conttact);
-
-                validationCheck();
-
-            }
-        });
         routeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -473,18 +396,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
     }
 
-    private void validationCheck(){
-        if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()){
-            Toast.makeText(this, "Please input empty fields",
-                    Toast.LENGTH_SHORT).show();
-        }
-        else{
 
-
-            new Get_User_Data().execute();
-
-        }
-    }
 
 
     private void buildApi(){
@@ -578,199 +490,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-        switch(requestCode) {
-            case SIGNATURE_ACTIVITY:
-                if (resultCode == RESULT_OK) {
-                    rName = received.getText().toString();
-                    conttact = contact.getText().toString();
-                     image2 = (String) data.getExtras().get("byte");
-                    Log.e("log_tag", "Panel Saved " + image2);
-                    byte[] decodedString = Base64.decode(String.valueOf(image2), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    Log.e("log_tag", "decoded  " + decodedByte);
-                    ImageView imageview = (ImageView) findViewById(R.id.signatureImg);
-                    imageview.setImageBitmap(decodedByte);
-                    signature(rName, conttact);
-
-                }
-                break;
-            case CAMERA_PIC_REQUEST:
-                if (requestCode == CAMERA_PIC_REQUEST) {
-                    if (data != null && data.getExtras() != null) {
-                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                        rName = received.getText().toString();
-                        conttact = contact.getText().toString();
-
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        imageBitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
-                        byte[] profileImage = outputStream.toByteArray();
-
-                         imgString = Base64.encodeToString(profileImage,
-                                Base64.NO_WRAP);
-                        ImageView imageview = (ImageView) findViewById(R.id.pictureImg);
-                        imageview.setImageBitmap(imageBitmap);
-                        camera(rName, conttact);
-
-                    }
-                }
-                break;
-            case PICKFILE_RESULT_CODE:
-                if (resultCode == RESULT_OK) {
-                        File fileS = new File(data.getData().getPath());
-                        Uri selectedFileURI = data.getData();
-                        filename.setText(fileS.getName());
-                    rName = received.getText().toString();
-                    conttact = contact.getText().toString();
-                        String fileExt = MimeTypeMap.getFileExtensionFromUrl(selectedFileURI.toString());
-                        try {
-                            is = getContentResolver().openInputStream(selectedFileURI);
-                            Log.e(TAG, "Fpath. " + is);
-                            Log.e(TAG, "fileExt. " + "." + fileExt);
-                            readBytes(is,".pdf",driverID,rName,conttact);
-
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                }
-        }
-    }
-
-    public class Get_User_Data extends AsyncTask<Void, Void, Void> {
-
-        private final ProgressDialog dialog = new ProgressDialog(
-                MainMap.this);
-
-        protected void onPreExecute() {
-            this.dialog.setMessage("Submitting...");
-            this.dialog.setCancelable(false);
-            this.dialog.show();
-        }
-        @Override
-        protected Void doInBackground(Void... params) {
-
-
-            Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-                 Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Api.transactionNumber)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-                 Api api = retrofit.create(Api.class);
-
-                 Call<List<SendBase>> userCall = api.sendBase64(sendBases);
-
-                 userCall.enqueue(new Callback<List<SendBase>>() {
-                 @Override
-                  public void onResponse(Call<List<SendBase>> call, Response<List<SendBase>> response) {
-                                  Log.e(TAG, "Success");
-                         }
-                         @Override
-            public void onFailure(Call<List<SendBase>> call, Throwable t) {
-                Log.e(TAG, "error "+ t.getMessage());
-            }
-        });
-
-            return null;
-        }
-
-        protected void onPostExecute(Void result) {
-
-            // Here if you wish to do future process for ex. move to another activity do here
-
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-                mainCV.setVisibility(View.INVISIBLE);
-                endTripBtn.setVisibility(View.INVISIBLE);
-                Toast.makeText(MainMap.this, "SENT",
-                        Toast.LENGTH_SHORT).show();
-                finish();
-
-
-            }
-
-        }
-    }
-    public byte[] readBytes(InputStream inputStream, String ext, int drive, String name, String contact) throws IOException {
-        byte[] data = IOUtils.toByteArray(inputStream);
-
-        String encoded = Base64.encodeToString( data, Base64.DEFAULT );
-        byte[] myByteArray = Base64.decode( encoded, Base64.DEFAULT );
-        String base64 = Base64.encodeToString(myByteArray, Base64.DEFAULT);
-
-        SendBase sendBase = new SendBase();
-        sendBase.setStatus(1);
-        sendBase.setName(name);
-        sendBase.setContact(contact);
-        sendBase.setExt(ext);
-        sendBase.setDriverID(drive);
-        sendBase.setEncodedfile(base64);
-        sendBase.setToken(access_token);
-        sendBases.add(sendBase);
-    return data;
-    }
-
-    private void signature(String a, String b){
-
-        SendBase sendBase = new SendBase();
-        sendBase.setStatus(1);
-        sendBase.setName(a);
-        sendBase.setContact(b);
-        sendBase.setExt(".png");
-        sendBase.setDriverID(driverID);
-        sendBase.setEncodedfile(image2);
-        sendBase.setToken(access_token);
-        sendBases.add(sendBase);
-        Log.e(TAG, "error "+ sendBase.getToken());
-
-    }
-
-    private void camera(String name, String number){
-
-        SendBase sendBase = new SendBase();
-        sendBase.setExt(".png");
-        sendBase.setToken(access_token);
-        sendBase.setDriverID(driverID);
-        sendBase.setEncodedfile(imgString);
-        sendBase.setStatus(1);
-        sendBase.setName(name);
-        sendBase.setContact(number);
-        sendBases.add(sendBase);
-    }
-    public void openFolder()
-    {
-
-//        "application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
-        String[] mimeTypes =
-                {"application/pdf"};
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
-            if (mimeTypes.length > 0) {
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            }
-        } else {
-            String mimeTypesStr = "";
-            for (String mimeType : mimeTypes) {
-                mimeTypesStr += mimeType + "|";
-            }
-            intent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
-        }
-        startActivityForResult(intent, PICKFILE_RESULT_CODE);
     }
 
     @Override
