@@ -6,6 +6,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class Login {
 
+    @SerializedName("status")
+    @Expose
+    private Integer status;
+    @SerializedName("message")
+    @Expose
+    private String message;
     @SerializedName("token_type")
     @Expose
     private String tokenType;
@@ -15,9 +21,22 @@ public class Login {
     @SerializedName("access_token")
     @Expose
     private String accessToken;
-    @SerializedName("refresh_token")
-    @Expose
-    private String refreshToken;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getTokenType() {
         return tokenType;
@@ -41,14 +60,6 @@ public class Login {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
 }

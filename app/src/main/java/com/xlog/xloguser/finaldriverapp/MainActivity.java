@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     int counter = 3;
     View viewSnackBar;
     String access_token;
+    int pass;
 
 
     @Override
@@ -75,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         userName = (EditText) findViewById(R.id.userName);
         passWord = (EditText) findViewById(R.id.passwordTxt);
         counterText = (TextView) findViewById(R.id.counterTxt);
-         uname = userName.getText().toString();
-         pword = passWord.getText().toString();
+
 
         Fabric.with(this, new Crashlytics());
         checkGps();
@@ -143,17 +143,17 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
-
-    public void login(String userName, String passWord){
+    public void login(String userName, String passWords){
 
         Api api = retrofit.create(Api.class);
-        Call<Login> call = api.getToken(client_secret, client_id, userName, passWord, grant_type,scope);
+        Call<Login> call = api.getToken(client_secret, client_id, userName,passWords, grant_type,scope);
 
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 if(response.isSuccessful()){
                     String access_token = response.body().getAccessToken();
+                    String message = response.body().getMessage();
                     Log.e(TAG, "token___"+access_token);
                     Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
                     saveTokenToDb(access_token);
@@ -181,12 +181,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void succes(){
-        progressDialogdialog = new ProgressDialog(MainActivity.this);
-        progressDialogdialog.setMessage("Connecting");
-        progressDialogdialog.show();
-        progressDialogdialog.setCancelable(false);
-        progressDialogdialog.setCanceledOnTouchOutside(false);
-        login(userName.getText().toString(), passWord.getText().toString());
+
+            pass = Integer.parseInt(passWord.getText().toString());
+            progressDialogdialog = new ProgressDialog(MainActivity.this);
+            progressDialogdialog.setMessage("Connecting");
+            progressDialogdialog.show();
+            progressDialogdialog.setCancelable(false);
+            progressDialogdialog.setCanceledOnTouchOutside(false);
+            login(userName.getText().toString(), passWord.getText().toString());
+
+
     }
     public void inputCredentials(){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);

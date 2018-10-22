@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_https_black_24dp"
             android:ems="12"
-            android:hint="Password"
+            android:hint="PIN"
             android:inputType="numberPassword"
             android:paddingStart="13dp"
             android:textColor="#000" />

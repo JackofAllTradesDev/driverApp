@@ -147,7 +147,7 @@ public class AllTrasactions extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                Log.e(TAG, "Response +"+t.getMessage());
             }
         });
 

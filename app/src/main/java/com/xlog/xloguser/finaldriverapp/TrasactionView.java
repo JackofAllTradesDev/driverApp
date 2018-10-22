@@ -92,6 +92,9 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Bundle extras = getIntent().getExtras();
+        transNumberPass = extras.getString("tr_number");
+        mToolbar.setTitle(transNumberPass);
         loadApi();
         list = new ArrayList<LatLng>();
         Fabric.with(this, new Crashlytics());
@@ -201,6 +204,9 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         }else {
                             startTransactionBtn.setVisibility(View.VISIBLE);
                         }
+                        if(check.contains(c)){
+                            startTransactionBtn.setText("Resume Route");
+                        }
                     }
                     for(int a = 0; a < val; a++){
                         if(a == 1){
@@ -236,6 +242,13 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getData();
+
+    }
+
     private void getData() {
         progressDialogdialog = new ProgressDialog(TrasactionView.this);
         progressDialogdialog.setMessage("Loading");
@@ -250,10 +263,10 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void run() {
                 String value = "";
-                Bundle extras = getIntent().getExtras();
-                transNumberPass = extras.getString("tr_number");
+//                Bundle extras = getIntent().getExtras();
+//                transNumberPass = extras.getString("tr_number");
                 currentTrans =  transNumberPass;
-                mToolbar.setTitle(currentTrans);
+
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
                     value = db.rmDao().getToken().get(a).getAccess_token();
