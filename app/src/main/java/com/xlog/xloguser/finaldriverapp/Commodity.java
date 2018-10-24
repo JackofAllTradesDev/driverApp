@@ -102,7 +102,7 @@ public class Commodity extends AppCompatActivity {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.transactionNumber)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -124,13 +124,13 @@ public class Commodity extends AppCompatActivity {
 
                 }
                 else {
-                    String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
-                    String volume = response.body().get(0).getReservation().getTotalVolume();
-                    setNames(grossWeight,volume);
-                    routes = response.body().get(0).getRoutes();
-                    loadDataAdapter();
-                    progressDialogdialog.dismiss();
-
+//                    String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
+//                    String volume = response.body().get(0).getReservation().getTotalVolume();
+//                    setNames(grossWeight,volume);
+//                    routes = response.body().get(0).getRoutes();
+//                    loadDataAdapter();
+//                    progressDialogdialog.dismiss();
+                errorMessage();
                 }
 
 
@@ -139,9 +139,27 @@ public class Commodity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                errorMessage();
             }
         });
+    }
+    public void errorMessage(){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
+        alertBuilder.setTitle("Timeout");
+        alertBuilder.setMessage("Please Try Again");
+        String positiveText = getString(android.R.string.ok);
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
     }
 
     private void getData() {

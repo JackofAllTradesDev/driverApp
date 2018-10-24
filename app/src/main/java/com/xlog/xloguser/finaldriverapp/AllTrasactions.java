@@ -85,7 +85,7 @@ public class AllTrasactions extends AppCompatActivity {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.transactionNumber)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

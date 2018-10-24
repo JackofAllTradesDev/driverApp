@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private Button loginBtn;
     private EditText userName;
     private EditText passWord;
-    private String client_secret = "Vb9YC88pcSdLgqwGGuciKDECzx0nQqZM2BmkLe6j";
+    private String client_secret = "xkZj7641VzG3L15xEAWFx4runiorm9jhuPi7SNm5";
     private String client_id = "3";
     private String grant_type = "password";
     private String scope = "*";
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URL)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

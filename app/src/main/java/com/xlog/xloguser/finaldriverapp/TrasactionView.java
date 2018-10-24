@@ -74,7 +74,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     private BitmapDescriptor userPositionMarkerBitmapDescriptor;
     private Marker userPositionMarker;
     Context context;
-    String transNumberPass, currentTrans;
+    String transNumberPass, currentTrans, pNumbers;
     int driverId;
     Toolbar mToolbar;
 
@@ -115,6 +115,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(View v) {
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
                 bottomSheetDialog.getActivity();
+                bottomSheetDialog.getNumbers(pNumbers);
                 bottomSheetDialog.show(getSupportFragmentManager(), "Contact Dialog");
                 bottomSheetDialog.getid(2);
             }
@@ -169,7 +170,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.transactionNumber)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -211,13 +212,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     for(int a = 0; a < val; a++){
                         if(a == 1){
                             String name = response.body().get(0).getRoutes().get(1).getName();
-                            num = response.body().get(0).getRoutes().get(1).getFormattedPhoneNumber();
+                            num = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
+                            Log.e(TAG, "Phone Number = " +num);
+
                             destination.setText(name);
                         }
 
                     }
-                    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
-                    bottomSheetDialog.getNumbers(num);
+                    pNumbers = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
                     int waypoint = response.body().get(0).getWaypoints().size();
                     for(int b = 0; b < waypoint; b++){
                         decodePoly(response.body().get(0).getWaypoints().get(b));

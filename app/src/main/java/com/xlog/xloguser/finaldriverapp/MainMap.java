@@ -411,7 +411,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.snapToRoadUrl)
+                .baseUrl(Api.URLQA)
 
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))

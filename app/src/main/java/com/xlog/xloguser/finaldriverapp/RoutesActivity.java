@@ -202,7 +202,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.transactionNumber)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -399,7 +399,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Api.transactionNumber)
+                    .baseUrl(Api.URLQA)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
@@ -420,7 +420,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                     sendBases.clear();
                     encodeFiles.clear();
                     getAccesToken();
-
+                    dialog.dismiss();
                 }
             });
 

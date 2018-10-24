@@ -32,7 +32,7 @@ import java.util.Map;
  * Created by Jaymon Rivera on 09/10/2018.
  */
 public class BottomSheetDialog extends BottomSheetDialogFragment{
-
+    private static final String TAG = "BottomSheetDialog";
     private Integer a;
     private ImageButton satBtn;
     private ImageButton defaultBtn;
@@ -41,7 +41,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
     private ImageButton msgBtn;
     private ImageButton callBtn;
     private GoogleMap map;
-    private String numbers ="";
+    String numbers;
     private int type;
 
 
@@ -65,7 +65,6 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
         if(a.equals(3)){
             dialog.setContentView(mapTypeDialog);
         }
-
         satBtn = (ImageButton) mapTypeDialog.findViewById(R.id.satelliteBtn);
         defaultBtn = (ImageButton) mapTypeDialog.findViewById(R.id.defaultBtn);
         gmapBtn = (ImageButton) nagivationDialog.findViewById(R.id.googleMapBtn);
@@ -132,7 +131,9 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
             @Override
             public void onClick(View v) {
 //                String num = "+639064402708";
-                if(numbers == " "){
+
+                Log.e(TAG, "call number =  "+numbers);
+                if(numbers.isEmpty()){
                     Toast.makeText(getActivity(), "No Phone Encoded",
                             Toast.LENGTH_LONG).show();
                 }else{
@@ -151,11 +152,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment{
     }
     public void getNumbers(String number){
          numbers = number;
-
-        Log.e("LOG", "number =  "+numbers);
-
-
-
+        Log.e(TAG, "phone number =  "+numbers);
     }
 
     public void getMapParameter(GoogleMap googleMap){

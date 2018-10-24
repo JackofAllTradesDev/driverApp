@@ -163,7 +163,7 @@ public class NavigationDrawer extends AppCompatActivity
 
         getLocalPermissionContacts();
         internetChecking();
-        getAccesToken();
+
 
         SimpleDateFormat formatter
                 = new SimpleDateFormat ("yyyy-MM-dd");
@@ -265,7 +265,6 @@ public class NavigationDrawer extends AppCompatActivity
         });
     }
     public void loadUserDetails(String Token){
-        internetChecking();
 
         Log.e(TAG, "TOKEN__ "+Token);
 
@@ -301,28 +300,31 @@ public class NavigationDrawer extends AppCompatActivity
                         if(dateString.equalsIgnoreCase(date) ) {
                             transactionList.addAll(Collections.singleton(response.body().get(t)));
                         }
+                        progressDialogdialog.dismiss();
 
                     }
 
                 }else {
-                    int value = response.body().size();
-                    String date= "";
-                    Log.e(TAG, "SIZE___ "+ value);
-                    today.setText(String.valueOf(value));
-                    upcoming.setText(String.valueOf(value));
-                    String transNumber ="";
-                    for(int t = 0; t < value; t++){
+//                    int value = response.body().size();
+//                    String date= "";
+//                    Log.e(TAG, "SIZE___ "+ value);
+//                    today.setText(String.valueOf(value));
+//                    upcoming.setText(String.valueOf(value));
+//                    String transNumber ="";
+//                    for(int t = 0; t < value; t++){
+//
+//                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
+//
+//                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+//                        Log.e(TAG, "date  "+date);
+//
+//                        if(dateString.equalsIgnoreCase(date) ){
+//                            transactionList.addAll(Collections.singleton(response.body().get(t)));
+//
+//                        }
+//                    }
 
-                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-
-                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                        Log.e(TAG, "date  "+date);
-
-                        if(dateString.equalsIgnoreCase(date) ){
-                            transactionList.addAll(Collections.singleton(response.body().get(t)));
-
-                        }
-                    }
+                    errorMessage();
 
                 }
                 int sizeTrans = transactionList.size();
@@ -330,10 +332,6 @@ public class NavigationDrawer extends AppCompatActivity
                 today.setText(Integer.toString(sizeTrans));
                 upcoming.setText(Integer.toString(sizeUpcoming));
                 generateEmployeeList();
-
-
-
-
 
             }
 
@@ -360,25 +358,28 @@ public class NavigationDrawer extends AppCompatActivity
 
                     }else{
                         String image_url = "https://xlog-dev.s3.amazonaws.com/";
+                        String image_urlQA = "https://xlog-qa.s3.amazonaws.com/";
                         getID(response.body().getEntity().getId());
-                        String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
+                        String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
                         String mobile = response.body().getEntity().getMobileNumber();
-                        profile_image = image_url+value;
+                        profile_image = image_urlQA+value;
                         loadImages(profile_image);
                         loadDetails(full_name, mobile);
 
                     }
 
                 }else{
-                    String image_url = "https://xlog-dev.s3.amazonaws.com/";
-                    String value = response.body().getEntity().getImage().toString();
-                    String full_name = response.body().getEntity().getFirstName() + response.body().getEntity().getLastName();
-                    String mobile = response.body().getEntity().getMobileNumber();
-                    getID(response.body().getEntity().getId());
-                    profile_image = image_url+value;
-                    loadImages(profile_image);
-                    loadDetails(full_name, mobile);
-
+//                    String image_url = "https://xlog-dev.s3.amazonaws.com/";
+//                    String image_urlQA = "https://xlog-qa.s3.amazonaws.com/";
+//                    String value = response.body().getEntity().getImage();
+//                    String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
+//                    String mobile = response.body().getEntity().getMobileNumber();
+//                    getID(response.body().getEntity().getId());
+//                    profile_image = image_urlQA+value;
+//                    Log.e(TAG, " profile_image "+profile_image);
+//                    loadImages(profile_image);
+//                    loadDetails(full_name, mobile);
+                    errorMessage();
                 }
 
             }
@@ -386,12 +387,31 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<UserDetails> call, Throwable t) {
                 Log.e(TAG, "Response Failure "+ t.getMessage());
-             getAccesToken();
+                errorMessage();
             }
         });
 
 
 
+    }
+
+    public void errorMessage(){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+        alertBuilder.setTitle("Somethings Wrong");
+        alertBuilder.setMessage("Please Try Again");
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
     }
     public void loadApi(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -401,7 +421,7 @@ public class NavigationDrawer extends AppCompatActivity
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.userDetails)
+                .baseUrl(Api.URLQA)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -581,12 +601,7 @@ public class NavigationDrawer extends AppCompatActivity
     }
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
-            /**
-             *Toast.makeText(getActivity(), "WiFi/Mobile Networks Connected!", Toast.LENGTH_SHORT).show();
-             *int duration = Snackbar.LENGTH_LONG;
-             *String message = "Internet Connection";
-             *Snackbar.make(viewSnackBar, message, duration).show();
-             */
+            getAccesToken();
         } else {
             int duration = Snackbar.LENGTH_LONG;
             String message = " No Internet Connection";
@@ -594,11 +609,6 @@ public class NavigationDrawer extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        internetChecking();
-    }
 
     private void generateEmployeeList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -615,6 +625,11 @@ public class NavigationDrawer extends AppCompatActivity
         mAdapter.notifyDataSetChanged();
     }
     public void getAccesToken(){
+        progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
+        progressDialogdialog.setMessage("Loading");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
                 .build();
 
