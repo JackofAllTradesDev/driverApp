@@ -92,7 +92,7 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
     private void startCurrentLocationUpdates() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(3500);
+        locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -101,7 +101,7 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
+            // to handle the case where the user grants the permission. See the documentation 
             // for ActivityCompat#requestPermissions for more details.
             return;
         }

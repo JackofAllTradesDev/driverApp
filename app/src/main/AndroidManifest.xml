@@ -63,7 +63,8 @@
         <activity
             android:name=".RoutesActivity"
             android:parentActivityName=".MainMap" />
-        <activity android:name=".TrasactionView"></activity>
+        <activity android:name=".TrasactionView"
+            android:parentActivityName=".NavigationDrawer" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

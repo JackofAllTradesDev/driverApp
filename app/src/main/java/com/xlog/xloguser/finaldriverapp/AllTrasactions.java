@@ -16,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
@@ -54,12 +56,14 @@ public class AllTrasactions extends AppCompatActivity {
     List<ReservationList> transactionList;
     private AllTransactionAdapter transactionAdapter;
     private ProgressDialog progressDialogdialog;
+    private TextView warn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_trasactions);
         recyclerView = (RecyclerView) findViewById(R.id.recycleViewAllTransactions);
+        warn = (TextView) findViewById(R.id.warningAllTxt);
         recyclerView.setHasFixedSize(true);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.allTransactionToolbar);
         mToolbar.setTitle("All Transactions");
@@ -138,6 +142,10 @@ public class AllTrasactions extends AppCompatActivity {
                         Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
                         transactionList = response.body();
 
+                    }
+                    if(transactionList.size() == 0){
+                        warn.setVisibility(View.VISIBLE);
+                        warn.setText("You have no transactions yet");
                     }
                     loadDataAdapter();
                     progressDialogdialog.dismiss();

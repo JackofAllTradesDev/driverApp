@@ -32,17 +32,20 @@
     </android.support.v7.widget.RecyclerView>
 
     <TextView
-        android:id="@+id/warnTxt"
+        android:id="@+id/warnTxtPending"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="64dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/roboto_medium"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#000"
         android:textSize="14dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/pendingRecycleView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pendingToolbar" />

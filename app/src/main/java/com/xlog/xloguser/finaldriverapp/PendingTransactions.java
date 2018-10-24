@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
@@ -51,7 +52,7 @@ public class PendingTransactions extends AppCompatActivity {
     List<ReservationList> transactionList;
     private RecyclerView.Adapter mAdapter;
     private Retrofit retrofit;
-    private TextView warn ;
+    private TextView warn;
     String dateString ="";
     PendingTransactionAdapter pendingTransactionAdapter;
     private ProgressDialog progressDialogdialog;
@@ -61,6 +62,7 @@ public class PendingTransactions extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_transactions);
         recyclerView = (RecyclerView) findViewById(R.id.pendingRecycleView);
+        warn = (TextView) findViewById(R.id.warnTxtPending);
         recyclerView.setHasFixedSize(true);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.pendingToolbar);
         mToolbar.setTitle("Pending Transactions");
@@ -143,6 +145,10 @@ public class PendingTransactions extends AppCompatActivity {
                         }
 
 
+                    }
+                    if(transactionList.size() == 0){
+                        warn.setVisibility(View.VISIBLE);
+                        warn.setText("You don't have upcoming transactions");
                     }
                     loadPendingTransactions();
                     progressDialogdialog.dismiss();

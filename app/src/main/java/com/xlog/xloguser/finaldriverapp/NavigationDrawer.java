@@ -36,6 +36,8 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.Dash;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
@@ -79,7 +81,7 @@ public class NavigationDrawer extends AppCompatActivity
     private TextView userFullname;
     private TextView driverMobileNumber;
     private TextView today, username;
-    private TextView upcoming;
+    private TextView upcoming, warning;
     private NavigationView navView;
     private DrawerLayout drawer;
     private ProgressDialog progressDialogdialog;
@@ -117,6 +119,7 @@ public class NavigationDrawer extends AppCompatActivity
         username = (TextView) findViewById(R.id.userNameDashTxt);
         upcoming = (TextView) findViewById(R.id.upcomingTxt);
         todayTr = (CardView) findViewById(R.id.cardViewToday);
+        warning = (TextView) findViewById(R.id.warningTxt);
         upcomingTr = (CardView) findViewById(R.id.cardViewUpComing);
         transactionList = new ArrayList<>();
         reservationListList = new ArrayList<>();
@@ -135,7 +138,7 @@ public class NavigationDrawer extends AppCompatActivity
         int versionCode = BuildConfig.VERSION_CODE;
         String versionName = BuildConfig.VERSION_NAME;
 
-        String verionCodeNumber = versionName + versionCode;
+        String verionCodeNumber = versionName;
         versionTxt.setText("Version "+verionCodeNumber);
         loadApi();
 
@@ -170,7 +173,7 @@ public class NavigationDrawer extends AppCompatActivity
         Date currentTime_1 = new Date();
          dateString = formatter.format(currentTime_1);
          Log.e(TAG, "DATE "+dateString);
-
+        todayTr.setEnabled(false);
 
 
     }
@@ -183,7 +186,6 @@ public class NavigationDrawer extends AppCompatActivity
         progressDialogdialog.setCancelable(false);
         progressDialogdialog.setCanceledOnTouchOutside(false);
         Api api = retrofit.create(Api.class);
-        Call<UserDetails> call = api.getUserDetails(tokens);
         Call<List<ReservationList>> call2 = api.getReservationList(tokens);
 
         call2.enqueue(new Callback<List<ReservationList>>() {
@@ -192,43 +194,52 @@ public class NavigationDrawer extends AppCompatActivity
                 if(response.isSuccessful()){
                     int value = response.body().size();
                     String date= "";
-                    for(int t = 0; t < value; t++){
-                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                        try {
-                            Date apiDate = formatApiDate.parse(date);
-                            Date current = currentDate.parse(dateString);
-                            if(dateString.equalsIgnoreCase(date)){
-                                transactionList.addAll(Collections.singleton(response.body().get(t)));
-                            }
 
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        for(int t = 0; t < value; t++){
+                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date apiDate = formatApiDate.parse(date);
+                                Date current = currentDate.parse(dateString);
+                                if(dateString.equalsIgnoreCase(date)){
+                                    transactionList.addAll(Collections.singleton(response.body().get(t)));
+
+                                }
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
+                    if(transactionList.size() == 0){
+                        warning.setVisibility(View.VISIBLE);
+                        warning.setText("You don't have transactions for today");
                     }
-                    generateEmployeeList();
-                    upcomingTr.setEnabled(true);
-                    todayTr.setEnabled(false);
+                        generateEmployeeList();
+                        upcomingTr.setEnabled(true);
+                        todayTr.setEnabled(false);
+
+                    }
                     progressDialogdialog.dismiss();
                 }
-            }
+
+
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                Log.e(TAG, "error today "+t.getMessage());
+                errorMessage();
             }
         });
     }
     private void upcomingList(){
-
+        upcomingList.clear();
         progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
         progressDialogdialog.setMessage("Fetching Data");
         progressDialogdialog.show();
         progressDialogdialog.setCancelable(false);
         progressDialogdialog.setCanceledOnTouchOutside(false);
         Api api = retrofit.create(Api.class);
-        Call<UserDetails> call = api.getUserDetails(tokens);
         Call<List<ReservationList>> call2 = api.getReservationList(tokens);
 
         call2.enqueue(new Callback<List<ReservationList>>() {
@@ -237,30 +248,40 @@ public class NavigationDrawer extends AppCompatActivity
                 if(response.isSuccessful()){
                     int value = response.body().size();
                     String date= "";
-                    for(int t = 0; t < value; t++){
-                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                        try {
-                            Date apiDate = formatApiDate.parse(date);
-                            Date current = currentDate.parse(dateString);
-                            if(current.before(apiDate)){
-                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
-                            }
 
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        for(int t = 0; t < value; t++){
+                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date apiDate = formatApiDate.parse(date);
+                                Date current = currentDate.parse(dateString);
+                                if(current.before(apiDate)){
+                                    upcomingList.addAll(Collections.singleton(response.body().get(t)));
+                                }
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
+                    Log.e(TAG, "upcomingList "+upcomingList.size());
+                    if(upcomingList.size() == 0){
+                        warning.setVisibility(View.VISIBLE);
+                        warning.setText("You don't have upcoming transactions");
                     }
-                    generateUpcomingList();
-                    upcomingTr.setEnabled(false);
+                        generateUpcomingList();
+                        upcomingTr.setEnabled(false);
+                        todayTr.setEnabled(true);
+                    }
                     progressDialogdialog.dismiss();
                 }
-            }
+
+
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                Log.e(TAG, "error upcoming "+t.getMessage());
+                errorMessage();
             }
         });
     }
@@ -283,61 +304,50 @@ public class NavigationDrawer extends AppCompatActivity
                     Log.e(TAG, "SIZE___ "+ value);
 
                     String transNumber ="";
-                    for(int t = 0; t < value; t++){
-                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                        try {
-                            Date apiDate = formatApiDate.parse(date);
-                            Date current = currentDate.parse(dateString);
-                            if(current.before(apiDate)){
-                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
+
+                        for (int t = 0; t < value; t++) {
+                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
+                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date apiDate = formatApiDate.parse(date);
+                                Date current = currentDate.parse(dateString);
+                                if (current.before(apiDate)) {
+                                    upcomingList.addAll(Collections.singleton(response.body().get(t)));
+                                }
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            if (dateString.equalsIgnoreCase(date)) {
+                                transactionList.addAll(Collections.singleton(response.body().get(t)));
+
                             }
 
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if(dateString.equalsIgnoreCase(date) ) {
-                            transactionList.addAll(Collections.singleton(response.body().get(t)));
-                        }
-                        progressDialogdialog.dismiss();
 
+
+                        }
+                    if(transactionList.size() == 0){
+                        warning.setVisibility(View.VISIBLE);
+                        warning.setText("You don't have transactions for today");
                     }
-
-                }else {
-//                    int value = response.body().size();
-//                    String date= "";
-//                    Log.e(TAG, "SIZE___ "+ value);
-//                    today.setText(String.valueOf(value));
-//                    upcoming.setText(String.valueOf(value));
-//                    String transNumber ="";
-//                    for(int t = 0; t < value; t++){
-//
-//                        Log.e(TAG, "Response +"+response.body().get(t).getPrefixedId());
-//
-//                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-//                        Log.e(TAG, "date  "+date);
-//
-//                        if(dateString.equalsIgnoreCase(date) ){
-//                            transactionList.addAll(Collections.singleton(response.body().get(t)));
-//
-//                        }
-//                    }
-
+                    progressDialogdialog.dismiss();
+                    int sizeTrans = transactionList.size();
+                    int sizeUpcoming = upcomingList.size();
+                    today.setText(Integer.toString(sizeTrans));
+                    upcoming.setText(Integer.toString(sizeUpcoming));
+                    generateEmployeeList();
+                    }
+                    else {
                     errorMessage();
-
                 }
-                int sizeTrans = transactionList.size();
-                int sizeUpcoming = upcomingList.size();
-                today.setText(Integer.toString(sizeTrans));
-                upcoming.setText(Integer.toString(sizeUpcoming));
-                generateEmployeeList();
+
 
             }
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                Log.e(TAG, "onFailure "+t.getMessage());
             }
         });
 
@@ -369,16 +379,6 @@ public class NavigationDrawer extends AppCompatActivity
                     }
 
                 }else{
-//                    String image_url = "https://xlog-dev.s3.amazonaws.com/";
-//                    String image_urlQA = "https://xlog-qa.s3.amazonaws.com/";
-//                    String value = response.body().getEntity().getImage();
-//                    String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
-//                    String mobile = response.body().getEntity().getMobileNumber();
-//                    getID(response.body().getEntity().getId());
-//                    profile_image = image_urlQA+value;
-//                    Log.e(TAG, " profile_image "+profile_image);
-//                    loadImages(profile_image);
-//                    loadDetails(full_name, mobile);
                     errorMessage();
                 }
 
@@ -420,10 +420,14 @@ public class NavigationDrawer extends AppCompatActivity
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.URLQA)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
     public void loadImages(String image_url){
@@ -492,8 +496,7 @@ public class NavigationDrawer extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
-                    Toast.makeText(this, "Permission Granted",
-                            Toast.LENGTH_SHORT).show();
+
                 }
 
             }
@@ -505,8 +508,7 @@ public class NavigationDrawer extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
-                    Toast.makeText(this, "Permission Granted",
-                            Toast.LENGTH_SHORT).show();
+
                 }
 
             }
@@ -673,4 +675,9 @@ public class NavigationDrawer extends AppCompatActivity
         }
     };
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        internetChecking();
+    }
 }

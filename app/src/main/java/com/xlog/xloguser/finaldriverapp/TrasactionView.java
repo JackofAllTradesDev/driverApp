@@ -89,6 +89,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         startTransactionBtn = (Button) findViewById(R.id.startTripBtn);
         currentTransBtn = (Button) findViewById(R.id.currentTransactionBtn);
         destination = (TextView) findViewById(R.id.originLocation);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);

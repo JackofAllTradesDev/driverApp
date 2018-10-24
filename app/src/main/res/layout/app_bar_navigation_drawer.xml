@@ -53,6 +53,27 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom">
 
+        <TextView
+            android:id="@+id/warningTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="311dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#000"
+            android:textSize="12dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
         <android.support.v7.widget.CardView
             android:id="@+id/cardViewToday"
             android:layout_width="160dp"
@@ -124,6 +145,7 @@
                 android:textAllCaps="true"
                 android:textColor="#4299CE"
                 android:textSize="38dp" />
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.RecyclerView
@@ -158,7 +180,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewToday"
             app:layout_constraintVertical_bias="1.0" />
-
 
 
     </android.support.constraint.ConstraintLayout>
