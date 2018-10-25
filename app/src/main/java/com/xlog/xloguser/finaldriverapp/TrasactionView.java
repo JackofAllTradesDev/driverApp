@@ -7,6 +7,7 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -42,7 +43,11 @@ import com.xlog.xloguser.finaldriverapp.BottomSheetDialog.BottomSheetDialog;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +82,10 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     String transNumberPass, currentTrans, pNumbers;
     int driverId;
     Toolbar mToolbar;
+    Marker mark;
+    String markLocation, dateString;
+    int[] mImgArray = { R.drawable.a_blue, R.drawable.b_blue,
+            R.drawable.c_blue, R.drawable.d_blue, R.drawable.e_blue};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +98,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         startTransactionBtn = (Button) findViewById(R.id.startTripBtn);
         currentTransBtn = (Button) findViewById(R.id.currentTransactionBtn);
         destination = (TextView) findViewById(R.id.originLocation);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Bundle extras = getIntent().getExtras();
         transNumberPass = extras.getString("tr_number");
         mToolbar.setTitle(transNumberPass);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         loadApi();
         list = new ArrayList<LatLng>();
         Fabric.with(this, new Crashlytics());
@@ -141,7 +150,13 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+
         getData();
+        SimpleDateFormat formatter
+                = new SimpleDateFormat ("yyyy-MM-dd");
+        Date currentTime_1 = new Date();
+        dateString = formatter.format(currentTime_1);
+        Log.e(TAG, "DATE "+dateString);
 
     }
 
@@ -162,6 +177,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+
+
     }
 
     public void loadApi() {
@@ -190,22 +207,22 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 if(response.isSuccessful()){
                     LatLng latLng = null;
                     String num ="";
+                    String date;
                     int val = response.body().get(0).getRoutes().size();
                     driverId = response.body().get(0).getId();
                     for(int v = 0; v < val; v++){
                         Double lat = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLat();
                         Double lang = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLng();
-                        String name = response.body().get(0).getRoutes().get(v).getName();
+                        markLocation = response.body().get(0).getRoutes().get(v).getName();
                         latLng = new LatLng(lat, lang);
-                        mMap.addMarker(new MarkerOptions().position(latLng)
-                                .title(name));
+                        userPositionMarkerBitmapDescriptor = BitmapDescriptorFactory.fromResource(mImgArray[v]);
+                        mark = mMap.addMarker(new MarkerOptions().position(latLng)
+                                .title(markLocation).icon(userPositionMarkerBitmapDescriptor));
 
                         String check = response.body().get(0).getRoutes().get(v).getRoutestatus();
                         String c = "Completed";
                         if(check.equalsIgnoreCase(c)){
                             startTransactionBtn.setVisibility(View.INVISIBLE);
-                        }else {
-                            startTransactionBtn.setVisibility(View.VISIBLE);
                         }
                         if(check.contains(c)){
                             startTransactionBtn.setText("Resume Route");
@@ -221,11 +238,27 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         }
 
                     }
+
                     pNumbers = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
                     int waypoint = response.body().get(0).getWaypoints().size();
                     for(int b = 0; b < waypoint; b++){
                         decodePoly(response.body().get(0).getWaypoints().get(b));
                     }
+                    date = response.body().get(0).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
+                    Log.e(TAG, "api Date = " +date);
+                    SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date apiDate = formatApiDate.parse(date);
+                        Date current = currentDate.parse(dateString);
+                        if(current.before(apiDate) || current.after(apiDate)){
+                            Log.e(TAG, "Correct Condition ");
+                            startTransactionBtn.setVisibility(View.INVISIBLE);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
                     progressDialogdialog.dismiss();
                 }else{
 

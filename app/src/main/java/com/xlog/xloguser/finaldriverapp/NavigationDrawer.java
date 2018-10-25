@@ -140,8 +140,7 @@ public class NavigationDrawer extends AppCompatActivity
 
         String verionCodeNumber = versionName;
         versionTxt.setText("Version "+verionCodeNumber);
-        loadApi();
-
+        todayTr.setEnabled(false);
 
         todayTr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,14 +165,14 @@ public class NavigationDrawer extends AppCompatActivity
 
         getLocalPermissionContacts();
         internetChecking();
-
+        loadApi();
 
         SimpleDateFormat formatter
                 = new SimpleDateFormat ("yyyy-MM-dd");
         Date currentTime_1 = new Date();
          dateString = formatter.format(currentTime_1);
          Log.e(TAG, "DATE "+dateString);
-        todayTr.setEnabled(false);
+
 
 
     }
@@ -286,7 +285,8 @@ public class NavigationDrawer extends AppCompatActivity
         });
     }
     public void loadUserDetails(String Token){
-
+        transactionList.clear();
+        upcomingList.clear();
         Log.e(TAG, "TOKEN__ "+Token);
 
         tokens = Token;
@@ -323,15 +323,13 @@ public class NavigationDrawer extends AppCompatActivity
                                 transactionList.addAll(Collections.singleton(response.body().get(t)));
 
                             }
-
-
-
+                            progressDialogdialog.dismiss();
                         }
                     if(transactionList.size() == 0){
                         warning.setVisibility(View.VISIBLE);
                         warning.setText("You don't have transactions for today");
                     }
-                    progressDialogdialog.dismiss();
+
                     int sizeTrans = transactionList.size();
                     int sizeUpcoming = upcomingList.size();
                     today.setText(Integer.toString(sizeTrans));

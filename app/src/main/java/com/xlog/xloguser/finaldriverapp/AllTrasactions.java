@@ -129,7 +129,7 @@ public class AllTrasactions extends AppCompatActivity {
     };
 
     public void loadData(String Token) {
-
+        transactionList.clear();
         Api api = retrofit.create(Api.class);
         Call<List<ReservationList>> call = api.getReservationList(Token);
 
@@ -185,10 +185,9 @@ public class AllTrasactions extends AppCompatActivity {
 
     }
 
-
-
-
-
-
-
+    @Override
+    protected void onRestart() {
+        getAccesToken();
+        super.onRestart();
+    }
 }

@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/xlog_launcher_new_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +30,8 @@
         <activity
             android:name=".NavigationDrawer"
             android:label="@string/title_activity_navigation_drawer"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -42,29 +43,38 @@
         <activity android:name=".ForgotPin" />
         <activity
             android:name=".Commodity"
-            android:parentActivityName=".NavigationDrawer" />
+            android:parentActivityName=".NavigationDrawer"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AllTrasactions"
-            android:parentActivityName=".NavigationDrawer" />
+            android:parentActivityName=".NavigationDrawer"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CompleteTransactions"
-            android:parentActivityName=".CompleteTransactions" />
+            android:parentActivityName=".CompleteTransactions"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PendingTransactions"
-            android:parentActivityName=".NavigationDrawer" />
+            android:parentActivityName=".NavigationDrawer"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".About"
-            android:parentActivityName=".NavigationDrawer" />
+            android:parentActivityName=".NavigationDrawer"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".TodayUpcomingActivity"
             android:parentActivityName=".NavigationDrawer" />
-        <activity android:name=".MainMap" />
-        <activity android:name=".SignatureActivity" />
+        <activity android:name=".MainMap"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SignatureActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RoutesActivity"
-            android:parentActivityName=".MainMap" />
+            android:parentActivityName=".MainMap"
+            android:screenOrientation="portrait"/>
         <activity android:name=".TrasactionView"
-            android:parentActivityName=".NavigationDrawer" />
+            android:parentActivityName=".NavigationDrawer"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

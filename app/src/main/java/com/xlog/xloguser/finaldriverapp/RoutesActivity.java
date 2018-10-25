@@ -452,4 +452,10 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         placeID = id;
         Log.e(TAG, "IDDDDDD+ "+ id);
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getAccesToken();
+    }
 }

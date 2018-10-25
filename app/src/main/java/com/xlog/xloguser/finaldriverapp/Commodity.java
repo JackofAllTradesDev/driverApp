@@ -212,4 +212,9 @@ public class Commodity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        internetChecking();
+    }
 }

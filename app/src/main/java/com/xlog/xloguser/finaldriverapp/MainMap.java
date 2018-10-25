@@ -99,6 +99,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocation;
     private BitmapDescriptor userPositionMarkerBitmapDescriptor;
+    private BitmapDescriptor locationPostionBitmapDescriptor;
     private Marker userPositionMarker;
     public static final int REQUEST_LOCATION_PERMISSION = 100;
     private static final String TAG = "MainMap";
@@ -120,6 +121,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     InputStream is;
     String rName;
     String conttact, access_token;
+    int[] mImgArray = { R.drawable.a_green, R.drawable.b_green,
+            R.drawable.c_green, R.drawable.d_green, R.drawable.e_green};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -459,7 +462,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         if (this.userPositionMarkerBitmapDescriptor == null) {
-            userPositionMarkerBitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.user_truck);
+            userPositionMarkerBitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_marker_small);
         }
 
         if (userPositionMarker == null) {
@@ -574,8 +577,9 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                         Double lang = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLng();
                         String name = response.body().get(0).getRoutes().get(v).getName();
                         latLng = new LatLng(lat, lang);
+                        locationPostionBitmapDescriptor = BitmapDescriptorFactory.fromResource(mImgArray[v]);
                         mMap.addMarker(new MarkerOptions().position(latLng)
-                                .title(name));
+                                .title(name).icon(locationPostionBitmapDescriptor));
                     }
                     int waypoint = response.body().get(0).getWaypoints().size();
                     for(int b = 0; b < waypoint; b++){

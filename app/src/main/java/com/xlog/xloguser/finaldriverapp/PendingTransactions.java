@@ -117,7 +117,7 @@ public class PendingTransactions extends AppCompatActivity {
 
     }
     public void loadData(String Token) {
-
+        transactionList.clear();
         Api api = retrofit.create(Api.class);
         Call<List<ReservationList>> call = api.getReservationList(Token);
 
@@ -195,5 +195,11 @@ public class PendingTransactions extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getAccesToken();
     }
 }

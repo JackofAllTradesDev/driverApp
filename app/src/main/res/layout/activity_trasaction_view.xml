@@ -77,11 +77,11 @@
                 <TextView
                     android:id="@+id/originLocation"
                     android:layout_width="0dp"
-                    android:layout_height="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="7dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="7dp"
+                    android:layout_marginBottom="8dp"
                     android:clickable="false"
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_medium"
@@ -179,7 +179,7 @@
         android:text="Start Trip"
         android:textAlignment="center"
         android:textColor="#fff"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
 
 </android.support.design.widget.CoordinatorLayout>
