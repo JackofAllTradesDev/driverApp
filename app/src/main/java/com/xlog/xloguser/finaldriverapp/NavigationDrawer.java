@@ -227,7 +227,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "error today "+t.getMessage());
-                errorMessage();
+                erroMessageToday(t.getMessage());
             }
         });
     }
@@ -280,7 +280,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "error upcoming "+t.getMessage());
-                errorMessage();
+                errorUpcoming(t.getMessage());
             }
         });
     }
@@ -337,7 +337,6 @@ public class NavigationDrawer extends AppCompatActivity
                     generateEmployeeList();
                     }
                     else {
-                    errorMessage();
                 }
 
 
@@ -346,6 +345,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "onFailure "+t.getMessage());
+                errorMessage(t.getMessage());
             }
         });
 
@@ -377,7 +377,7 @@ public class NavigationDrawer extends AppCompatActivity
                     }
 
                 }else{
-                    errorMessage();
+
                 }
 
             }
@@ -385,7 +385,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<UserDetails> call, Throwable t) {
                 Log.e(TAG, "Response Failure "+ t.getMessage());
-                errorMessage();
+                errorMessage(t.getMessage());
             }
         });
 
@@ -393,18 +393,55 @@ public class NavigationDrawer extends AppCompatActivity
 
     }
 
-    public void errorMessage(){
+    public void errorMessage(String message){
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
-        alertBuilder.setTitle("Somethings Wrong");
-        alertBuilder.setMessage("Please Try Again");
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
         String positiveText = "Retry";
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.dismiss();
+                        getAccesToken();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+
+    public void erroMessageToday(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        todayList();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+    public void errorUpcoming(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                     upcomingList();
                     }
                 });
 

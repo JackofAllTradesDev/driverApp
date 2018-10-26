@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -84,6 +86,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     String rName, conttact, access_token, image2, imgString, token,stat;
     ArrayList<SendBase> sendBases;
     ArrayList<EncodeFile> encodeFiles;
+    ArrayList<String> completeList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +107,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         routes = new ArrayList<>();
         sendBases = new ArrayList<>();
         encodeFiles = new ArrayList<>();
+        completeList = new ArrayList<>();
         loadApi();
         getAccesToken();
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +265,6 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                         driverID = response.body().get(0).getId();
                 Log.e(TAG, "driverID" + driverID );
                         routes = response.body().get(0).getRoutes();
-
                     loadDataAdapter();
                     progressDialogdialog.dismiss();
 
@@ -269,7 +272,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                errorMessage(t.getMessage());
             }
         });
 
@@ -458,4 +461,23 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         super.onRestart();
         getAccesToken();
     }
+    public void errorMessage(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(RoutesActivity.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        getAccesToken();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+
 }

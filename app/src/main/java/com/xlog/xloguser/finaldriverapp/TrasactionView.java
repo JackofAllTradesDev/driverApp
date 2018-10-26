@@ -5,6 +5,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -84,14 +86,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     Toolbar mToolbar;
     Marker mark;
     String markLocation, dateString;
-    int[] mImgArray = { R.drawable.a_blue, R.drawable.b_blue,
+    int[] mImgArray = {R.drawable.a_blue, R.drawable.b_blue,
             R.drawable.c_blue, R.drawable.d_blue, R.drawable.e_blue};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trasaction_view);
-         mToolbar = (Toolbar) findViewById(R.id.transactionViewToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.transactionViewToolbar);
         compassBtn = (ImageButton) findViewById(R.id.compassBtn);
         mapTypeBtn = (ImageButton) findViewById(R.id.mapTypeBtn);
         sendBtn = (ImageButton) findViewById(R.id.sendBtn);
@@ -136,7 +138,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TrasactionView.this, Commodity.class);
-                intent.putExtra("tr_number",currentTrans);
+                intent.putExtra("tr_number", currentTrans);
                 startActivity(intent);
             }
         });
@@ -153,10 +155,10 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
         getData();
         SimpleDateFormat formatter
-                = new SimpleDateFormat ("yyyy-MM-dd");
+                = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime_1 = new Date();
         dateString = formatter.format(currentTime_1);
-        Log.e(TAG, "DATE "+dateString);
+        Log.e(TAG, "DATE " + dateString);
 
     }
 
@@ -204,13 +206,13 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         call.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     LatLng latLng = null;
-                    String num ="";
+                    String num = "";
                     String date;
                     int val = response.body().get(0).getRoutes().size();
                     driverId = response.body().get(0).getId();
-                    for(int v = 0; v < val; v++){
+                    for (int v = 0; v < val; v++) {
                         Double lat = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLat();
                         Double lang = response.body().get(0).getRoutes().get(v).getGeometry().getLocation().getLng();
                         markLocation = response.body().get(0).getRoutes().get(v).getName();
@@ -221,18 +223,20 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
                         String check = response.body().get(0).getRoutes().get(v).getRoutestatus();
                         String c = "Completed";
-                        if(check.equalsIgnoreCase(c)){
+                        if (check.equalsIgnoreCase(c)) {
                             startTransactionBtn.setVisibility(View.INVISIBLE);
+                        }else{
+                            startTransactionBtn.setVisibility(View.VISIBLE);
                         }
-                        if(check.contains(c)){
+                        if (check.contains(c)) {
                             startTransactionBtn.setText("Resume Route");
                         }
                     }
-                    for(int a = 0; a < val; a++){
-                        if(a == 1){
+                    for (int a = 0; a < val; a++) {
+                        if (a == 1) {
                             String name = response.body().get(0).getRoutes().get(1).getName();
                             num = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
-                            Log.e(TAG, "Phone Number = " +num);
+                            Log.e(TAG, "Phone Number = " + num);
 
                             destination.setText(name);
                         }
@@ -241,17 +245,17 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
                     pNumbers = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
                     int waypoint = response.body().get(0).getWaypoints().size();
-                    for(int b = 0; b < waypoint; b++){
+                    for (int b = 0; b < waypoint; b++) {
                         decodePoly(response.body().get(0).getWaypoints().get(b));
                     }
-                    date = response.body().get(0).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                    Log.e(TAG, "api Date = " +date);
+                    date = response.body().get(0).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
+                    Log.e(TAG, "api Date = " + date);
                     SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
                     SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
                     try {
                         Date apiDate = formatApiDate.parse(date);
                         Date current = currentDate.parse(dateString);
-                        if(current.before(apiDate) || current.after(apiDate)){
+                        if (current.before(apiDate) || current.after(apiDate)) {
                             Log.e(TAG, "Correct Condition ");
                             startTransactionBtn.setVisibility(View.INVISIBLE);
                         }
@@ -260,9 +264,6 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     progressDialogdialog.dismiss();
-                }else{
-
-
                 }
 
 
@@ -271,10 +272,9 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                errorMessage(t.getMessage());
             }
         });
-
 
 
     }
@@ -302,7 +302,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 String value = "";
 //                Bundle extras = getIntent().getExtras();
 //                transNumberPass = extras.getString("tr_number");
-                currentTrans =  transNumberPass;
+                currentTrans = transNumberPass;
 
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
@@ -315,8 +315,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         });
 
 
-
     }
+
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -359,13 +359,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     .clickable(true)
                     .addAll(poly));
             polyline1.setWidth(15);
-            polyline1.setColor(Color.rgb(	0,191,255));
+            polyline1.setColor(Color.rgb(0, 191, 255));
             polyline1.setEndCap(new RoundCap());
             centerIncidentRouteOnMap(poly);
         }
 
         return poly;
     }
+
     public void centerIncidentRouteOnMap(List<LatLng> copiedPoints) {
         double minLat = Integer.MAX_VALUE;
         double maxLat = Integer.MIN_VALUE;
@@ -381,6 +382,24 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 90));
     }
 
+    public void errorMessage(String message) {
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        getData();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
 
 
 

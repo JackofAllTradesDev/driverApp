@@ -124,13 +124,13 @@ public class Commodity extends AppCompatActivity {
 
                 }
                 else {
-//                    String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
-//                    String volume = response.body().get(0).getReservation().getTotalVolume();
-//                    setNames(grossWeight,volume);
-//                    routes = response.body().get(0).getRoutes();
-//                    loadDataAdapter();
-//                    progressDialogdialog.dismiss();
-                errorMessage();
+                     String grossWeight = response.body().get(0).getReservation().getTotalGrossWeight();
+                    String volume = response.body().get(0).getReservation().getTotalVolume();
+                    setNames(grossWeight,volume);
+                    routes = response.body().get(0).getRoutes();
+                    loadDataAdapter();
+                    progressDialogdialog.dismiss();
+
                 }
 
 
@@ -139,7 +139,7 @@ public class Commodity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                errorMessage();
+                errorMessage(t.getMessage());
             }
         });
     }
@@ -216,5 +216,23 @@ public class Commodity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         internetChecking();
+    }
+    public void errorMessage(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        getData();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
     }
 }

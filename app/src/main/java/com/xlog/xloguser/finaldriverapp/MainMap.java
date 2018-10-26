@@ -7,6 +7,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -133,6 +135,8 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         transNumberPass = extras.getString("transNumber");
         mToolbar.setTitle(transNumberPass);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         coordinateToSnap = new ArrayList<>();
         coordinatesList = new ArrayList<>();
         saveCoordinates = new ArrayList<>();
@@ -177,11 +181,19 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
             }
         });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopBack();
+            }
+        });
+
         buildApi();
         getData();
         getloc();
 
     }
+
 
     private void getloc(){
          broadcastReceiver = new BroadcastReceiver() {
@@ -196,8 +208,10 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         registerReceiver(broadcastReceiver, new IntentFilter("mycustombroadcast"));
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        stopBack();
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -593,6 +607,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "Response failed "+t.getMessage());
+                errorMessage(t.getMessage());
                 progressDialogdialog.dismiss();
             }
         });
@@ -739,6 +754,49 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         retrieve.clear();
 
 
+    }
+    public void errorMessage(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainMap.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                      getData();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+    public void stopBack(){
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainMap.this);
+        alertBuilder.setTitle("Are you sure?");
+        alertBuilder.setMessage("You are currently in a transaction. Do you want to exit?");
+        String positiveText = "Yes";
+        String negativeText = "NO";
+        alertBuilder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
     }
 
 

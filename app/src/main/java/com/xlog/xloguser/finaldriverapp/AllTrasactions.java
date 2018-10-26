@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -156,6 +158,7 @@ public class AllTrasactions extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "Response +"+t.getMessage());
+                errorMessage(t.getMessage());
             }
         });
 
@@ -189,5 +192,24 @@ public class AllTrasactions extends AppCompatActivity {
     protected void onRestart() {
         getAccesToken();
         super.onRestart();
+    }
+
+    public void errorMessage(String message){
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AllTrasactions.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        getAccesToken();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
     }
 }

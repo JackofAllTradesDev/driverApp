@@ -35,11 +35,13 @@ import io.fabric.sdk.android.Fabric;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by Jaymon Rivera on 09/14/2018.
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     int counter = 3;
     View viewSnackBar;
     String access_token;
-    int pass;
+    Integer pass;
 
 
     @Override
@@ -126,10 +128,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void runApi(){
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
 
@@ -143,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
-    public void login(String userName, String passWords){
+    public void login(String userName, Integer passWords){
 
         Api api = retrofit.create(Api.class);
         Call<Login> call = api.getToken(client_secret, client_id, userName,passWords, grant_type,scope);
@@ -155,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     String access_token = response.body().getAccessToken();
                     String message = response.body().getMessage();
                     Log.e(TAG, "token___"+access_token);
+                    Log.e(TAG, "message "+message);
                     Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
                     saveTokenToDb(access_token);
                     startActivity(intent);
@@ -188,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             progressDialogdialog.show();
             progressDialogdialog.setCancelable(false);
             progressDialogdialog.setCanceledOnTouchOutside(false);
-            login(userName.getText().toString(), passWord.getText().toString());
+            login(userName.getText().toString(), pass);
 
 
     }
@@ -211,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
     public void errorMessage(){
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertBuilder.setTitle("Timeout");
-        alertBuilder.setMessage("Please Try Again");
+        alertBuilder.setTitle("Please Try Again");
+        alertBuilder.setMessage("Timeout");
         String positiveText = getString(android.R.string.ok);
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {

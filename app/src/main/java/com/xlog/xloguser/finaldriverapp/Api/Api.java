@@ -30,7 +30,7 @@ public interface Api {
 
 
     @GET("loginauth.php")
-    Call<Login> getToken(@Query("client_secret") String client_secret, @Query("client_id") String client_id, @Query("username") String username, @Query("password") String password, @Query("grant_type") String grant_type, @Query("scope") String scope );
+    Call<Login> getToken(@Query("client_secret") String client_secret, @Query("client_id") String client_id, @Query("username") String username, @Query("password") Integer password, @Query("grant_type") String grant_type, @Query("scope") String scope );
     @GET("currentUserDetails.php")
     Call<UserDetails> getUserDetails(@Query("access_token") String access_token);
     @POST("snaptoroad.php")
