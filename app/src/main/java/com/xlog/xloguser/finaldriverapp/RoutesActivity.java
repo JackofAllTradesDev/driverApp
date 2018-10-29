@@ -109,7 +109,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         encodeFiles = new ArrayList<>();
         completeList = new ArrayList<>();
         loadApi();
-        getAccesToken();
+        internetChecking();
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -459,7 +459,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     @Override
     protected void onRestart() {
         super.onRestart();
-        getAccesToken();
+        internetChecking();
     }
     public void errorMessage(String message){
         progressDialogdialog.dismiss();
@@ -478,6 +478,28 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
+    }
+
+    private void internetChecking() {
+        if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            getAccesToken();
+        } else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(RoutesActivity.this);
+            alertBuilder.setTitle("You're Offline");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = "Retry";
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            getAccesToken();
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
+        }
     }
 
 }

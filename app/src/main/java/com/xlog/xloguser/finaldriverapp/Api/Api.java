@@ -2,6 +2,7 @@ package com.xlog.xloguser.finaldriverapp.Api;
 
 import com.xlog.xloguser.finaldriverapp.Model.Login;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Model.RetrieveLocation.RetrieveLocation;
 import com.xlog.xloguser.finaldriverapp.Model.SendBase;
 import com.xlog.xloguser.finaldriverapp.Model.SnapToRoad;
 import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
@@ -14,6 +15,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -27,6 +29,7 @@ public interface Api {
 
     /**QA SIDE**/
     String URLQA = "http://ec2-35-174-156-110.compute-1.amazonaws.com/mobileapi/qaapi/";
+    String load = "http://qa-gps-api.xlog.asia/api/";
 
 
     @GET("loginauth.php")
@@ -41,4 +44,7 @@ public interface Api {
     Call<List<ReservationList>> getInfo(@Query("access_token") String token, @Query("prefixId")String trans);
     @POST("saveattachment.php")
     Call<List<SendBase>> sendBase64(@Body ArrayList<SendBase> post);
+    @Headers("Authorization: Basic Z3BzYXBpZGV2OlFYbDFjMmc2U1c1a2FXRQ")
+    @GET("driver-locations")
+    Call<RetrieveLocation> getLocation(@Query("prefixedId") String prefix, @Query("driverId") String driverID, @Query("start") String start, @Query("end") String endTime, @Query("type") String type);
 }

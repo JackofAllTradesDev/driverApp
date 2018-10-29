@@ -153,7 +153,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-        getData();
+        internetChecking();
         SimpleDateFormat formatter
                 = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime_1 = new Date();
@@ -282,7 +282,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onRestart() {
         super.onRestart();
-        getData();
+      internetChecking();
 
     }
 
@@ -399,6 +399,27 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
+    }
+    private void internetChecking() {
+        if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+           getData();
+        } else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
+            alertBuilder.setTitle("You're Offline");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = "Retry";
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            internetChecking();
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
+        }
     }
 
 

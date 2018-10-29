@@ -145,14 +145,53 @@ public class NavigationDrawer extends AppCompatActivity
         todayTr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                todayList();
+                if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+                    todayList();
+                }else{
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+                    alertBuilder.setTitle("You're Offline");
+                    alertBuilder.setMessage("Please Check your network");
+                    String positiveText = getString(android.R.string.ok);
+                    alertBuilder.setPositiveButton(positiveText,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    AlertDialog dialog = alertBuilder.create();
+                    dialog.show();
+                }
+
+
 
             }
         });
         upcomingTr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                upcomingList();
+                if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+                   upcomingList();
+                }else{
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+                    alertBuilder.setTitle("You're Offline");
+                    alertBuilder.setMessage("Please Check your network");
+                    String positiveText = getString(android.R.string.ok);
+                    alertBuilder.setPositiveButton(positiveText,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    AlertDialog dialog = alertBuilder.create();
+                    dialog.show();
+                }
+
+
+
             }
         });
         imageCircleView.setOnClickListener(new View.OnClickListener() {
@@ -244,9 +283,10 @@ public class NavigationDrawer extends AppCompatActivity
         call2.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                if(response.isSuccessful()){
-                    int value = response.body().size();
-                    String date= "";
+
+                    if(response.isSuccessful()){
+                        int value = response.body().size();
+                        String date= "";
 
                         for(int t = 0; t < value; t++){
                             date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
@@ -263,11 +303,11 @@ public class NavigationDrawer extends AppCompatActivity
                                 e.printStackTrace();
                             }
                         }
-                    Log.e(TAG, "upcomingList "+upcomingList.size());
-                    if(upcomingList.size() == 0){
-                        warning.setVisibility(View.VISIBLE);
-                        warning.setText("You don't have upcoming transactions");
-                    }
+                        Log.e(TAG, "upcomingList "+upcomingList.size());
+                        if(upcomingList.size() == 0){
+                            warning.setVisibility(View.VISIBLE);
+                            warning.setText("You don't have upcoming transactions");
+                        }
                         generateUpcomingList();
                         upcomingTr.setEnabled(false);
                         todayTr.setEnabled(true);
@@ -403,8 +443,8 @@ public class NavigationDrawer extends AppCompatActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         getAccesToken();
+                        dialog.dismiss();
                     }
                 });
 
@@ -640,9 +680,21 @@ public class NavigationDrawer extends AppCompatActivity
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
             getAccesToken();
         } else {
-            int duration = Snackbar.LENGTH_LONG;
-            String message = " No Internet Connection";
-            Snackbar.make(viewSnackBar, message, duration).show();
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+            alertBuilder.setTitle("You're Offline");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = "Retry";
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                      dialog.dismiss();
+                      internetChecking();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
         }
     }
 

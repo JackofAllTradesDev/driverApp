@@ -74,7 +74,7 @@ public class AllTrasactions extends AppCompatActivity {
         transactionList = new ArrayList<>();
         Fabric.with(this, new Crashlytics());
         loadApi();
-        getAccesToken();
+        internetChecking();
     }
     private void loadDataAdapter(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -190,7 +190,7 @@ public class AllTrasactions extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
-        getAccesToken();
+        internetChecking();
         super.onRestart();
     }
 
@@ -204,12 +204,32 @@ public class AllTrasactions extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         getAccesToken();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
+    }
+    private void internetChecking() {
+        if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            getAccesToken();
+        } else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AllTrasactions.this);
+            alertBuilder.setTitle("You're Offline");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = getString(android.R.string.ok);
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            internetChecking();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
+        }
     }
 }

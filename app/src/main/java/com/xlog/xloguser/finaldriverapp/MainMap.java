@@ -66,6 +66,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Model.RetrieveLocation.RetrieveLocation;
 import com.xlog.xloguser.finaldriverapp.Model.SendBase;
 import com.xlog.xloguser.finaldriverapp.Model.SnapToRoad;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
@@ -82,6 +83,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -123,8 +125,12 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     InputStream is;
     String rName;
     String conttact, access_token;
+    String start ="2017-08-10 12:00:00";
+    String end = "2019-08-16 12:00:00";
+    String type = "all";
     int[] mImgArray = { R.drawable.a_green, R.drawable.b_green,
             R.drawable.c_green, R.drawable.d_green, R.drawable.e_green};
+    LatLng latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,6 +357,65 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         polyline1.setEndCap(new RoundCap());
         Log.e(TAG, "plotted" );
     }
+    private void getSnappedLocation(){
+        progressDialogdialog = new ProgressDialog(MainMap.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Api.load)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Api api = retrofit.create(Api.class);
+        Call<RetrieveLocation> call = api.getLocation(transNumberPass, String.valueOf(driverID), start,end, type);
+
+        call.enqueue(new Callback<RetrieveLocation>() {
+            @Override
+            public void onResponse(Call<RetrieveLocation> call, Response<RetrieveLocation> response) {
+                int v = response.body().getData().getCompletePath().size();
+                Log.e("TAAGGGGGGGGGG ", "SIZZEEEE!!!! "+ v);
+                for(int a = 0; a < v; a++){
+                    Double lat = Double.valueOf(response.body().getData().getCompletePath().get(a).getLatitude());
+                    Double lang = Double.valueOf(response.body().getData().getCompletePath().get(a).getLongitude());
+
+                    latLng = new LatLng(lat, lang);
+
+                    coordinatesList.add(latLng);
+                    progressDialogdialog.dismiss();
+                }
+                Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                        .clickable(true)
+                        .addAll(coordinatesList));
+                polyline1.setWidth(15);
+                polyline1.setColor(Color.BLACK);
+                polyline1.setEndCap(new RoundCap());
+
+
+            }
+
+            @Override
+            public void onFailure(Call<RetrieveLocation> call, Throwable t) {
+                Log.e("TAAGGGGGGGGGG ", "FAILUUREEEEEE!!!! "+ t.getMessage());
+            }
+        });
+    }
     private void snapToRoadLocalApi(String coordinates){
         String cord = coordinates;
 
@@ -547,11 +612,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         super.onSaveInstanceState(outState);
     }
     private void getData() {
-        progressDialogdialog = new ProgressDialog(MainMap.this);
-        progressDialogdialog.setMessage("Loading");
-        progressDialogdialog.show();
-        progressDialogdialog.setCancelable(false);
-        progressDialogdialog.setCanceledOnTouchOutside(false);
 
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token")
                 .build();
@@ -663,7 +723,9 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 zoomMapTo(loc);
                 drawUserPositionMarker(loc);
                 sendCoordinatesToApi(loc);
+                getSnappedLocation();
             }else{
+                getSnappedLocation();
                 deleteArray();
                 localToAPi();
                 zoomMapTo(loc);

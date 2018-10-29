@@ -80,11 +80,12 @@ public class Commodity extends AppCompatActivity {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
             alertBuilder.setTitle("Somethings Wrong");
             alertBuilder.setMessage("Please Check your network");
-            String positiveText = getString(android.R.string.ok);
+            String positiveText = "Retry";
             alertBuilder.setPositiveButton(positiveText,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            internetChecking();
                             dialog.dismiss();
                         }
                     });
@@ -235,4 +236,5 @@ public class Commodity extends AppCompatActivity {
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
     }
+
 }

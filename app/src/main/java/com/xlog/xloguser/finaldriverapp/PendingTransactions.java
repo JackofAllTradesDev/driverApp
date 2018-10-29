@@ -2,7 +2,9 @@ package com.xlog.xloguser.finaldriverapp;
 
 import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -70,7 +72,7 @@ public class PendingTransactions extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         transactionList = new ArrayList<>();
         loadApi();
-        getAccesToken();
+        internetChecking();
         SimpleDateFormat formatter
                 = new SimpleDateFormat ("yyyy-MM-dd");
         Date currentTime_1 = new Date();
@@ -200,6 +202,27 @@ public class PendingTransactions extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        getAccesToken();
+        internetChecking();
+    }
+    private void internetChecking() {
+        if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            getAccesToken();
+        } else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(PendingTransactions.this);
+            alertBuilder.setTitle("You're Offline");
+            alertBuilder.setMessage("Please Check your network");
+            String positiveText = "Retry";
+            alertBuilder.setPositiveButton(positiveText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            internetChecking();
+                        }
+                    });
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
+        }
     }
 }

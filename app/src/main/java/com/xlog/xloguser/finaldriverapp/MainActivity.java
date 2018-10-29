@@ -156,21 +156,39 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                if(response.isSuccessful()){
-                    String access_token = response.body().getAccessToken();
-                    String message = response.body().getMessage();
-                    Log.e(TAG, "token___"+access_token);
-                    Log.e(TAG, "message "+message);
-                    Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
-                    saveTokenToDb(access_token);
-                    startActivity(intent);
-                    finish();
-                    progressDialogdialog.dismiss();
-                }
-                else{
+                if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+                    if(response.isSuccessful()){
+                        String access_token = response.body().getAccessToken();
+                        String message = response.body().getMessage();
+                        Log.e(TAG, "token___"+access_token);
+                        Log.e(TAG, "message "+message);
+                        Intent intent = new Intent(MainActivity.this, NavigationDrawer.class);
+                        saveTokenToDb(access_token);
+                        startActivity(intent);
+                        finish();
+                        progressDialogdialog.dismiss();
+                    }
+                    else{
 
-                    internetChecking();
+                        internetChecking();
+                    }
+                }else{
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+                    alertBuilder.setTitle("You're Offline");
+                    alertBuilder.setMessage("Please Check your network");
+                    String positiveText = getString(android.R.string.ok);
+                    alertBuilder.setPositiveButton(positiveText,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    AlertDialog dialog = alertBuilder.create();
+                    dialog.show();
                 }
+
 
 
             }
@@ -249,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
             submitForm();
         } else {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertBuilder.setTitle("Somethings Wrong");
+            alertBuilder.setTitle("You're Offline");
             alertBuilder.setMessage("Please Check your network");
             String positiveText = getString(android.R.string.ok);
             alertBuilder.setPositiveButton(positiveText,
@@ -264,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         }
     }
+
     public void saveTokenToDb(final String token){
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2).fallbackToDestructiveMigration()
                 .build();
