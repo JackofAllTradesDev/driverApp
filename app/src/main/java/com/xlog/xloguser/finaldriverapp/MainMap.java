@@ -110,9 +110,11 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
     boolean zoomable = true;
     boolean didInitialZoom;
     private Retrofit retrofit;
+    private Retrofit retrofitGet;
     ArrayList<String> coordinateToSnap;
     ArrayList<LatLng> saveCoordinates;
     ArrayList<LatLng> coordinatesList;
+    ArrayList<LatLng> snapLocation;
     ArrayList<ArrayList<LatLng>> saved;
     private ProgressDialog progressDialogdialog;
     public static  String transNumberPass;
@@ -146,6 +148,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         coordinateToSnap = new ArrayList<>();
         coordinatesList = new ArrayList<>();
         saveCoordinates = new ArrayList<>();
+        snapLocation = new ArrayList<>();
         saved = new ArrayList<ArrayList<LatLng>>();
         mainMapTypeBtn = (ImageButton) findViewById(R.id.mainMapTypeButton);
         routeBtn = (ImageButton) findViewById(R.id.routeBtn);
@@ -323,6 +326,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             public void onResponse(Call<SnapToRoad> call, Response<SnapToRoad> response) {
                 int value = response.body().getSnappedPoints().size();
 
+                Log.e(TAG, "INT VALUE "+ value);
                 double latLocation = 0;
                 double lngLocation = 0;
                 for (int i = 0; i < value; i++) {
@@ -358,11 +362,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         Log.e(TAG, "plotted" );
     }
     private void getSnappedLocation(){
-        progressDialogdialog = new ProgressDialog(MainMap.this);
-        progressDialogdialog.setMessage("Fetching Data");
-        progressDialogdialog.show();
-        progressDialogdialog.setCancelable(false);
-        progressDialogdialog.setCanceledOnTouchOutside(false);
+        snapLocation.clear();
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -377,37 +377,43 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .setLenient()
                 .create();
 
-        retrofit = new Retrofit.Builder()
+        retrofitGet = new Retrofit.Builder()
                 .baseUrl(Api.load)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        Api api = retrofit.create(Api.class);
+        Api api = retrofitGet.create(Api.class);
         Call<RetrieveLocation> call = api.getLocation(transNumberPass, String.valueOf(driverID), start,end, type);
 
         call.enqueue(new Callback<RetrieveLocation>() {
             @Override
             public void onResponse(Call<RetrieveLocation> call, Response<RetrieveLocation> response) {
-                int v = response.body().getData().getCompletePath().size();
-                Log.e("TAAGGGGGGGGGG ", "SIZZEEEE!!!! "+ v);
-                for(int a = 0; a < v; a++){
-                    Double lat = Double.valueOf(response.body().getData().getCompletePath().get(a).getLatitude());
-                    Double lang = Double.valueOf(response.body().getData().getCompletePath().get(a).getLongitude());
 
-                    latLng = new LatLng(lat, lang);
+                Log.e("TAAGGGGGGGGGG ", "WALANG LAMAN!!!! "+response.body().getMessage());
+                String message = response.body().getMessage();
+                if(message == null){
+                    int v = response.body().getData().getCompletePath().size();
 
-                    coordinatesList.add(latLng);
+                    Log.e("TAAGGGGGGGGGG ", "SIZZEEEE!!!! "+ v);
+                    for(int a = 0; a < v; a++){
+                        Double lat = Double.valueOf(response.body().getData().getCompletePath().get(a).getLatitude());
+                        Double lang = Double.valueOf(response.body().getData().getCompletePath().get(a).getLongitude());
+
+                        latLng = new LatLng(lat, lang);
+
+                        snapLocation.add(latLng);
+                    }
+                    Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                            .clickable(true)
+                            .addAll(snapLocation));
+                    polyline1.setWidth(15);
+                    polyline1.setColor(Color.BLACK);
+                    polyline1.setEndCap(new RoundCap());
+                    progressDialogdialog.dismiss();
+                }else{
                     progressDialogdialog.dismiss();
                 }
-                Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                        .clickable(true)
-                        .addAll(coordinatesList));
-                polyline1.setWidth(15);
-                polyline1.setColor(Color.BLACK);
-                polyline1.setEndCap(new RoundCap());
-
-
             }
 
             @Override
@@ -431,7 +437,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             @Override
             public void onResponse(Call<SnapToRoad> call, Response<SnapToRoad> response) {
                 int value = response.body().getSnappedPoints().size();
-
                 double latLocation = 0;
                 double lngLocation = 0;
                 for (int i = 0; i < value; i++) {
@@ -612,6 +617,11 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         super.onSaveInstanceState(outState);
     }
     private void getData() {
+        progressDialogdialog = new ProgressDialog(MainMap.this);
+        progressDialogdialog.setMessage("Fetching Data");
+        progressDialogdialog.show();
+        progressDialogdialog.setCancelable(false);
+        progressDialogdialog.setCanceledOnTouchOutside(false);
 
         final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token")
                 .build();
@@ -629,6 +639,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 }
 
                 loadWaypoints(access_token, transNumberPass);
+                getSnappedLocation();
             }
         });
 
@@ -723,14 +734,11 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 zoomMapTo(loc);
                 drawUserPositionMarker(loc);
                 sendCoordinatesToApi(loc);
-                getSnappedLocation();
             }else{
-                getSnappedLocation();
                 deleteArray();
                 localToAPi();
                 zoomMapTo(loc);
                 drawUserPositionMarker(loc);
-
             }
 
 
@@ -854,6 +862,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
+                       unregisterReceiver(backgroundReceiver);
                     }
                 });
 

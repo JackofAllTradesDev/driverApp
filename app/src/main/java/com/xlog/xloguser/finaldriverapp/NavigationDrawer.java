@@ -96,7 +96,7 @@ public class NavigationDrawer extends AppCompatActivity
     List<ReservationList> transactionList;
     List<ReservationList> reservationListList;
     List<ReservationList> upcomingList;
-    String dateString ="";
+    String dateString = "";
     String tokens;
     int driverId;
 
@@ -126,9 +126,9 @@ public class NavigationDrawer extends AppCompatActivity
         upcomingList = new ArrayList<>();
         todayTr.setEnabled(true);
 
-            //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
-           //        viewPager.setAdapter(TabPagerAdapter);
-          //        tabLayout.setupWithViewPager(viewPager);
+        //        tabPagerAdapter TabPagerAdapter = new tabPagerAdapter(getSupportFragmentManager());
+        //        viewPager.setAdapter(TabPagerAdapter);
+        //        tabLayout.setupWithViewPager(viewPager);
         Fabric.with(this, new Crashlytics());
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -139,7 +139,7 @@ public class NavigationDrawer extends AppCompatActivity
         String versionName = BuildConfig.VERSION_NAME;
 
         String verionCodeNumber = versionName;
-        versionTxt.setText("Version "+verionCodeNumber);
+        versionTxt.setText("Version " + verionCodeNumber);
         todayTr.setEnabled(false);
 
         todayTr.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +147,7 @@ public class NavigationDrawer extends AppCompatActivity
             public void onClick(View v) {
                 if (AppStatus.getInstance(getBaseContext()).isOnline()) {
                     todayList();
-                }else{
+                } else {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
                     alertBuilder.setTitle("You're Offline");
                     alertBuilder.setMessage("Please Check your network");
@@ -163,7 +163,6 @@ public class NavigationDrawer extends AppCompatActivity
                     AlertDialog dialog = alertBuilder.create();
                     dialog.show();
                 }
-
 
 
             }
@@ -172,8 +171,8 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (AppStatus.getInstance(getBaseContext()).isOnline()) {
-                   upcomingList();
-                }else{
+                    upcomingList();
+                } else {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
                     alertBuilder.setTitle("You're Offline");
                     alertBuilder.setMessage("Please Check your network");
@@ -189,7 +188,6 @@ public class NavigationDrawer extends AppCompatActivity
                     AlertDialog dialog = alertBuilder.create();
                     dialog.show();
                 }
-
 
 
             }
@@ -207,16 +205,15 @@ public class NavigationDrawer extends AppCompatActivity
         loadApi();
 
         SimpleDateFormat formatter
-                = new SimpleDateFormat ("yyyy-MM-dd");
+                = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime_1 = new Date();
-         dateString = formatter.format(currentTime_1);
-         Log.e(TAG, "DATE "+dateString);
-
+        dateString = formatter.format(currentTime_1);
+        Log.e(TAG, "DATE " + dateString);
 
 
     }
 
-    private void todayList(){
+    private void todayList() {
         transactionList.clear();
         progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
         progressDialogdialog.setMessage("Fetching Data");
@@ -229,48 +226,48 @@ public class NavigationDrawer extends AppCompatActivity
         call2.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     int value = response.body().size();
-                    String date= "";
+                    String date = "";
 
-                        for(int t = 0; t < value; t++){
-                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date apiDate = formatApiDate.parse(date);
-                                Date current = currentDate.parse(dateString);
-                                if(dateString.equalsIgnoreCase(date)){
-                                    transactionList.addAll(Collections.singleton(response.body().get(t)));
+                    for (int t = 0; t < value; t++) {
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if (dateString.equalsIgnoreCase(date)) {
+                                transactionList.addAll(Collections.singleton(response.body().get(t)));
 
-                                }
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
-                    if(transactionList.size() == 0){
+                    }
+                    if (transactionList.size() == 0) {
                         warning.setVisibility(View.VISIBLE);
                         warning.setText("You don't have transactions for today");
                     }
-                        generateEmployeeList();
-                        upcomingTr.setEnabled(true);
-                        todayTr.setEnabled(false);
+                    generateEmployeeList();
+                    upcomingTr.setEnabled(true);
+                    todayTr.setEnabled(false);
 
-                    }
-                    progressDialogdialog.dismiss();
                 }
-
+                progressDialogdialog.dismiss();
+            }
 
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                Log.e(TAG, "error today "+t.getMessage());
+                Log.e(TAG, "error today " + t.getMessage());
                 erroMessageToday(t.getMessage());
             }
         });
     }
-    private void upcomingList(){
+
+    private void upcomingList() {
         upcomingList.clear();
         progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
         progressDialogdialog.setMessage("Fetching Data");
@@ -284,50 +281,50 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
 
-                    if(response.isSuccessful()){
-                        int value = response.body().size();
-                        String date= "";
+                if (response.isSuccessful()) {
+                    int value = response.body().size();
+                    String date = "";
 
-                        for(int t = 0; t < value; t++){
-                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0,10);
-                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date apiDate = formatApiDate.parse(date);
-                                Date current = currentDate.parse(dateString);
-                                if(current.before(apiDate)){
-                                    upcomingList.addAll(Collections.singleton(response.body().get(t)));
-                                }
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                    for (int t = 0; t < value; t++) {
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if (current.before(apiDate)) {
+                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
                             }
-                        }
-                        Log.e(TAG, "upcomingList "+upcomingList.size());
-                        if(upcomingList.size() == 0){
-                            warning.setVisibility(View.VISIBLE);
-                            warning.setText("You don't have upcoming transactions");
-                        }
-                        generateUpcomingList();
-                        upcomingTr.setEnabled(false);
-                        todayTr.setEnabled(true);
-                    }
-                    progressDialogdialog.dismiss();
-                }
 
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.e(TAG, "upcomingList " + upcomingList.size());
+                    if (upcomingList.size() == 0) {
+                        warning.setVisibility(View.VISIBLE);
+                        warning.setText("You don't have upcoming transactions");
+                    }
+                    generateUpcomingList();
+                    upcomingTr.setEnabled(false);
+                    todayTr.setEnabled(true);
+                }
+                progressDialogdialog.dismiss();
+            }
 
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                Log.e(TAG, "error upcoming "+t.getMessage());
+                Log.e(TAG, "error upcoming " + t.getMessage());
                 errorUpcoming(t.getMessage());
             }
         });
     }
-    public void loadUserDetails(String Token){
+
+    public void loadUserDetails(String Token) {
         transactionList.clear();
         upcomingList.clear();
-        Log.e(TAG, "TOKEN__ "+Token);
+        Log.e(TAG, "TOKEN__ " + Token);
 
         tokens = Token;
         Api api = retrofit.create(Api.class);
@@ -338,34 +335,34 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
 
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     int value = response.body().size();
-                    String date= "";
-                    Log.e(TAG, "SIZE___ "+ value);
+                    String date = "";
+                    Log.e(TAG, "SIZE___ " + value);
 
-                    String transNumber ="";
+                    String transNumber = "";
 
-                        for (int t = 0; t < value; t++) {
-                            date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
-                            SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
-                            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date apiDate = formatApiDate.parse(date);
-                                Date current = currentDate.parse(dateString);
-                                if (current.before(apiDate)) {
-                                    upcomingList.addAll(Collections.singleton(response.body().get(t)));
-                                }
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                    for (int t = 0; t < value; t++) {
+                        date = response.body().get(t).getDeliveryDates().get(0).getDeliveryAt().substring(0, 10);
+                        SimpleDateFormat formatApiDate = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date apiDate = formatApiDate.parse(date);
+                            Date current = currentDate.parse(dateString);
+                            if (current.before(apiDate)) {
+                                upcomingList.addAll(Collections.singleton(response.body().get(t)));
                             }
-                            if (dateString.equalsIgnoreCase(date)) {
-                                transactionList.addAll(Collections.singleton(response.body().get(t)));
 
-                            }
-                            progressDialogdialog.dismiss();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
-                    if(transactionList.size() == 0){
+                        if (dateString.equalsIgnoreCase(date)) {
+                            transactionList.addAll(Collections.singleton(response.body().get(t)));
+
+                        }
+
+                    }
+                    if (transactionList.size() == 0) {
                         warning.setVisibility(View.VISIBLE);
                         warning.setText("You don't have transactions for today");
                     }
@@ -375,16 +372,14 @@ public class NavigationDrawer extends AppCompatActivity
                     today.setText(Integer.toString(sizeTrans));
                     upcoming.setText(Integer.toString(sizeUpcoming));
                     generateEmployeeList();
-                    }
-                    else {
+                    progressDialogdialog.dismiss();
                 }
-
 
             }
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                Log.e(TAG, "onFailure "+t.getMessage());
+                Log.e(TAG, "onFailure " + t.getMessage());
                 errorMessage(t.getMessage());
             }
         });
@@ -392,31 +387,31 @@ public class NavigationDrawer extends AppCompatActivity
         call.enqueue(new Callback<UserDetails>() {
             @Override
             public void onResponse(Call<UserDetails> call, Response<UserDetails> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String value = response.body().getEntity().getImage();
-                    Log.e(TAG, " value "+value);
-                    if(value == null){
+                    Log.e(TAG, " value " + value);
+                    if (value == null) {
 
-                        String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
+                        String full_name = response.body().getEntity().getFirstName() + " " + response.body().getEntity().getLastName();
                         String mobile = response.body().getEntity().getMobileNumber();
                         profile_image = "https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX8345221.jpg";
                         loadImages(profile_image);
                         loadDetails(full_name, mobile);
                         getID(response.body().getEntity().getId());
 
-                    }else{
+                    } else {
                         String image_url = "https://xlog-dev.s3.amazonaws.com/";
                         String image_urlQA = "https://xlog-qa.s3.amazonaws.com/";
                         getID(response.body().getEntity().getId());
-                        String full_name = response.body().getEntity().getFirstName() +" "+ response.body().getEntity().getLastName();
+                        String full_name = response.body().getEntity().getFirstName() + " " + response.body().getEntity().getLastName();
                         String mobile = response.body().getEntity().getMobileNumber();
-                        profile_image = image_urlQA+value;
+                        profile_image = image_urlQA + value;
                         loadImages(profile_image);
                         loadDetails(full_name, mobile);
 
                     }
 
-                }else{
+                } else {
 
                 }
 
@@ -424,16 +419,15 @@ public class NavigationDrawer extends AppCompatActivity
 
             @Override
             public void onFailure(Call<UserDetails> call, Throwable t) {
-                Log.e(TAG, "Response Failure "+ t.getMessage());
+                Log.e(TAG, "Response Failure " + t.getMessage());
                 errorMessage(t.getMessage());
             }
         });
 
 
-
     }
 
-    public void errorMessage(String message){
+    public void errorMessage(String message) {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
@@ -452,7 +446,7 @@ public class NavigationDrawer extends AppCompatActivity
         dialog.show();
     }
 
-    public void erroMessageToday(String message){
+    public void erroMessageToday(String message) {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
@@ -470,7 +464,8 @@ public class NavigationDrawer extends AppCompatActivity
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
     }
-    public void errorUpcoming(String message){
+
+    public void errorUpcoming(String message) {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
@@ -481,14 +476,15 @@ public class NavigationDrawer extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                     upcomingList();
+                        upcomingList();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
         dialog.show();
     }
-    public void loadApi(){
+
+    public void loadApi() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -505,7 +501,8 @@ public class NavigationDrawer extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
-    public void loadImages(String image_url){
+
+    public void loadImages(String image_url) {
 
         Picasso.get()
                 .load(image_url)
@@ -527,7 +524,8 @@ public class NavigationDrawer extends AppCompatActivity
             }
         }
     }
-    public void loadDetails(String fullname, String mobile_num){
+
+    public void loadDetails(String fullname, String mobile_num) {
         LinearLayout mParent = (LinearLayout) navView.getHeaderView(0);
         userFullname = (TextView) mParent.findViewById(R.id.fullNameTxt);
         driverMobileNumber = (TextView) mParent.findViewById(R.id.userNumberTxt);
@@ -538,17 +536,13 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
 
-
-
-
-
     private void getLocalPermissionContacts() {
         String[] permissions = {permission.CALL_PHONE, permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION, permission.CAMERA, permission.READ_EXTERNAL_STORAGE};
 
-        if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, permission.CAMERA ) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, permission.READ_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED)  {
+        if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(this, permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
 
                 locationPermissionGrantedContacts = true;
@@ -633,7 +627,7 @@ public class NavigationDrawer extends AppCompatActivity
         if (id == R.id.nav_pending) {
             Intent intent = new Intent(this, PendingTransactions.class);
             startActivity(intent);
-        }  else if (id == R.id.nav_all) {
+        } else if (id == R.id.nav_all) {
             Intent intent = new Intent(this, AllTrasactions.class);
             startActivity(intent);
 
@@ -641,7 +635,7 @@ public class NavigationDrawer extends AppCompatActivity
             Intent intent = new Intent(this, About.class);
             startActivity(intent);
 
-        }else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             AlertDialog.Builder builder = new AlertDialog.Builder(NavigationDrawer.this);
             builder.setTitle("LOGOUT");
             builder.setMessage("Are you sure you want to logout");
@@ -676,6 +670,7 @@ public class NavigationDrawer extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
             getAccesToken();
@@ -688,8 +683,8 @@ public class NavigationDrawer extends AppCompatActivity
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                      dialog.dismiss();
-                      internetChecking();
+                            dialog.dismiss();
+                            internetChecking();
                         }
                     });
 
@@ -706,6 +701,7 @@ public class NavigationDrawer extends AppCompatActivity
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
+
     private void generateUpcomingList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -713,34 +709,35 @@ public class NavigationDrawer extends AppCompatActivity
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
-    public void getAccesToken(){
+
+    public void getAccesToken() {
         progressDialogdialog = new ProgressDialog(NavigationDrawer.this);
         progressDialogdialog.setMessage("Loading");
         progressDialogdialog.show();
         progressDialogdialog.setCancelable(false);
         progressDialogdialog.setCanceledOnTouchOutside(false);
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token").addMigrations(MIGRATION_1_2)
                 .build();
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                String value ="";
-                for(int a = 0; a < db.rmDao().getToken().size(); a++){
-                    Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getToken().get(a).getAccess_token());
+                String value = "";
+                for (int a = 0; a < db.rmDao().getToken().size(); a++) {
+                    Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
                     value = db.rmDao().getToken().get(a).getAccess_token();
 
                 }
 
-            loadUserDetails(value);
+                loadUserDetails(value);
 
             }
         });
 
     }
 
-    public void getID(final int id){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
+    public void getID(final int id) {
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token").addMigrations(MIGRATION_1_2)
                 .build();
 
         AsyncTask.execute(new Runnable() {
@@ -748,12 +745,12 @@ public class NavigationDrawer extends AppCompatActivity
             public void run() {
 
 
-
-               db.rmDao().updateId(id, 1);
+                db.rmDao().updateId(id, 1);
 
             }
         });
     }
+
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -764,7 +761,8 @@ public class NavigationDrawer extends AppCompatActivity
 
     @Override
     protected void onRestart() {
-        super.onRestart();
         internetChecking();
+        super.onRestart();
     }
 }
+

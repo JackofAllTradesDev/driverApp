@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void succes(){
 
-            pass = Integer.parseInt(passWord.getText().toString());
+            pass = Integer.parseInt(passWord.getText().toString().trim());
             progressDialogdialog = new ProgressDialog(MainActivity.this);
             progressDialogdialog.setMessage("Connecting");
             progressDialogdialog.show();
