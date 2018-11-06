@@ -11,8 +11,9 @@ import android.content.Context;
 import com.xlog.xloguser.finaldriverapp.Room.Dao.Dao;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.Transactions;
 
-@Database(entities = { TokenEntity.class, Coordinates.class}, version =1, exportSchema = false)
+@Database(entities = { TokenEntity.class, Coordinates.class, Transactions.class}, version =2, exportSchema = false)
 public abstract class RmDatabase extends RoomDatabase {
 
     private static final String DB_NAME = "RoomDatabase.db";
@@ -30,6 +31,7 @@ public abstract class RmDatabase extends RoomDatabase {
                             // if no Migration object.
                             // Migration is not part of this practical.
                             .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_1_3)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -43,6 +45,12 @@ public abstract class RmDatabase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE `Coordinates` (`id` INTEGER, "
                     + "`latlng` TEXT, PRIMARY KEY(`id`))");
+        }
+    };
+    static final Migration MIGRATION_1_3 = new Migration(1, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `Transactions` (`id` INTEGER, " + "`latLang` TEXT,`status` INTEGER, PRIMARY KEY(`id`))");
         }
     };
 

@@ -40,9 +40,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.BottomSheetDialog.BottomSheetDialog;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
+import com.xlog.xloguser.finaldriverapp.Room.Entity.Transactions;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
 import java.text.ParseException;
@@ -148,12 +152,14 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 Intent intent = new Intent(TrasactionView.this, MainMap.class);
                 intent.putExtra("transNumber", transNumberPass);
                 intent.putExtra("driverId", driverId);
+                saveTransaction(transNumberPass);
                 startActivity(intent);
 
             }
         });
 
         internetChecking();
+
         SimpleDateFormat formatter
                 = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime_1 = new Date();
@@ -190,10 +196,15 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.URLQA)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
@@ -228,9 +239,6 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         }else{
                             startTransactionBtn.setVisibility(View.VISIBLE);
                         }
-                        if (check.contains(c)) {
-                            startTransactionBtn.setText("Resume Route");
-                        }
                     }
                     for (int a = 0; a < val; a++) {
                         if (a == 1) {
@@ -264,6 +272,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     progressDialogdialog.dismiss();
+                    getStatus();
                 }
 
 
@@ -403,6 +412,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
            getData();
+
         } else {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
             alertBuilder.setTitle("You're Offline");
@@ -420,6 +430,47 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             AlertDialog dialog = alertBuilder.create();
             dialog.show();
         }
+    }
+    public void saveTransaction(final String tr){
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Transactions").addMigrations(MIGRATION_1_3).fallbackToDestructiveMigration()
+                .build();
+
+        int b = 1;
+        final Transactions todoListItem= new Transactions(null, tr, b);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                 db.rmDao().addTransactions(todoListItem);
+            }
+        });
+    }
+    static final Migration MIGRATION_1_3 = new Migration(1, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `Transactions` (`id` INTEGER, " + "`latLang` TEXT,`status` INTEGER, PRIMARY KEY(`id`))");
+        }
+    };
+
+    public void getStatus() {
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Transactions").addMigrations(MIGRATION_1_3)
+                .build();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, "STATUS "+ db.rmDao().selectTransaction(transNumberPass));
+                Integer stat = db.rmDao().selectTransaction(transNumberPass);
+                if(stat == null){
+                    startTransactionBtn.setText("Start Route");
+                }else{
+                    startTransactionBtn.setText("Resume Route");
+                }
+
+
+
+
+            }
+        });
     }
 
 

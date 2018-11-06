@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,20 +19,28 @@
         android:roundIcon="@mipmap/xlog_launcher_new_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:screenOrientation="portrait">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".BackgroundService" android:exported="false" android:enabled="true"/>
-        <receiver android:name=".BackgroundReceiver"/>
+
+        <service
+            android:name=".BackgroundService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver android:name=".BackgroundReceiver" />
+
         <activity
             android:name=".NavigationDrawer"
             android:label="@string/title_activity_navigation_drawer"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -44,42 +53,45 @@
         <activity
             android:name=".Commodity"
             android:parentActivityName=".NavigationDrawer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AllTrasactions"
             android:parentActivityName=".NavigationDrawer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CompleteTransactions"
             android:parentActivityName=".CompleteTransactions"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PendingTransactions"
             android:parentActivityName=".NavigationDrawer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".About"
             android:parentActivityName=".NavigationDrawer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TodayUpcomingActivity"
             android:parentActivityName=".NavigationDrawer" />
-        <activity android:name=".MainMap"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SignatureActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MainMap"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignatureActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".RoutesActivity"
             android:parentActivityName=".MainMap"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".TrasactionView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TrasactionView"
             android:parentActivityName=".NavigationDrawer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="b8fb1d13925b815d75a6f2082c56920bb4a712f1" />
+
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

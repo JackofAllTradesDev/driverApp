@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Adapters.RoutesAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
@@ -102,10 +104,15 @@ public class Commodity extends AppCompatActivity {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.URLQA)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
     public void getData(String token, String transactionNumber){

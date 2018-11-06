@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xlog.xloguser.finaldriverapp.Adapters.AllTransactionAdapter;
 import com.xlog.xloguser.finaldriverapp.Adapters.DashboadAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
@@ -90,10 +92,15 @@ public class AllTrasactions extends AppCompatActivity {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Api.URLQA)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 

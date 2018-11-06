@@ -6,11 +6,13 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -178,7 +180,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
 //        "application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
         String[] mimeTypes =
-                {"application/pdf"};
+                {"*/*"};
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -320,15 +322,35 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                 if (resultCode == RESULT_OK) {
                     File fileS = new File(data.getData().getPath());
                     Uri selectedFileURI = data.getData();
-                    filename.setText(fileS.getName());
+                    String uriString = selectedFileURI.toString();
+                    File myFile = new File(uriString);
+                    String displayName = null;
+
                     rName = received.getText().toString();
                     conttact = contact.getText().toString();
-                    String fileExt = MimeTypeMap.getFileExtensionFromUrl(selectedFileURI.toString());
+
+                    if (uriString.startsWith("content://")) {
+                        Cursor cursor = null;
+                        try {
+                            cursor = this.getContentResolver().query(selectedFileURI, null, null, null, null);
+                            if (cursor != null && cursor.moveToFirst()) {
+                                displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                            }
+                        } finally {
+                            cursor.close();
+                        }
+                    } else if (uriString.startsWith("file://")) {
+                        displayName = myFile.getName();
+                    }
+
                     try {
+                        String ext = displayName.substring(displayName.lastIndexOf(".")+1);
                         is = getContentResolver().openInputStream(selectedFileURI);
                         Log.e(TAG, "Fpath. " + is);
-                        Log.e(TAG, "fileExt. " + "." + fileExt);
-                        readBytes(is,".pdf",driverID,rName,conttact);
+                        Log.e(TAG, "fileExt. " + "." + ext);
+
+                        filename.setText(displayName);
+                        readBytes(is,ext,driverID,rName,conttact);
 
 
                     } catch (FileNotFoundException e) {

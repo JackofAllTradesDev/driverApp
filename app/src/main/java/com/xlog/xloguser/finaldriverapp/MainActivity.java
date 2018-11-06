@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveTokenToDb(final String token){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2).fallbackToDestructiveMigration()
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_3).fallbackToDestructiveMigration()
                 .build();
 
         int a = 1;
@@ -304,11 +304,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    static final Migration MIGRATION_1_3 = new Migration(1, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE `Coordinates` (`id` INTEGER, "
-                    + "`latLang` TEXT, PRIMARY KEY(`id`))");
+            database.execSQL("CREATE TABLE `Transactions` (`id` INTEGER, " + "`latLang` TEXT,`status` INTEGER, PRIMARY KEY(`id`))");
         }
     };
+
 }
