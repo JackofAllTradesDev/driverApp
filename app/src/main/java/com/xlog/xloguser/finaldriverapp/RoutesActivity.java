@@ -36,6 +36,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.IOUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.xlog.xloguser.finaldriverapp.Adapters.EndRouteAdapter;
 import com.xlog.xloguser.finaldriverapp.Adapters.RoutesAdapter;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
@@ -64,7 +65,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RoutesActivity extends AppCompatActivity implements Attachment{
+public class RoutesActivity extends AppCompatActivity implements Attachment {
     private static final String TAG = "RoutesActivity";
     private Retrofit retrofit;
     private CardView cv;
@@ -75,6 +76,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     private Button signatureBtn;
     private ImageButton attachBtn;
     private Button mainSubmitBtn;
+    private Button endTrip;
     final int CAMERA_PIC_REQUEST = 1337;
     public static final int SIGNATURE_ACTIVITY = 10;
     private static final int PICKFILE_RESULT_CODE = 1;
@@ -82,13 +84,16 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     int driverID;
     EndRouteAdapter endRouteAdapter;
     EditText received, contact;
+    int rID, truckerID;
     String placeID;
     private ProgressDialog progressDialogdialog;
     InputStream is;
-    String rName, conttact, access_token, image2, imgString, token,stat;
+    String rName, conttact, access_token, image2, imgString, token, stat;
     ArrayList<SendBase> sendBases;
     ArrayList<EncodeFile> encodeFiles;
     ArrayList<String> completeList;
+    String transNumberPass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +104,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         Fabric.with(this, new Crashlytics());
         recyclerView = (RecyclerView) findViewById(R.id.routeRecyclerView);
         signatureBtn = (Button) findViewById(R.id.signatureBtn);
+        endTrip = (Button) findViewById(R.id.btnEndTrip);
         cameraBtn = (ImageButton) findViewById(R.id.cameraBtn);
         attachBtn = (ImageButton) findViewById(R.id.attachmentBtn);
         received = (EditText) findViewById(R.id.receivedTxt);
@@ -110,15 +116,16 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         sendBases = new ArrayList<>();
         encodeFiles = new ArrayList<>();
         completeList = new ArrayList<>();
+        Bundle extras = getIntent().getExtras();
+        transNumberPass = extras.getString("tr_number");
         loadApi();
         internetChecking();
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                if (contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
                     Toast.makeText(RoutesActivity.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
                 }
@@ -129,11 +136,11 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         signatureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                if (contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
                     Toast.makeText(RoutesActivity.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Intent intent = new Intent(RoutesActivity.this, SignatureActivity.class);
-                    startActivityForResult(intent,SIGNATURE_ACTIVITY);
+                    startActivityForResult(intent, SIGNATURE_ACTIVITY);
                 }
 
             }
@@ -141,9 +148,9 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         attachBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
+                if (contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
                     Toast.makeText(RoutesActivity.this, "Please input name and contact number first.", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     openFolder();
                 }
 
@@ -156,27 +163,37 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                 rName = received.getText().toString();
                 conttact = contact.getText().toString();
                 validationCheck();
-              routes.clear();
+                routes.clear();
+
+            }
+        });
+        endTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RoutesActivity.this, TrasactionView.class);
+                intent.putExtra("tr_number", transNumberPass);
+                startActivity(intent);
+                setStatusRoute();
 
             }
         });
 
+
     }
 
-    private void validationCheck(){
-        if(contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()){
+    private void validationCheck() {
+        if (contact.getText().toString().isEmpty() && received.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please input empty fields",
                     Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
 
 
             new RoutesActivity.Get_User_Data().execute();
 
         }
     }
-    public void openFolder()
-    {
+
+    public void openFolder() {
 
 //        "application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
         String[] mimeTypes =
@@ -195,7 +212,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
             for (String mimeType : mimeTypes) {
                 mimeTypesStr += mimeType + "|";
             }
-            intent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
+            intent.setType(mimeTypesStr.substring(0, mimeTypesStr.length() - 1));
         }
         startActivityForResult(intent, PICKFILE_RESULT_CODE);
     }
@@ -214,30 +231,29 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                 .build();
     }
 
-    private void loadDataAdapter(){
+    private void loadDataAdapter() {
         endRouteAdapter = new EndRouteAdapter(routes, RoutesActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(endRouteAdapter);
 
     }
 
-    public void getAccesToken(){
+    public void getAccesToken() {
         progressDialogdialog = new ProgressDialog(RoutesActivity.this);
         progressDialogdialog.setMessage("Fetching Data");
         progressDialogdialog.show();
         progressDialogdialog.setCancelable(false);
         progressDialogdialog.setCanceledOnTouchOutside(false);
-        Bundle extras = getIntent().getExtras();
-        final String transNumberPass = extras.getString("tr_number");
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Token").addMigrations(MIGRATION_1_2)
+
+        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Token").addMigrations(MIGRATION_1_2)
                 .build();
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                String value ="";
-                for(int a = 0; a < db.rmDao().getToken().size(); a++){
-                    Log.e("LOG___", "fetch_____ "+a +" "+ db.rmDao().getToken().get(a).getAccess_token());
+                String value = "";
+                for (int a = 0; a < db.rmDao().getToken().size(); a++) {
+                    Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
                     token = db.rmDao().getToken().get(a).getAccess_token();
                 }
                 loadData(token, transNumberPass);
@@ -247,6 +263,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
 
     }
+
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -254,21 +271,32 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                     + "`latLang` TEXT, PRIMARY KEY(`id`))");
         }
     };
+
     public void loadData(String Token, String transactionNum) {
 
         Api api = retrofit.create(Api.class);
         Call<List<ReservationList>> call = api.getInfo(Token, transactionNum);
-        Log.e(TAG, "Response" + transactionNum );
+        Log.e(TAG, "Response" + transactionNum);
         call.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
                 int value = response.body().get(0).getRoutes().size();
-                Log.e(TAG, "value" + value );
-                        driverID = response.body().get(0).getId();
-                Log.e(TAG, "driverID" + driverID );
-                        routes = response.body().get(0).getRoutes();
-                    loadDataAdapter();
-                    progressDialogdialog.dismiss();
+                Log.e(TAG, "value" + value);
+                driverID = response.body().get(0).getId();
+                Log.e(TAG, "driverID" + driverID);
+                routes = response.body().get(0).getRoutes();
+                loadDataAdapter();
+
+                rID = response.body().get(0).getTrucks().get(0).getTruckingReservationId();
+                truckerID = response.body().get(0).getTrucks().get(0).getTruckerTruckId();
+                int routeSize = response.body().get(0).getRoutes().size();
+                for (int b = 0; b < routeSize; b++) {
+                    String routeStatus = response.body().get(0).getRoutes().get(b).getRoutestatus();
+                    if (routeStatus.equalsIgnoreCase("Completed")) {
+                        endTrip.setVisibility(View.VISIBLE);
+                    }
+                }
+                progressDialogdialog.dismiss();
 
             }
 
@@ -282,7 +310,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch(requestCode) {
+        switch (requestCode) {
             case SIGNATURE_ACTIVITY:
                 if (resultCode == RESULT_OK) {
                     rName = received.getText().toString();
@@ -344,13 +372,13 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                     }
 
                     try {
-                        String ext = displayName.substring(displayName.lastIndexOf(".")+1);
+                        String ext = displayName.substring(displayName.lastIndexOf(".") + 1);
                         is = getContentResolver().openInputStream(selectedFileURI);
                         Log.e(TAG, "Fpath. " + is);
                         Log.e(TAG, "fileExt. " + "." + ext);
 
                         filename.setText(displayName);
-                        readBytes(is,ext,driverID,rName,conttact);
+                        readBytes(is, ext, driverID, rName, conttact);
 
 
                     } catch (FileNotFoundException e) {
@@ -366,8 +394,8 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     public byte[] readBytes(InputStream inputStream, String ext, int drive, String name, String contact) throws IOException {
         byte[] data = IOUtils.toByteArray(inputStream);
 
-        String encoded = Base64.encodeToString( data, Base64.DEFAULT );
-        byte[] myByteArray = Base64.decode( encoded, Base64.DEFAULT );
+        String encoded = Base64.encodeToString(data, Base64.DEFAULT);
+        byte[] myByteArray = Base64.decode(encoded, Base64.DEFAULT);
         String base64 = Base64.encodeToString(myByteArray, Base64.DEFAULT);
 
         EncodeFile encodeFile = new EncodeFile();
@@ -377,7 +405,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         return data;
     }
 
-    private void signature(String a, String b){
+    private void signature(String a, String b) {
 
         EncodeFile encodeFile = new EncodeFile();
         encodeFile.setEncodedfile(image2);
@@ -387,7 +415,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
 
     }
 
-    private void camera(String name, String number){
+    private void camera(String name, String number) {
 
         EncodeFile encodeFile = new EncodeFile();
         encodeFile.setEncodedfile(imgString);
@@ -406,6 +434,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
             this.dialog.setCancelable(false);
             this.dialog.show();
         }
+
         @Override
         protected Void doInBackground(Void... params) {
             SendBase sendBase = new SendBase();
@@ -418,7 +447,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
             sendBase.setEncodeFile(encodeFiles);
             sendBases.add(sendBase);
 
-            Log.e(TAG, "error "+ rName+" "+conttact);
+            Log.e(TAG, "error " + rName + " " + conttact);
             Gson gson = new GsonBuilder()
                     .setLenient()
                     .create();
@@ -431,7 +460,6 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
             Api api = retrofit.create(Api.class);
 
 
-
             Call<List<SendBase>> userCall = api.sendBase64(sendBases);
 
             userCall.enqueue(new Callback<List<SendBase>>() {
@@ -439,9 +467,10 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
                 public void onResponse(Call<List<SendBase>> call, Response<List<SendBase>> response) {
                     Log.e(TAG, "Success");
                 }
+
                 @Override
                 public void onFailure(Call<List<SendBase>> call, Throwable t) {
-                    Log.e(TAG, "error "+ t.getMessage());
+                    Log.e(TAG, "error " + t.getMessage());
                     sendBases.clear();
                     encodeFiles.clear();
                     getAccesToken();
@@ -475,7 +504,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
     @Override
     public void sendID(String id) {
         placeID = id;
-        Log.e(TAG, "IDDDDDD+ "+ id);
+        Log.e(TAG, "IDDDDDD+ " + id);
     }
 
     @Override
@@ -483,7 +512,8 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         super.onRestart();
         internetChecking();
     }
-    public void errorMessage(String message){
+
+    public void errorMessage(String message) {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(RoutesActivity.this);
         alertBuilder.setTitle("Try Again");
@@ -524,4 +554,21 @@ public class RoutesActivity extends AppCompatActivity implements Attachment{
         }
     }
 
+    private void setStatusRoute() {
+        Api api = retrofit.create(Api.class);
+        Call<JsonObject> call = api.setRoutStatus(2, rID, truckerID, transNumberPass);
+
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                Log.e(TAG, "Successss_____ ");
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+
+    }
 }

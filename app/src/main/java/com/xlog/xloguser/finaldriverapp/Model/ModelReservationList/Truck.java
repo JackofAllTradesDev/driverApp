@@ -12,6 +12,15 @@ public class Truck {
     @SerializedName("end_date")
     @Expose
     private String endDate;
+    @SerializedName("trucking_reservation_id")
+    @Expose
+    private Integer truckingReservationId;
+    @SerializedName("trucker_truck_id")
+    @Expose
+    private Integer truckerTruckId;
+    @SerializedName("route_status")
+    @Expose
+    private Integer routeStatus;
 
     public String getStartDate() {
         return startDate;
@@ -27,6 +36,30 @@ public class Truck {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public Integer getTruckingReservationId() {
+        return truckingReservationId;
+    }
+
+    public void setTruckingReservationId(Integer truckingReservationId) {
+        this.truckingReservationId = truckingReservationId;
+    }
+
+    public Integer getTruckerTruckId() {
+        return truckerTruckId;
+    }
+
+    public void setTruckerTruckId(Integer truckerTruckId) {
+        this.truckerTruckId = truckerTruckId;
+    }
+
+    public Integer getRouteStatus() {
+        return routeStatus;
+    }
+
+    public void setRouteStatus(Integer routeStatus) {
+        this.routeStatus = routeStatus;
     }
 
 }

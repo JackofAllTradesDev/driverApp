@@ -30,7 +30,7 @@ public class ReservationList {
     private List<Object> supportingDocuments = null;
     @SerializedName("special_instructions")
     @Expose
-    private Object specialInstructions;
+    private String specialInstructions;
     @SerializedName("terms_of_payment")
     @Expose
     private Integer termsOfPayment;
@@ -109,11 +109,11 @@ public class ReservationList {
         this.supportingDocuments = supportingDocuments;
     }
 
-    public Object getSpecialInstructions() {
+    public String getSpecialInstructions() {
         return specialInstructions;
     }
 
-    public void setSpecialInstructions(Object specialInstructions) {
+    public void setSpecialInstructions(String specialInstructions) {
         this.specialInstructions = specialInstructions;
     }
 

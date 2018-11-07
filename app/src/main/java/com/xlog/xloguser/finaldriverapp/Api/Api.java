@@ -1,5 +1,6 @@
 package com.xlog.xloguser.finaldriverapp.Api;
 
+import com.google.gson.JsonObject;
 import com.xlog.xloguser.finaldriverapp.Model.Login;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
 import com.xlog.xloguser.finaldriverapp.Model.RetrieveLocation.RetrieveLocation;
@@ -47,4 +48,6 @@ public interface Api {
     @Headers("Authorization: Basic Z3BzYXBpZGV2OlFYbDFjMmc2U1c1a2FXRQ")
     @GET("driver-locations")
     Call<RetrieveLocation> getLocation(@Query("prefixedId") String prefix, @Query("driverId") String driverID, @Query("start") String start, @Query("end") String endTime, @Query("type") String type);
+    @GET("setroutestatus.php")
+    Call<JsonObject> setRoutStatus(@Query("status") int status, @Query("trucking_reservation_id") int trID, @Query("trucker_truck_id") int ttID, @Query("prefixId") String prID);
 }

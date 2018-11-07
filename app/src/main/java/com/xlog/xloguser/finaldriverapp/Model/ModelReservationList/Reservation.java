@@ -1,6 +1,7 @@
 
 package com.xlog.xloguser.finaldriverapp.Model.ModelReservationList;
 
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -33,9 +34,6 @@ public class Reservation {
     @SerializedName("commodity")
     @Expose
     private Commodity commodity;
-    @SerializedName("container_release_order")
-    @Expose
-    private Object containerReleaseOrder;
     @SerializedName("consignee")
     @Expose
     private Consignee consignee;
@@ -112,13 +110,6 @@ public class Reservation {
         this.commodity = commodity;
     }
 
-    public Object getContainerReleaseOrder() {
-        return containerReleaseOrder;
-    }
-
-    public void setContainerReleaseOrder(Object containerReleaseOrder) {
-        this.containerReleaseOrder = containerReleaseOrder;
-    }
 
     public Consignee getConsignee() {
         return consignee;

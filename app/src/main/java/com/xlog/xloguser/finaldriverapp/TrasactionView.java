@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.xlog.xloguser.finaldriverapp.Api.Api;
 import com.xlog.xloguser.finaldriverapp.BottomSheetDialog.BottomSheetDialog;
 import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationList;
@@ -86,10 +87,11 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     private Marker userPositionMarker;
     Context context;
     String transNumberPass, currentTrans, pNumbers;
-    int driverId;
+    int driverId, rID, truckerID;
     Toolbar mToolbar;
     Marker mark;
     String markLocation, dateString;
+    Integer stat;
     int[] mImgArray = {R.drawable.a_blue, R.drawable.b_blue,
             R.drawable.c_blue, R.drawable.d_blue, R.drawable.e_blue};
 
@@ -152,14 +154,12 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 Intent intent = new Intent(TrasactionView.this, MainMap.class);
                 intent.putExtra("transNumber", transNumberPass);
                 intent.putExtra("driverId", driverId);
-                saveTransaction(transNumberPass);
+                setStatusRoute();
                 startActivity(intent);
-
             }
         });
 
         internetChecking();
-
         SimpleDateFormat formatter
                 = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime_1 = new Date();
@@ -250,7 +250,6 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         }
 
                     }
-
                     pNumbers = response.body().get(0).getRoutes().get(0).getFormattedPhoneNumber();
                     int waypoint = response.body().get(0).getWaypoints().size();
                     for (int b = 0; b < waypoint; b++) {
@@ -270,9 +269,13 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
+                     rID = response.body().get(0).getTrucks().get(0).getTruckingReservationId();
+                     truckerID = response.body().get(0).getTrucks().get(0).getTruckerTruckId();
+                    int status = response.body().get(0).getTrucks().get(0).getRouteStatus();
+                    if(status == 1){
+                        startTransactionBtn.setText("Resume Route");
+                    }
                     progressDialogdialog.dismiss();
-                    getStatus();
                 }
 
 
@@ -287,6 +290,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
 
     }
+
+
 
     @Override
     protected void onRestart() {
@@ -318,8 +323,8 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     value = db.rmDao().getToken().get(a).getAccess_token();
 
                 }
-
                 loadWaypoints(transNumberPass, value);
+
             }
         });
 
@@ -431,47 +436,23 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             dialog.show();
         }
     }
-    public void saveTransaction(final String tr){
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class,"Transactions").addMigrations(MIGRATION_1_3).fallbackToDestructiveMigration()
-                .build();
+    private void setStatusRoute(){
+        Api api = retrofit.create(Api.class);
+        Call<JsonObject> call = api.setRoutStatus(1, rID, truckerID, transNumberPass);
 
-        int b = 1;
-        final Transactions todoListItem= new Transactions(null, tr, b);
-        AsyncTask.execute(new Runnable() {
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void run() {
-                 db.rmDao().addTransactions(todoListItem);
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                Log.e(TAG, "Successss_____ ");
             }
-        });
-    }
-    static final Migration MIGRATION_1_3 = new Migration(1, 3) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE `Transactions` (`id` INTEGER, " + "`latLang` TEXT,`status` INTEGER, PRIMARY KEY(`id`))");
-        }
-    };
 
-    public void getStatus() {
-        final RmDatabase db = Room.databaseBuilder(getApplicationContext(), RmDatabase.class, "Transactions").addMigrations(MIGRATION_1_3)
-                .build();
-
-        AsyncTask.execute(new Runnable() {
             @Override
-            public void run() {
-                Log.e(TAG, "STATUS "+ db.rmDao().selectTransaction(transNumberPass));
-                Integer stat = db.rmDao().selectTransaction(transNumberPass);
-                if(stat == null){
-                    startTransactionBtn.setText("Start Route");
-                }else{
-                    startTransactionBtn.setText("Resume Route");
-                }
-
-
-
+            public void onFailure(Call<JsonObject> call, Throwable t) {
 
             }
         });
     }
+
 
 
 
