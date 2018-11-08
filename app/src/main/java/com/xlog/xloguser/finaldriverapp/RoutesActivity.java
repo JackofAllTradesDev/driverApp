@@ -77,6 +77,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
     private ImageButton attachBtn;
     private Button mainSubmitBtn;
     private Button endTrip;
+    private ImageView imageview, imageviewSignature;
     final int CAMERA_PIC_REQUEST = 1337;
     public static final int SIGNATURE_ACTIVITY = 10;
     private static final int PICKFILE_RESULT_CODE = 1;
@@ -112,6 +113,8 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
         cv = (CardView) findViewById(R.id.endRouteCv);
         filename = (TextView) findViewById(R.id.fileNameTxt);
         mainSubmitBtn = (Button) findViewById(R.id.mainSubmitBtn);
+        imageview = (ImageView) findViewById(R.id.signatureImg);
+        imageviewSignature = (ImageView) findViewById(R.id.pictureImg);
         routes = new ArrayList<>();
         sendBases = new ArrayList<>();
         encodeFiles = new ArrayList<>();
@@ -197,7 +200,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
 
 //        "application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
         String[] mimeTypes =
-                {"*/*"};
+                {"image/jpeg", "image/png","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/pdf" };
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -294,6 +297,8 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     String routeStatus = response.body().get(0).getRoutes().get(b).getRoutestatus();
                     if (routeStatus.equalsIgnoreCase("Completed")) {
                         endTrip.setVisibility(View.VISIBLE);
+                    }else{
+                        endTrip.setVisibility(View.INVISIBLE);
                     }
                 }
                 progressDialogdialog.dismiss();
@@ -320,7 +325,6 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     byte[] decodedString = Base64.decode(String.valueOf(image2), Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     Log.e("log_tag", "decoded  " + decodedByte);
-                    ImageView imageview = (ImageView) findViewById(R.id.signatureImg);
                     imageview.setImageBitmap(decodedByte);
                     signature(rName, conttact);
 
@@ -339,7 +343,6 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
 
                         imgString = Base64.encodeToString(profileImage,
                                 Base64.NO_WRAP);
-                        ImageView imageview = (ImageView) findViewById(R.id.pictureImg);
                         imageview.setImageBitmap(imageBitmap);
                         camera(rName, conttact);
 
@@ -400,7 +403,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
 
         EncodeFile encodeFile = new EncodeFile();
         encodeFile.setEncodedfile(base64);
-        encodeFile.setExt(".pdf");
+        encodeFile.setExt(ext);
         encodeFiles.add(encodeFile);
         return data;
     }
@@ -475,6 +478,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     encodeFiles.clear();
                     getAccesToken();
                     dialog.dismiss();
+                    clear();
                 }
             });
 
@@ -511,6 +515,15 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
     protected void onRestart() {
         super.onRestart();
         internetChecking();
+    }
+
+    private void clear(){
+        contact.getText().clear();
+        received.getText().clear();
+        imageviewSignature.setImageBitmap(null);
+        imageview.setImageBitmap(null);
+        filename.setText(null);
+
     }
 
     public void errorMessage(String message) {
