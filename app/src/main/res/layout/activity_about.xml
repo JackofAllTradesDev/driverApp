@@ -73,171 +73,170 @@
 
                 <TextView
                     android:id="@+id/textView16"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
-                    android:text="Mission"
-                    android:textAllCaps="true"
-                    android:textAlignment="textStart"
                     android:fontFamily="@font/roboto_medium"
-                    android:textSize="12dp"
+                    android:paddingLeft="20dp"
+                    android:text="Mission"
+                    android:layout_gravity="center"
+                    android:textAllCaps="true"
                     android:textColor="#000"
-                    android:paddingLeft="35dp"/>
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/textView17"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
-                    android:text="The digital solution for all your logistics needs"
-                    android:textSize="10dp"
-                    android:textColor="#000"
-                    android:paddingLeft="35dp"
-                    android:textAlignment="textStart"
-                    android:textAllCaps="true"
                     android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
-                    />
+                    android:text="The digital solution for all your logistics needs"
+                    android:layout_gravity="center"
+                    android:textAllCaps="true"
+                    android:textColor="#000"
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView18"
-                    android:layout_width="340dp"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
                     android:text="Our Mission is to help shipping companies and shippers (exporters/ importers) realize utmost savings and operational efficiency by directly connecting them to service providers in the global logistics industry."
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView20"
-                    android:layout_width="340dp"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
                     android:text="XLOG is designed to make logistics simple and fast by connecting your business to the right service providers, tracking your shipments in real time, and managing all your bookings through one seamless and fully-integrated digital platform."
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView21"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="5dp"
                     android:text="Connect"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
-                    android:textSize="12dp"
-                    android:paddingLeft="35dp"
-                    android:paddingTop="5dp"
-                    android:fontFamily="@font/roboto_medium"/>
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/textView27"
-                    android:layout_width="340dp"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
                     android:text="Save on time and money by booking your logistics requirements online, with a wide selection of reputable and legitimate service providers to choose from"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView32"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="5dp"
                     android:text="Track"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
-                    android:textSize="12dp"
-                    android:paddingLeft="35dp"
-                    android:paddingTop="5dp"
-                    android:fontFamily="@font/roboto_medium"/>
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/textView33"
-                    android:layout_width="340dp"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
                     android:text="Have full visibility over your shipments, from seeing its location in real time to quick status updates on key milestones and tasks"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView34"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="5dp"
                     android:text="Manage"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
-                    android:textSize="12dp"
-                    android:paddingLeft="35dp"
-                    android:paddingTop="5dp"
-                    android:fontFamily="@font/roboto_medium"/>
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/textView35"
-                    android:layout_width="340dp"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
+                    android:paddingLeft="20dp"
                     android:paddingTop="5dp"
                     android:text="Have a communal platform with all parties involved in a transaction for efficient communication and coordination"
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textView36"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
-                    android:text="Vision"
-                    android:textAllCaps="true"
-                    android:textAlignment="textStart"
                     android:fontFamily="@font/roboto_medium"
-                    android:textSize="12dp"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Vision"
+                    android:layout_gravity="center"
+                    android:textAllCaps="true"
                     android:textColor="#000"
-                    android:paddingLeft="35dp"
-                    android:paddingTop="10dp"/>
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/textView37"
-                    android:layout_width="match_parent"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
                     android:text="Simplifying the complex world of logistics"
-                    android:textAllCaps="true"
-                    android:textAlignment="textStart"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="10dp"
-                    android:textColor="#000"
-                    android:paddingLeft="35dp"/>
-
-                <TextView
-                    android:id="@+id/textView38"
-                    android:layout_width="340dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_medium"
-                    android:paddingLeft="35dp"
-                    android:paddingTop="7dp"
-                    android:text="We believe in the power of technology to radically improve and transform how the various stakeholders in the shipping industry work together to maximize savings, generate better profits and do things in a very easy to use environment but in a highly secure and reliable digital platform."
-                    android:textAlignment="textStart"
+                    android:layout_gravity="center"
                     android:textAllCaps="true"
                     android:textColor="#000"
                     android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/textView38"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="7dp"
+                    android:text="We believe in the power of technology to radically improve and transform how the various stakeholders in the shipping industry work together to maximize savings, generate better profits and do things in a very easy to use environment but in a highly secure and reliable digital platform."
+                    android:textAllCaps="true"
+                    android:textColor="#000"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"/>
             </LinearLayout>
         </ScrollView>
 

@@ -447,8 +447,6 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                         lngLocation = Double.parseDouble(lng);
                         LatLng latLng = new LatLng(latLocation, lngLocation);
                         saveCoordinates.add(latLng);
-                        Log.e(TAG, "saveCoordinates "+ saveCoordinates);
-
                     } catch (NumberFormatException e) {
                         Log.e(TAG, "Convert to Double Failed : " );
                     }
