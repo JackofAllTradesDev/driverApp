@@ -147,28 +147,11 @@ public class Commodity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                errorMessage(t.getMessage());
+                errorMessage();
             }
         });
     }
-    public void errorMessage(){
-        progressDialogdialog.dismiss();
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
-        alertBuilder.setTitle("Timeout");
-        alertBuilder.setMessage("Please Try Again");
-        String positiveText = getString(android.R.string.ok);
-        alertBuilder.setPositiveButton(positiveText,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.dismiss();
-                    }
-                });
-
-        AlertDialog dialog = alertBuilder.create();
-        dialog.show();
-    }
 
     private void getData() {
         progressDialogdialog = new ProgressDialog(Commodity.this);
@@ -225,22 +208,32 @@ public class Commodity extends AppCompatActivity {
         super.onRestart();
         internetChecking();
     }
-    public void errorMessage(String message){
+    public void errorMessage(){
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to fetch data.");
         String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
+                        progressDialogdialog.dismiss();
                         getData();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 

@@ -262,7 +262,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "error today " + t.getMessage());
-                erroMessageToday(t.getMessage());
+                erroMessageToday();
             }
         });
     }
@@ -316,7 +316,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "error upcoming " + t.getMessage());
-                errorUpcoming(t.getMessage());
+                errorUpcoming();
             }
         });
     }
@@ -380,7 +380,7 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "onFailure " + t.getMessage());
-                errorMessage(t.getMessage());
+                errorMessage();
             }
         });
 
@@ -411,8 +411,6 @@ public class NavigationDrawer extends AppCompatActivity
 
                     }
 
-                } else {
-
                 }
 
             }
@@ -420,67 +418,96 @@ public class NavigationDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<UserDetails> call, Throwable t) {
                 Log.e(TAG, "Response Failure " + t.getMessage());
-                errorMessage(t.getMessage());
             }
         });
 
 
     }
 
-    public void errorMessage(String message) {
+    public void errorMessage() {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to Fetch Data");
         String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getAccesToken();
+                        progressDialogdialog.dismiss();
                         dialog.dismiss();
+                        getAccesToken();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
-    public void erroMessageToday(String message) {
+    public void erroMessageToday() {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to Fetch Data");
         String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
+                        progressDialogdialog.dismiss();
                         todayList();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
-    public void errorUpcoming(String message) {
+    public void errorUpcoming() {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to Fetch Data");
         String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
+                        progressDialogdialog.dismiss();
                         upcomingList();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
@@ -689,6 +716,7 @@ public class NavigationDrawer extends AppCompatActivity
                     });
 
             AlertDialog dialog = alertBuilder.create();
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         }
     }

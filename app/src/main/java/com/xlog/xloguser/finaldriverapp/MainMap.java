@@ -676,7 +676,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
                 Log.e(TAG, "Response failed "+t.getMessage());
-                errorMessage(t.getMessage());
+                errorMessage();
                 progressDialogdialog.dismiss();
             }
         });
@@ -823,17 +823,18 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
 
     }
-    public void errorMessage(String message){
+    public void errorMessage(){
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainMap.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to Fetch Data");
         String positiveText = "Retry";
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
+                        progressDialogdialog.dismiss();
                       getData();
                     }
                 });

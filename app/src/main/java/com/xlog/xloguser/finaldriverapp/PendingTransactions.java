@@ -228,6 +228,7 @@ public class PendingTransactions extends AppCompatActivity {
                     });
 
             AlertDialog dialog = alertBuilder.create();
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         }
     }

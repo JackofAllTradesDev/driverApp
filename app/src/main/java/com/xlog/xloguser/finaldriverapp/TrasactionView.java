@@ -284,7 +284,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                errorMessage(t.getMessage());
+                errorMessage();
             }
         });
 
@@ -396,22 +396,32 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 90));
     }
 
-    public void errorMessage(String message) {
+    public void errorMessage() {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage(message);
+        alertBuilder.setMessage("Unable to Fetch Data");
         String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        progressDialogdialog.dismiss();
+                        dialog.dismiss();
                         getData();
                     }
                 });
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
     private void internetChecking() {
