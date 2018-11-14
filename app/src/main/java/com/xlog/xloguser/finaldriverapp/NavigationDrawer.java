@@ -50,6 +50,7 @@ import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.Coordinates;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -334,7 +336,6 @@ public class NavigationDrawer extends AppCompatActivity
         call2.enqueue(new Callback<List<ReservationList>>() {
             @Override
             public void onResponse(Call<List<ReservationList>> call, Response<List<ReservationList>> response) {
-
                 if (response.isSuccessful()) {
                     int value = response.body().size();
                     String date = "";
@@ -428,7 +429,7 @@ public class NavigationDrawer extends AppCompatActivity
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
@@ -452,12 +453,30 @@ public class NavigationDrawer extends AppCompatActivity
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
+    public void errorRequest(String message) {
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
+        alertBuilder.setTitle("Alert!");
+        alertBuilder.setMessage(message);
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
 
     public void erroMessageToday() {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
@@ -486,7 +505,7 @@ public class NavigationDrawer extends AppCompatActivity
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(NavigationDrawer.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
@@ -512,6 +531,8 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     public void loadApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)

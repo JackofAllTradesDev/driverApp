@@ -33,6 +33,7 @@ import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationLi
 import com.xlog.xloguser.finaldriverapp.Model.UserDetails;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,7 +77,6 @@ public class AllTrasactions extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         transactionList = new ArrayList<>();
         Fabric.with(this, new Crashlytics());
-        loadApi();
         internetChecking();
     }
     private void loadDataAdapter(){
@@ -86,15 +87,19 @@ public class AllTrasactions extends AppCompatActivity {
 
     }
     public void loadApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
 
         Gson gson = new GsonBuilder()
                 .setLenient()
+                .setDateFormat(DateFormat.LONG)
                 .create();
 
         retrofit = new Retrofit.Builder()
@@ -164,7 +169,7 @@ public class AllTrasactions extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-                Log.e(TAG, "Response +"+t.getMessage());
+                Log.e(TAG, "Response + "+t.getMessage());
                 errorMessage();
             }
         });
@@ -205,7 +210,7 @@ public class AllTrasactions extends AppCompatActivity {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AllTrasactions.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data.");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
@@ -231,6 +236,7 @@ public class AllTrasactions extends AppCompatActivity {
     }
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            loadApi();
             getAccesToken();
         } else {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AllTrasactions.this);

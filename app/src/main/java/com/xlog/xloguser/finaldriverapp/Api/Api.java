@@ -39,9 +39,9 @@ public interface Api {
     Call<UserDetails> getUserDetails(@Query("access_token") String access_token);
     @POST("snaptoroad.php")
     Call<SnapToRoad> getCoordinates(@Query("coordinates") String coordinates, @Query("driverId") int driver, @Query("prefixId")String prefixId);
-    @GET("truckerList.php")
+    @POST("truckerList.php")
     Call<List<ReservationList>> getReservationList(@Query("access_token") String token);
-    @GET("truckerList.php")
+    @POST("truckerList.php")
     Call<List<ReservationList>> getInfo(@Query("access_token") String token, @Query("prefixId")String trans);
     @POST("saveattachment.php")
     Call<List<SendBase>> sendBase64(@Body ArrayList<SendBase> post);

@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,10 +99,13 @@ public class Commodity extends AppCompatActivity {
     }
 
     public void loadApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
 
@@ -212,7 +216,7 @@ public class Commodity extends AppCompatActivity {
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Commodity.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to fetch data.");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {

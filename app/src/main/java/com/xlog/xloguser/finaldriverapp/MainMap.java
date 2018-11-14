@@ -507,7 +507,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
         if (this.didInitialZoom == false) {
             try {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.5f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.5f));
                 this.didInitialZoom = true;
                 return;
             } catch (Exception e) {
@@ -827,7 +827,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainMap.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         alertBuilder.setPositiveButton(positiveText,
                 new DialogInterface.OnClickListener() {

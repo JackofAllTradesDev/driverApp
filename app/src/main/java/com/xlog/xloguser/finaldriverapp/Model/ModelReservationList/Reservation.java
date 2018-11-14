@@ -1,7 +1,6 @@
 
 package com.xlog.xloguser.finaldriverapp.Model.ModelReservationList;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -109,7 +108,6 @@ public class Reservation {
     public void setCommodity(Commodity commodity) {
         this.commodity = commodity;
     }
-
 
     public Consignee getConsignee() {
         return consignee;

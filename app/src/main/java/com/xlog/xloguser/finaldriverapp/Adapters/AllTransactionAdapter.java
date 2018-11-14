@@ -49,7 +49,7 @@ public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAd
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
                 for(ReservationList item : reservationListFiltered){
-                    if(item.getPrefixedId().toString().toLowerCase().contains(filterPattern)){
+                    if(item.getPrefixedId().toLowerCase().contains(filterPattern)){
                         filteredList.add(item);
                     }
                 }

@@ -13,6 +13,9 @@ public class ReservationList {
     @SerializedName("prefixedId")
     @Expose
     private String prefixedId;
+    @SerializedName("message")
+    @Expose
+    private String message;
     @SerializedName("trucker_id")
     @Expose
     private Integer truckerId;
@@ -68,6 +71,14 @@ public class ReservationList {
     public void setPrefixedId(String prefixedId) {
         this.prefixedId = prefixedId;
     }
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 
     public Integer getTruckerId() {
         return truckerId;

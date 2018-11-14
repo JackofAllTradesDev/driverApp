@@ -30,6 +30,7 @@ import com.xlog.xloguser.finaldriverapp.Model.ModelReservationList.ReservationLi
 import com.xlog.xloguser.finaldriverapp.Model.PendingTransactionModel;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,14 +85,18 @@ public class PendingTransactions extends AppCompatActivity {
 
     }
     public void loadApi(){
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
         Gson gson = new GsonBuilder()
                 .setLenient()
+                .setDateFormat(DateFormat.LONG)
                 .create();
 
         retrofit = new Retrofit.Builder()
@@ -166,10 +172,38 @@ public class PendingTransactions extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
-
+                errorMessage();
             }
         });
 
+    }
+    public void errorMessage() {
+        progressDialogdialog.dismiss();
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(PendingTransactions.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
+        String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialogdialog.dismiss();
+                        dialog.dismiss();
+                        getAccesToken();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void loadPendingTransactions(){

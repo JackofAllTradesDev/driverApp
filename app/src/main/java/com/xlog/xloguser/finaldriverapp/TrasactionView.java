@@ -50,6 +50,7 @@ import com.xlog.xloguser.finaldriverapp.Room.Entity.TokenEntity;
 import com.xlog.xloguser.finaldriverapp.Room.Entity.Transactions;
 import com.xlog.xloguser.finaldriverapp.Room.RmDatabase;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -114,7 +116,6 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         mToolbar.setTitle(transNumberPass);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        loadApi();
         list = new ArrayList<LatLng>();
         Fabric.with(this, new Crashlytics());
 
@@ -190,15 +191,19 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     }
 
     public void loadApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
 
         Gson gson = new GsonBuilder()
                 .setLenient()
+                .setDateFormat(DateFormat.LONG)
                 .create();
 
         retrofit = new Retrofit.Builder()
@@ -236,7 +241,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                         String c = "Completed";
                         if (check.equalsIgnoreCase(c)) {
                             startTransactionBtn.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else {
                             startTransactionBtn.setVisibility(View.VISIBLE);
                         }
                     }
@@ -269,26 +274,56 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                     rID = response.body().get(0).getTrucks().get(0).getTruckingReservationId();
-                     truckerID = response.body().get(0).getTrucks().get(0).getTruckerTruckId();
+                    rID = response.body().get(0).getTrucks().get(0).getTruckingReservationId();
+                    truckerID = response.body().get(0).getTrucks().get(0).getTruckerTruckId();
                     int status = response.body().get(0).getTrucks().get(0).getRouteStatus();
-                    if(status == 1){
+                    if (status == 1) {
                         startTransactionBtn.setText("Resume Route");
                     }
+//                    if(!messageError.trim().isEmpty()){
+//                        errorRequest(messageError);
+//                    }
                     progressDialogdialog.dismiss();
                 }
-
-
             }
 
 
             @Override
             public void onFailure(Call<List<ReservationList>> call, Throwable t) {
+                Log.e(TAG, "OnFailure "+ t.getMessage());
                 errorMessage();
             }
         });
 
 
+    }
+
+    private void errorRequest(String message){
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
+        alertBuilder.setTitle("Try Again");
+        alertBuilder.setMessage(message);
+        String positiveText = "Retry";
+        String negativeText = "Ok";
+        alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialogdialog.dismiss();
+                dialog.dismiss();
+            }
+        });
+        alertBuilder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialogdialog.dismiss();
+                        dialog.dismiss();
+                        getData();
+                    }
+                });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
 
@@ -400,7 +435,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
         progressDialogdialog.dismiss();
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TrasactionView.this);
         alertBuilder.setTitle("Try Again");
-        alertBuilder.setMessage("Unable to Fetch Data");
+        alertBuilder.setMessage("Unable to Fetch Data\nPlease wait for a few minutes.");
         String positiveText = "Retry";
         String negativeText = "Ok";
         alertBuilder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
@@ -408,6 +443,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(DialogInterface dialog, int which) {
                 progressDialogdialog.dismiss();
                 dialog.dismiss();
+
             }
         });
         alertBuilder.setPositiveButton(positiveText,
@@ -422,10 +458,12 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
         AlertDialog dialog = alertBuilder.create();
         dialog.setCanceledOnTouchOutside(false);
+        startTransactionBtn.setVisibility(View.INVISIBLE);
         dialog.show();
     }
     private void internetChecking() {
         if (AppStatus.getInstance(getBaseContext()).isOnline()) {
+            loadApi();
            getData();
 
         } else {

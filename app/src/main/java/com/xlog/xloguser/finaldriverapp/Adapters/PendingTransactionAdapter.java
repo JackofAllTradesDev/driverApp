@@ -52,7 +52,7 @@ public class PendingTransactionAdapter extends RecyclerView.Adapter<PendingTrans
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
                 for(ReservationList item : trNumberPendingFiltered){
-                    if(item.getPrefixedId().toString().toLowerCase().contains(filterPattern)){
+                    if(item.getPrefixedId().toLowerCase().contains(filterPattern)){
                         filteredList.add(item);
                     }
                 }
