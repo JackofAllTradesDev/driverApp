@@ -92,7 +92,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     int driverId, rID, truckerID;
     Toolbar mToolbar;
     Marker mark;
-    String markLocation, dateString;
+    String markLocation, dateString, access;
     Integer stat;
     int[] mImgArray = {R.drawable.a_blue, R.drawable.b_blue,
             R.drawable.c_blue, R.drawable.d_blue, R.drawable.e_blue};
@@ -207,7 +207,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLQA)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -355,10 +355,10 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
 
                 for (int a = 0; a < db.rmDao().getToken().size(); a++) {
                     Log.e("LOG___", "fetch_____ " + a + " " + db.rmDao().getToken().get(a).getAccess_token());
-                    value = db.rmDao().getToken().get(a).getAccess_token();
+                    access = db.rmDao().getToken().get(a).getAccess_token();
 
                 }
-                loadWaypoints(transNumberPass, value);
+                loadWaypoints(transNumberPass, access);
 
             }
         });
@@ -486,7 +486,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
     }
     private void setStatusRoute(){
         Api api = retrofit.create(Api.class);
-        Call<JsonObject> call = api.setRoutStatus(1, rID, truckerID, transNumberPass);
+        Call<JsonObject> call = api.setRoutStatus(1, rID, truckerID, transNumberPass, access);
 
         call.enqueue(new Callback<JsonObject>() {
             @Override

@@ -544,7 +544,7 @@ public class NavigationDrawer extends AppCompatActivity
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLQA)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

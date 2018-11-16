@@ -178,6 +178,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                 intent.putExtra("tr_number", transNumberPass);
                 startActivity(intent);
                 setStatusRoute();
+                finish();
 
             }
         });
@@ -232,7 +233,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLQA)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -460,7 +461,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Api.URLQA)
+                    .baseUrl(Api.URLPROD)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
@@ -481,8 +482,8 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     sendBases.clear();
                     encodeFiles.clear();
                     getAccesToken();
-                    dialog.dismiss();
                     clear();
+                    dialog.dismiss();
                 }
             });
 
@@ -582,7 +583,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
 
     private void setStatusRoute() {
         Api api = retrofit.create(Api.class);
-        Call<JsonObject> call = api.setRoutStatus(2, rID, truckerID, transNumberPass);
+        Call<JsonObject> call = api.setRoutStatus(2, rID, truckerID, transNumberPass, token);
 
         call.enqueue(new Callback<JsonObject>() {
             @Override

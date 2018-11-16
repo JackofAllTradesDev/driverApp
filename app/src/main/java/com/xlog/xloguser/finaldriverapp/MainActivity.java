@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText userName;
     private EditText passWord;
     private String client_secret = "xkZj7641VzG3L15xEAWFx4runiorm9jhuPi7SNm5";
+    private String client_secretprod = "IiOSGWDjPfNZaxjMnmbmXwtEPBKiQGdTTcWdkyty";
     private String client_id = "3";
+    private String client_id_prod = "5";
     private String grant_type = "password";
     private String scope = "*";
     private Retrofit retrofit;
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLQA)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     public void login(String userName, Integer passWords){
 
         Api api = retrofit.create(Api.class);
-        Call<Login> call = api.getToken(client_secret, client_id, userName,passWords, grant_type,scope);
+        Call<Login> call = api.getToken(client_secretprod, client_id_prod, userName,passWords, grant_type,scope);
 
         call.enqueue(new Callback<Login>() {
             @Override
