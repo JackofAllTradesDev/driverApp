@@ -100,7 +100,7 @@ public class PendingTransactions extends AppCompatActivity {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLPROD)
+                .baseUrl(Api.URLUAT)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

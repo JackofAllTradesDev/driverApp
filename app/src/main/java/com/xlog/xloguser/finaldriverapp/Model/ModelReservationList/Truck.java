@@ -12,6 +12,12 @@ public class Truck {
     @SerializedName("end_date")
     @Expose
     private String endDate;
+    @SerializedName("driver_actual_start_date")
+    @Expose
+    private String driverActualStartDate;
+    @SerializedName("driver_actual_end_date")
+    @Expose
+    private String driverActualEndDate;
     @SerializedName("trucking_reservation_id")
     @Expose
     private Integer truckingReservationId;
@@ -36,6 +42,22 @@ public class Truck {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getDriverActualStartDate() {
+        return driverActualStartDate;
+    }
+
+    public void setDriverActualStartDate(String driverActualStartDate) {
+        this.driverActualStartDate = driverActualStartDate;
+    }
+
+    public String getDriverActualEndDate() {
+        return driverActualEndDate;
+    }
+
+    public void setDriverActualEndDate(String driverActualEndDate) {
+        this.driverActualEndDate = driverActualEndDate;
     }
 
     public Integer getTruckingReservationId() {

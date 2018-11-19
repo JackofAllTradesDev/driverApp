@@ -378,7 +378,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .create();
 
         retrofitGet = new Retrofit.Builder()
-                .baseUrl(Api.loadProd)
+                .baseUrl(Api.loadUAT)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -485,10 +485,13 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
 
 
     private void buildApi(){
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.MINUTES)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build();
 
         Gson gson = new GsonBuilder()
@@ -496,8 +499,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLPROD)
-
+                .baseUrl(Api.URLUAT)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

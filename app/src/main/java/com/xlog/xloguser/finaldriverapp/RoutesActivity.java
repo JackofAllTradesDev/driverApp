@@ -233,7 +233,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLPROD)
+                .baseUrl(Api.URLUAT)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -461,7 +461,7 @@ public class RoutesActivity extends AppCompatActivity implements Attachment {
                     .create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Api.URLPROD)
+                    .baseUrl(Api.URLUAT)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
