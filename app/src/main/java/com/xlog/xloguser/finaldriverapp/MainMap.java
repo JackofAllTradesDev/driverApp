@@ -378,7 +378,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .create();
 
         retrofitGet = new Retrofit.Builder()
-                .baseUrl(Api.loadUAT)
+                .baseUrl(Api.loadProd)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -499,7 +499,7 @@ public class MainMap extends AppCompatActivity implements OnMapReadyCallback, Go
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLUAT)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

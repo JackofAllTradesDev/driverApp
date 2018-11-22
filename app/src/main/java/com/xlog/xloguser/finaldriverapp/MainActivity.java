@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLUAT)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     public void login(String userName, Integer passWords){
 
         Api api = retrofit.create(Api.class);
-        Call<Login> call = api.getToken(client_secret, client_id, userName,passWords, grant_type,scope);
+        Call<Login> call = api.getToken(client_secretprod, client_id_prod, userName,passWords, grant_type,scope);
 
         call.enqueue(new Callback<Login>() {
             @Override

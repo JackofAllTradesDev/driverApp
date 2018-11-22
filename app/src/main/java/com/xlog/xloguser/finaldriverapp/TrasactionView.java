@@ -207,7 +207,7 @@ public class TrasactionView extends AppCompatActivity implements OnMapReadyCallb
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Api.URLUAT)
+                .baseUrl(Api.URLPROD)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
